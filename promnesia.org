@@ -18,20 +18,27 @@ Also, you can quickly skim through the [[https://github.com/karlicoss/promnesia#
 #+toc: headlines 2
 
 * I want my singularity!
+:PROPERTIES:
+:CUSTOM_ID: singularity_when
+:END:
+
 I was raised on science fiction and grew up dreaming about technology drastically changing our lives.
 Artificial intelligence, augmenting the brain with a math co-processor, head-up displays, neural interfaces, having perfect reaction and memory -- many of you are on the same page and know the drill.
 
 Years passed, I became a software engineer, and realized just how far we are from all these fancy technologies I wanted.
 So my aspirations have become more modest, and I've chosen a more realistic and plausible target:
-using my digital trace (such as browser history, webpage annotations and my [[https://beepb00p.xyz/tags.html#exobrain][personal wiki]]) to make up for my limited memory.
+using my digital trace (such as browser history, webpage annotations and my [[file:tags.org::#exobrain][personal wiki]]) to make up for my limited memory.
 
-I'm exploring lots of information on the Internet, and it feels wasteful to use my [[https://beepb00p.xyz/tags.html#meatsack][meat resources]] to keep track of it.
+I'm exploring lots of information on the Internet, and it feels wasteful to use my [[file:tags.org::#meatsack][meat resources]] to keep track of it.
 Meanwhile, web browsers keep a record automatically, without any manual and conscious effort.
 Surely we can benefit from the immense computing power and memory capabilities of computers?
 
 So I figured that I wanted:
 
 * Ok, maybe a web assistant at least?
+:PROPERTIES:
+:CUSTOM_ID: what_i_want
+:END:
 A web surfing companion. A copilot.
 A [[https://en.wikipedia.org/wiki/Memex][Memex]].
 A [[http://alumni.media.mit.edu/~rhodes/Papers/remembrance.html][Remembrance Agent]]?
@@ -68,7 +75,7 @@ Call it whatever you like, I /wish/ it were a concept with a widely accepted nam
   Imagine if in one click, I could see which of my friends, or the people I follow have read a certain link.
   What did they think? Have they posted about it, annotated, or something else? Do they follow the author, perhaps I should too?
 
-- bridge the gap between the browser and my [[https://beepb00p.xyz/tags.html#exobrain][personal wiki]]
+- bridge the gap between the browser and my [[file:tags.org::#exobrain][personal wiki]]
 
   Whatever product I choose for managing my notes: Google Keep, Evernote, Roam Research, or even org-mode files on my disk,
   they always end up *isolated and disconnected* from my web browsing.
@@ -77,13 +84,16 @@ I searched for a system like this [[https://twitter.com/karlicoss/status/7674129
 
 After enough failed attempts at finding an [[#prior_art][existing solution]], I figured it was going to be yet another thing I'd have to implement myself.
 
-The journey of building it took longer than I expected, led me through a rabbit hole of [[https://beepb00p.xyz/tags.html#dataliberation][data liberation]], lots of [[https://en.wiktionary.org/wiki/yak_shaving][yak shaving]],
+The journey of building it took longer than I expected, led me through a rabbit hole of [[file:tags.org::#dataliberation][data liberation]], lots of [[https://en.wiktionary.org/wiki/yak_shaving][yak shaving]],
 and made me realize: *browser history is very, very broken*.
 
 Note: the next two sections are (somewhat technical) rants. If you prefer a more positive/less boring agenda, feel free to skip them straight to [[#prior_art]["Existing solutions"]]
 , and you can return back later if you feel like it.
 
 * Browser history is broken
+:PROPERTIES:
+:CUSTOM_ID: history_broken
+:END:
 To a large extent, URLs express *relationships and hierarchy* between the bits of information. For example:  ~blog <-> post <-> comment~, ~person <-> tweet~, ~playlist <-> video~.
 
 With this information you should be easily able to find everything relevant to the current page and trace your jumps through past websites.
@@ -91,7 +101,7 @@ Merely by looking at URLs, without "AI" or some dubious machine learning algorit
 Seems like a low hanging fruit to harvest, right?
 
 Web browser history is a rich source of potentially useful information.
-Just think about it: it's zero effort [[https://beepb00p.xyz/tags.html#lifelogging][lifelogging]].
+Just think about it: it's zero effort [[file:tags.org::#lifelogging][lifelogging]].
 It contains exact timestamps and links which /basically/ address information.
 
 Now think about the experience you actually have. What was the last time you used the browser history in any nontrivial way, for something other than reopening an accidentally closed tab?
@@ -99,6 +109,9 @@ Now think about the experience you actually have. What was the last time you use
 Besides:
 
 ** it's not just about web browsers
+:PROPERTIES:
+:CUSTOM_ID: not_just_browser
+:END:
 When you're using a native phone app (say, for Reddit or Twitter), your history either isn't logged anywhere or if it is, it's only stored locally on your phone.
 (this is why I emphasize *browsing* history, not *browser* history)
 
@@ -112,20 +125,24 @@ As a specific example, the [[https://github.com/ccrama/Slide][Reddit Slide]] app
 Okay, say you root your phone and access the database. Turns out the the app isn't persisting the data forever, it's merely keeping a few weeks' cache.
 And I can hardly blame the developer for this: because of the data model, no one expects regular users to access this database.
 
-So if you want your complete history, you have to backup this database regularly, keep the snapshots and [[https://beepb00p.xyz/exports.html#synthetic][somehow]]
+So if you want your complete history, you have to backup this database regularly, keep the snapshots and [[file:exports.org::#synthetic][somehow]]
 reconstruct it.
 
 You may dismiss this as nitpicking and obsession over every last bit of my data.
 But when *all* of your phone apps are doing this you're missing out on quite a lot of useful information.
 
 ** it's scattered and siloed
+:PROPERTIES:
+:CUSTOM_ID: siloed
+:END:
+
 Building on the previous point:
 
 - for the most part, you can't access history in your phone apps
 - lots of data which /ought/ to be counted as web history is scattered across silos
 
   - in the cloud: behind APIs (best case), GDPR and manual exports (worst case)
-    ([[https://beepb00p.xyz/sad-infra.html][#sadinfra]])
+    ([[file:sad-infra.org][#sadinfra]])
     It is never easy to get hands on, /even/ if you're an experienced software engineer.
 
   - on the filesystem, for example in markdown/org-mode files
@@ -139,7 +156,7 @@ Even /regular/ browser history is not easy to get:
 
   The only way to access older history I'm aware of is [[https://myactivity.google.com][Google Activity]] and Takeout.
 
-- Google Takeout [[https://beepb00p.xyz/./takeout-data-gone.html][quietly recycles your history]]
+- Google Takeout [[file:./takeout-data-gone.html][quietly recycles your history]]
 
 - Migration is limited to the most popular browsers
 
@@ -154,6 +171,9 @@ Even /regular/ browser history is not easy to get:
   but as you can imagine, is quite tedious.
 
 ** it's got varying significance
+:PROPERTIES:
+:CUSTOM_ID: significance
+:END:
 Not all links in your history are equally important:
 
 - some are clicked on by accident
@@ -165,6 +185,9 @@ Not all links in your history are equally important:
 
 The current browser history experience makes no distinction between these scenarios.
 * URLs are broken
+:PROPERTIES:
+:CUSTOM_ID: urls_broken
+:END:
 This topic probably deserves a separate post, but I'll keep it section-sized for now.
 
 URLs might seem great because they mostly address content and are semi-descriptive: people /try/ to keep URLs somewhat reasonable, tidy and working.
@@ -237,11 +260,18 @@ But in the real world:
 I want URLs to *address information* and *represent relations*. The current URL experience is far from ideal for this.
 
 * Prior art
+:PROPERTIES:
+:CUSTOM_ID: prior_art
+:END:
 
 
 Sadly, I've seen very few similar projects.
 
 ** Prototypes and mockups
+:PROPERTIES:
+:CUSTOM_ID: prototypes
+:END:
+
 - [[http://alumni.media.mit.edu/~rhodes/Papers/mnotes-iui00.html]["Margin Notes: Building a Contextually Aware Associative Memory"]]
 
   A paper from 2000 (!):
@@ -263,12 +293,19 @@ Sadly, I've seen very few similar projects.
   Sadly it's only a concept.
 
 ** Google Activity/Takeout
+:PROPERTIES:
+:CUSTOM_ID: google
+:END:
+
 Though I covered it already, it's worth another mention as many people use it. I find it problematic because:
 
 - it's a Google-specific silo, and the functionality provided by Google is only useful for deliberate searches
 - it doesn't have an API, and can't be integrated in the browser
 
 ** 'Unlimited history' extensions
+:PROPERTIES:
+:CUSTOM_ID: history_extensions
+:END:
 There is a family of Chrome extensions similar to [[https://chrome.google.com/webstore/detail/history-trends-unlimited/pnmchffiealhkdloeffcdnbgdnedheme][History Trends Unlimited]]
 which try to make up for Chrome's 90-day retention by keeping the history in IndexDB.
 Unfortunately, retention is the only problem this solves, and then it it ends up as a yet another silo.
@@ -276,17 +313,28 @@ Unfortunately, retention is the only problem this solves, and then it it ends up
 But, thousands of users indicates there is at least demand for such functionality.
 
 ** [[https://histre.com][Histre]]
+:PROPERTIES:
+:CUSTOM_ID: histre
+:END:
+
 Histre is an open source browser extension that presents history as a tree to allow for easier exploration.
 I really like the idea, and it's a shame this is not the default representaion in our browsers.
 
 The downside of Histre is that it doesn't integrate with your existing knowledge about the page from other services, so it's a silo in its own regard.
 
 ** Vivaldi Browser
+:PROPERTIES:
+:CUSTOM_ID: vivaldi
+:END:
+
 Vivaldi has some [[https://help.vivaldi.com/article/history][fresh ideas]], in particular, statistics for browser history and calendar view.
 You can also enable infinite retention for the history in the settings.
 
 However you only have access to your history within Vivaldi, and all your other data is left out.
 ** Memacs
+:PROPERTIES:
+:CUSTOM_ID: memacs
+:END:
 [[https://github.com/novoid/Memacs#readme][Memacs]] by Karl Voit is a memex software which unifies your data as org-mode, allowing you to query it from within Emacs.
 
 It's excellent as a personal timeline/information search system. However, that means you have to query information *actively* in your Emacs, as opposed to a *passive* assistant doing it for you.
@@ -294,12 +342,19 @@ It's excellent as a personal timeline/information search system. However, that m
 Having your full detailed history as plaintext is kind of noisy without extra interfaces, and inefficient for long browsing histories with hundreds of thousands of entries.
 
 ** [[https://hyfen.net/memex][Memex]] by Andrew Louis
+:PROPERTIES:
+:CUSTOM_ID: memex_louis
+:END:
 This is a working (but not open-source, at least yet) prototype of a Memex, unifying personal data and exposing an API for it.
 
 I only ran into it a few months ago! Because it's not public, I'm not sure to what extent it can address the browser history problems specifically.
 Jumping a bit ahead of myself, I expect it to integrate well with [[#promnesia][Promnesia]], so we could potentially benefit from each other's work.
 
 ** Worldbrain Memex
+:PROPERTIES:
+:CUSTOM_ID: worldbrain_memex
+:END:
+
 [[https://github.com/WorldBrain/Memex#memex-features][Worldbrain Memex]] is a browser extension to annotate, search and organize what you've seen online,
 and soon a [[https://community.worldbrain.io/t/new-testing-memex-mobile-app-sync/233][mobile app]].
 
@@ -320,12 +375,20 @@ Overall, it seems that our vision is pretty similar, and I [[#future][expect]] t
 up to the point that Promnesia extension is sharing the extension/backend with Worldbrain Memex.
 
 * Hello, Promnesia!
+:PROPERTIES:
+:CUSTOM_ID: promnesia
+:END:
+
 Ok enough rants! [[https://github.com/karlicoss/promnesia][Promnesia]] is the tool I've developed to address some of the issues with the browsing history and URLs.
-(: [[https://beepb00p.xyz/myinfra.html#promnesia][promnesia]])
+(: [[file:myinfra.org::#promnesia][promnesia]])
 
 I've already [[#what_i_want][mentioned]] what I wanted, but I'll recap:
 
 ** Goals
+:PROPERTIES:
+:CUSTOM_ID: promnesia_goals
+:END:
+
 - [[#history_broken][make history useful]]: unify scattered and siloed history under a single interface
 
   There should be absolutely no difference between a link you opened yesterday in your Instapaper phone app,
@@ -351,6 +414,10 @@ A cool thing is that some of these goals weren't clear from the beginning -- I d
 and I think there are many more I haven't discovered yet!
 
 ** Meta-goals
+:PROPERTIES:
+:CUSTOM_ID: promnesia_metagoals
+:END:
+
 There are also some *meta-goals* and principles I'm adhering to:
 
 - make it *open source*
@@ -363,7 +430,7 @@ There are also some *meta-goals* and principles I'm adhering to:
   Your past is sensitive data and you should have control over where you keep it and how you're accessing it.
   In the simplest setup, promnesia communicates with your browser through a *local* port.
 
-  In addition, you have all your data available [[https://beepb00p.xyz/tags.html#offline][#offline]].
+  In addition, you have all your data available [[file:tags.org::#offline][#offline]].
   Modern browsers provide a pretty pathetic offline experience, but if you use a tool similar to [[https://github.com/pirate/ArchiveBox][ArchiveBox]], this can be useful to you.
 
 - make it *modular*
@@ -379,7 +446,7 @@ There are also some *meta-goals* and principles I'm adhering to:
 
   This kind of complements the previous point.
 
-  There are many decent services and tools already. They all have their own [[https://beepb00p.xyz/annotating.html#comparison][pros and cons]].
+  There are many decent services and tools already. They all have their own [[file:annotating.org::#comparison][pros and cons]].
   Different people prefer different tools. Sometimes because they're locked in and don't have much choice,
   but other times because they genuinely have subtle preferences and opinions.
 
@@ -389,6 +456,9 @@ There are also some *meta-goals* and principles I'm adhering to:
   We should invest in finding better ways of *combining* existing tools, not rewriting all over again.
 
 ** How does it work?
+:PROPERTIES:
+:CUSTOM_ID: how_does_it_work
+:END:
 Promnesia consists of three parts:
 
 - browser extension
@@ -414,6 +484,9 @@ Promnesia consists of three parts:
 You might also want to skim through the [[https://github.com/karlicoss/promnesia#glossary][glossary]] if you want to understand deeper what information Promnesia is extracting.
 
 *** Data sources
+:PROPERTIES:
+:CUSTOM_ID: datasources
+:END:
 Promnesia ships with some builtin sources. It supports:
 
 - data exports from online services: Reddit/Twitter/Hackernews/Telegram/Messenger/Hypothesis/Pocket/Instapaper, etc.
@@ -429,6 +502,10 @@ See [[https://github.com/karlicoss/promnesia/blob/master/doc/SOURCES.org][SOURCE
 
 
 *** Data flow
+:PROPERTIES:
+:CUSTOM_ID: dataflow
+:END:
+
 Here's a diagram, which would hopefully help to understand how data flows through Promnesia.
 
 See HPI [[https://github.com/karlicoss/HPI/blob/master/doc/SETUP.org#data-flow][section on data flow]] for more information on HPI modules and data flow.
@@ -462,6 +539,10 @@ Also check out my [[https://beepb00p.xyz/myinfra.html#promnesia][infrastructure 
 :          └───────────────────────┴─────────────────────────────────┴────────────────────┘
 
 * How can you use Promnesia?
+:PROPERTIES:
+:CUSTOM_ID: how_to_use
+:END:
+
 Here I'll describe some specific scenarios for which I find Promnesia extremely useful.
 [[https://github.com/karlicoss/promnesia#readme][README]] also has screenshots and short screencasts which elaborate on the features.
 
@@ -508,7 +589,7 @@ Here I'll describe some specific scenarios for which I find Promnesia extremely 
 
   I find it intriguing to think about this as tapping into each other's brains!
 
-  See: [[https://beepb00p.xyz/myinfra-roam.html#promnesia][demo]] integrating Promnesia with a Roam Research database.
+  See: [[file:myinfra-roam.org::#promnesia][demo]] integrating Promnesia with a Roam Research database.
 
 - Unified browser history
 
@@ -517,9 +598,12 @@ Here I'll describe some specific scenarios for which I find Promnesia extremely 
   As you collect more and more detailed history, the whole system becomes more and more useful.
 
 * Future of Promnesia
+:PROPERTIES:
+:CUSTOM_ID: future
+:END:
 Promnesia was a lot of work, especially in terms of sharing it with other people and documenting.
 If fact, *most writing on my blog have been slowly building up to this post*.
-On my [[https://beepb00p.xyz/myinfra.html#promnesia][infrastructure map]], Promnesia is a leaf node!
+On my [[file:myinfra.org::#promnesia][infrastructure map]], Promnesia is a leaf node!
 
 As much as I am proud of my work, and how rewarding it is when other people find it useful... I'm already thinking how to break Promnesia apart and perhaps even sunset it.
 I would be happy if:
@@ -567,6 +651,10 @@ This collaboration is something I'll look at in the near future.
 In the meantime, Promnesia is completely usable on its own, and as long as I use it, I'll be supporting it!
 
 * ---
+:PROPERTIES:
+:CUSTOM_ID: fin
+:END:
+
 I've always expected my gadgets to extend my ability to think and process information.
 Promnesia is a step I've taken to bring that future closer.
 
@@ -584,8 +672,8 @@ Related links:
 - Cloudflare blog: [[https://blog.cloudflare.com/the-history-of-the-url][The History of the URL]]
 - [[https://utcc.utoronto.ca/~cks/space/blog/web/URLSAreTerriblePermanentIDs]["URLs are terrible permanent identifiers for things"]]
 - [[https://news.ycombinator.com/item?id=23227186][HN: WorldBrain's Memex: Bookmarking for the power users of the web]]
-- [[https://beepb00p.xyz/hpi.html][Human Programming Interface]]
-- [[https://beepb00p.xyz/sad-infra.html][The sad state of personal data and infrastructure]]
+- [[file:hpi.org][Human Programming Interface]]
+- [[file:sad-infra.org][The sad state of personal data and infrastructure]]
 
 *Credits:* thanks to [[https://jborichevskiy.com/about][Jonathan]], [[http://awesomesauce.name][Andrew]] and [[https://petr-tik.github.io][Petr]] for the valuable feedback on the post.
 Thanks to [[https://twitter.com/_bepolymathe_][Emmanuel]] for trying out the project and suggestions on making it easier to set up!

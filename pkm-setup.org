@@ -7,13 +7,13 @@ So, what is [[https://en.wikipedia.org/wiki/Personal_knowledge_management][perso
 I guess almost everyone at least at some point of their life tried to bring more organization: used a calendar, checklists, notebook etc.
 Perhaps you also were learning something and were wondering of more efficient ways of memorizing, organizing and acting on that information.
 
-This is what I'm loosely going to refer as [[https://beepb00p.xyz/tags.html#pkm][PKM]] further on.
+This is what I'm loosely going to refer as [[file:tags.org::#pkm][PKM]] further on.
 
 Some of the reasons why what I'm going to write about might be useful to you:
 
 - you generally want to be more organized in your life but not sure how
 - you are reading lots of stuff, but then you feel like you quickly forget it (especially on the Internet, where information is denser than in books)
-- you think that flesh is weak and want to offload remembering things to external persistent medium  ([[https://beepb00p.xyz/tags.html#extendedmind][#extendedmind]])
+- you think that flesh is weak and want to offload remembering things to external persistent medium  ([[file:tags.org::#extendedmind][#extendedmind]])
 - you are looking for better ways of accessing, processing and retaining new information
 
 I'm writing that because my 'system' has more or less settled and stabilized, and I feel that I could be useful by helping out other people and sharing the ideas.
@@ -33,14 +33,20 @@ This is the plan, which I will fill with links as I write.
 #+toc: headlines 2
 
 * STRT task/todo management
-I'm [[https://beepb00p.xyz/pkm-todos.html][in progress]] of writing a longer post, but in short I'm using org-mode.
+:PROPERTIES:
+:CUSTOM_ID: todos
+:END:
+I'm [[file:pkm-todos.org][in progress]] of writing a longer post, but in short I'm using org-mode.
 If you think you're not ready for org-mode, I recommend trying [[https://www.rememberthemilk.com][Remember The Milk]].
 
 * STRT personal wiki
-Aka [[https://beepb00p.xyz/tags.html#exobrain][#exobrain]].
+:PROPERTIES:
+:CUSTOM_ID: personal_wiki
+:END:
+Aka [[file:tags.org::#exobrain][#exobrain]].
 
 Wiki is a somewhat more universally understood term (unlike 'personal knowledge repository'), so I am gonna stick with it even though it's.
-That's just a fancy name for somewhere where you store your notes. Mine is public and you can see it in the header: [[https://beepb00p.xyz/./exobrain][Exobrain]].
+That's just a fancy name for somewhere where you store your notes. Mine is public and you can see it in the header: [[file:./exobrain][Exobrain]].
 It's backed by org-mode.
 
 Some of the things I tried and used before:
@@ -55,22 +61,38 @@ Some of the things I tried and used before:
 - Remember The Milk (2016-2018)
 - [[https://en.wikipedia.org/wiki/Org-mode][Org mode]] notes (2017-now)
 
-* [[https://beepb00p.xyz/pkm-search.html][Searching information]]
+* [[file:pkm-search.org][Searching information]]
+:PROPERTIES:
+:CUSTOM_ID: search
+:END:
 
 * TODO logging and capturing
+:PROPERTIES:
+:CUSTOM_ID: capture
+:END:
 Capturing or clipping is a way of getting pieces of information/links in your personal wiki. 
 It has to be seamless, requiring *minimal* cognitife effort. I'm using:
 
 - on computer: [[https://orgmode.org/manual/Capture.html][org-capture]]
-- in web browser: [[https://beepb00p.xyz/./grasp.html][grasp]], web extension I wrote
+- in web browser: [[file:./grasp.html][grasp]], web extension I wrote
 - on Android: [[https://github.com/orgzly/orgzly-android][Orgzly]]
 - whiteboards
 
 * STRT processing and organizing information
-- see posts about Orger ([[https://beepb00p.xyz/orger.html][1]], [[https://beepb00p.xyz/orger-todos.html][2]]), in particular, [[https://beepb00p.xyz/orger-todos.html#reddit][reddit processing workflow]]
+:PROPERTIES:
+:CUSTOM_ID: processing
+:END:
+- see posts about Orger ([[file:orger.org][1]], [[file:orger-todos.org][2]]), in particular, [[file:orger-todos.org::#reddit][reddit processing workflow]]
 
-* [[https://beepb00p.xyz/annotating.html][Annotating information]]
+* [[file:annotating.org][Annotating information]]
+:PROPERTIES:
+:CUSTOM_ID: annotating
+:END:
 * STRT discovering new information
+:PROPERTIES:
+:CUSTOM_ID: discovering
+:END:
+
 Mainly, to consume new information passively, I'm using:
 
 - RSS (2009-)
@@ -78,19 +100,25 @@ Mainly, to consume new information passively, I'm using:
 - pinboard (2014-)
 - reddit (2016-)
 
-In addition I'm using, [[https://beepb00p.xyz/axol.html][Axol]], a tool of my own that monitors results for certain queries on pinboard, reddit, twitter, hackernews and github.
+In addition I'm using, [[file:axol.org][Axol]], a tool of my own that monitors results for certain queries on pinboard, reddit, twitter, hackernews and github.
 That way I can just read summaries of the topics I'm interested at once a month instead making sure I don't miss interesting content and people.
 
 * STRT spaced repetition and habits
+:PROPERTIES:
+:CUSTOM_ID: spaced_repetition
+:END:
 - [[https://orgmode.org/worg/org-contrib/org-drill.html][org-drill]] on my desktop
 - [[https://www.memrise.com][Memrise]] to learn German on my phone
-- example of using Orger [[https://beepb00p.xyz/orger-todos.html#krill][to drill new words from my Kobo reader]]
+- example of using Orger [[file:orger-todos.org::#krill][to drill new words from my Kobo reader]]
 
 * STRT syncing
+:PROPERTIES:
+:CUSTOM_ID: syncing
+:END:
 Continuous sync of my data and information is a biggie for me.
 
 - first, I've always had one desktop/big sturdy laptop and one small portable for travel/coffee shops/etc
-- second, I need to be able to access information on my phone, when I may not have good network (or any) [[https://beepb00p.xyz/tags.html#offline][#offline]]
+- second, I need to be able to access information on my phone, when I may not have good network (or any) [[file:tags.org::#offline][#offline]]
 
 Eventual sync (e.g. via Git) might be fine for personal wiki. 
 For todos, however, I really don't want to have this overhead of thinking whether I need to do some extra work in order to sync.
@@ -98,19 +126,31 @@ For todos, however, I really don't want to have this overhead of thinking whethe
 I'm using Dropbox and Syncthing to access my data and information from every device.
 
 * STRT tools and infrastructure
-See [[https://beepb00p.xyz/tags.html#infra][#infra]]
+:PROPERTIES:
+:CUSTOM_ID: tools
+:END:
+See [[file:tags.org::#infra][#infra]]
 
-- Some motivation behind integrating my personal data: [[https://beepb00p.xyz/sad-infra.html][the sad state of personal infrastructure]].
-- I'm using special [[https://beepb00p.xyz/hpi.html][my.]] Python package to access all of my personal information and interact with it.
+- Some motivation behind integrating my personal data: [[file:sad-infra.org][the sad state of personal infrastructure]].
+- I'm using special [[file:hpi.org][my.]] Python package to access all of my personal information and interact with it.
 - [[https://github.com/karlicoss/promnesia][promnesia]] is a browser extension I'm working on that enhances browsing history and integrates with your knowledge base
 * TODO timeline
-See [[https://beepb00p.xyz/tags.html#lifelogging][#lifelogging]]  
+:PROPERTIES:
+:CUSTOM_ID: timeline
+:END:
+See [[file:tags.org::#lifelogging][#lifelogging]]  
 
 I've got a personal timeline of all my events, e.g. reading/watching/sleeping/exercising/etc.
 * STRT regular backups
-I [[https://beepb00p.xyz/my-data.html][collect most of my digital trace]] and regularly back up pretty much everything.
+:PROPERTIES:
+:CUSTOM_ID: backups
+:END:
+I [[file:my-data.org][collect most of my digital trace]] and regularly back up pretty much everything.
 I'm using [[https://borgbackup.readthedocs.io/en/stable][borg backup]] for it.
 * TODO future
+:PROPERTIES:
+:CUSTOM_ID: future
+:END:
 Things that I want to try or integrate eventually:
 
 - Voice interaction

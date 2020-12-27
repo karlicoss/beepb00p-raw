@@ -10,6 +10,10 @@ suggest that using a real programming language (i.e. general purpose one, like P
 #+toc: headlines 2
 
 * Most modern config formats suck
+:PROPERTIES:
+:CUSTOM_ID: configs_suck
+:END:
+
 In this section, I'm mostly referring to JSON/YAML/TOML/ini files, which are the most common config formats I encounter.
 
 I'll refer to such configs as *plain configs*. Not sure if there is a better name for it, please let me know!
@@ -67,6 +71,9 @@ An incomplete list of my frustrations:
 Summary: we spend time learning *useless syntax, instead of productive work*.
 
 * Workarounds
+:PROPERTIES:
+:CUSTOM_ID: workarounds
+:END:
 So what happens when people encounter these problems?
 Often they end up using a 'real' (i.e. general purpose, Turing complete) programming language anyway:
 
@@ -85,6 +92,10 @@ All this stuff is unpleasant and distracts you from your main objective.
 Perhaps you can see where I'm coming with this.
 
 * Use a real programming language
+:PROPERTIES:
+:CUSTOM_ID: real_language
+:END:
+
 The idea is to write your config in your target programming language.
 I'll have Python in mind here, but the same idea can be applied to *any dynamic enough language* (e.g. Javascript/Ruby).
 
@@ -144,6 +155,10 @@ Let's see how it helps us with the problems I described:
 
 
 ** Downsides
+:PROPERTIES:
+:CUSTOM_ID: cons
+:END:
+
 Are there any problems with that approach? Sure:
 
 - interoperability
@@ -240,6 +255,9 @@ Are there any problems with that approach? Sure:
   - See [[https://www.gwern.net/Turing-complete#accidentally-turing-complete]["Accidentally Turing complete"]] for an excellent overview
 
 ** Why Python?
+:PROPERTIES:
+:CUSTOM_ID: why_python
+:END:
 Some reasons I find Python specifically enjoyable for writing config files:
 
 - Python is present on almost all modern operating systems
@@ -250,6 +268,10 @@ Some reasons I find Python specifically enjoyable for writing config files:
 However, you can achieve a similarly pleasant experience in *most modern programming languages* (provided they are dynamic enough).
 
 ** Who else does it?
+:PROPERTIES:
+:CUSTOM_ID: who_else
+:END:
+
 Some projects that allow for using code as configuration:
 
 - [[https://webpack.js.org/configuration][Webpack]], web asset bundler, uses a Javascript as a config
@@ -307,6 +329,10 @@ But again, if your program is written in Javascript and doesn't interact with ot
 
 
 * What if you don't have a choice?
+:PROPERTIES:
+:CUSTOM_ID: what_if_i_have_to
+:END:
+
 Some ways I've found to minimize the frustration while using plain configs:
 
 - write as little in config files as possible
@@ -336,6 +362,10 @@ Some ways I've found to minimize the frustration while using plain configs:
 
 
 * Extra links
+:PROPERTIES:
+:CUSTOM_ID: links
+:END:
+
 - [[https://www.arp242.net/flags-config.html][(commandline) flags are great for configuration]]
 
   Overall, I agree, but there are still cases when using flags isn't feasible.
@@ -361,6 +391,9 @@ Some ways I've found to minimize the frustration while using plain configs:
 - [[https://news.ycombinator.com/item?id=14298715][The configuration complexity clock]]: a case for hard-coding
 
 * --
+:PROPERTIES:
+:CUSTOM_ID: fin
+:END:
 A followup question, which I don't have an answer for: why is it that way?
 I'm sure Ansible/CircleCI or Github Actions are developed by talented engineers who have considered pros and cons of using YAML.
 Do the pros really outweigh the cons?
@@ -372,6 +405,10 @@ Open to all feedback, and feel free to share your config pain and how are you so
 - [2020-04-11] Added P.S. section
 
 * [2020-04-11 Sat] P.S.
+:PROPERTIES:
+:CUSTOM_ID: ps
+:END:
+
 Thanks everyone for the discussions and comments!
 
 There were some polar opinions involved, so I'd like to clarify the most common objections here:

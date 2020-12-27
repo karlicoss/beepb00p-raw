@@ -1,6 +1,6 @@
 #+upid: notes
 
-Eventually this page will host my [[https://beepb00p.xyz/tags.html#exobrain][#exobrain]].
+Eventually this page will host my [[file:tags.org::#exobrain][#exobrain]].
 
 * how I am scoring books on goodreads                       :reading:scoring:
 :PROPERTIES:
@@ -37,8 +37,6 @@ Ideally I think books scoring should be some sort of yes-no questionnaire. Kinda
 
 
 * Lisbon                                                      :travel:lisbon:
-:PROPERTIES:
-:END:
 ** transport
 - Airport
   We were leaving Monday 7pm and the line for border control was ridiculous, only one out of ten booths was operational, even though the whole queue had to depart in 20 minutes. So you might really want to arrive in advance.

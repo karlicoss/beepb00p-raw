@@ -4,15 +4,13 @@
 🚧🚧 this page is still under construction 🚧🚧
 
 * Motivation for doing this
-:PROPERTIES:
-:END:
 In no particular order,
 
-- I'm interested in many different things which I don't have time to explore on my own ([[https://beepb00p.xyz/./ideas.html][ideas]], [[https://beepb00p.xyz/./notes.html][notes]]), but I'd be happy to discuss them with people who are looking up similar things on the Internet.
-- I'm working on different [[https://beepb00p.xyz/tags.html#tools][#tools]], which I also would like to share with other people because it's satisfying, can inspire other people to do similar things, and open source community can help with maintaining them.
+- I'm interested in many different things which I don't have time to explore on my own ([[file:./ideas.html][ideas]], [[file:./notes.html][notes]]), but I'd be happy to discuss them with people who are looking up similar things on the Internet.
+- I'm working on different [[file:tags.org::#tools][#tools]], which I also would like to share with other people because it's satisfying, can inspire other people to do similar things, and open source community can help with maintaining them.
 - I've got a fairly big knowledge repository of semi-curated data, which I'd like to share both for other people's and my benefit.
 - Sometimes there is an urge to share things that don't fit in few tweets and I want to make them somewhat more persistent.
-- I often struggle to describe my interests to new people I meet, and it's hard to guess what other people might be interested to know about you. This site could potentially serve as a rough idea of "what's on my mind" for other people to explore. (see [[https://beepb00p.xyz/tags.html#extendedmind][#extendedmind]])
+- I often struggle to describe my interests to new people I meet, and it's hard to guess what other people might be interested to know about you. This site could potentially serve as a rough idea of "what's on my mind" for other people to explore. (see [[file:tags.org::#extendedmind][#extendedmind]])
 
   And vice versa, I feel that if people had better digital projections of their minds it'd be way easier to get to know them, find shared interests and have meaningful conversations.
 
@@ -21,13 +19,9 @@ In no particular order,
   - Alexey Guzey writes about this in detail: [[https://guzey.com/personal/why-have-a-blog][Why You Should Start a Blog Right Now]]
 
 * Style
-:PROPERTIES:
-:END:
 I'm a fan of leaving TODOs wherever I can; I can't stand forgetting useful thoughts, so you might see them around a lot in my texts.
 
 * Software
-:PROPERTIES:
-:END:
 
 Motivation for choice of software: somewhere along the lines of [[https://www.gwern.net/About#long-site][Gwern]].
 
@@ -35,12 +29,10 @@ I'm in progress of writing a post explaining my setup, but if you are specifical
 
 I use Hakyll + some custom scripts to wire everything together, here's the [[https://github.com/karlicoss/beepb00p][repository]].
 
-- [[https://beepb00p.xyz/./sandbox/test.html][org-mode sandbox]]
-- [[https://beepb00p.xyz/./sandbox/testipython.html][ipython sandbox]]
+- [[file:./sandbox/test.html][org-mode sandbox]]
+- [[file:./sandbox/testipython.html][ipython sandbox]]
 
 ** TODO why static blog?
-:PROPERTIES:
-:END:
 In progress of writing about it, stay tuned!
 
 But basically:
@@ -50,8 +42,6 @@ But basically:
 - resilient
 
 ** comments
-:PROPERTIES:
-:END:
 For the most part, I expect discussion on Reddit/Twitter or wherever I share my posts.
 However it's good to have an extra means of commenting just in case.
 
@@ -67,8 +57,6 @@ I'm using [[https://posativ.org/isso][Isso]] at the moment, since it's:
   Also it's easy to back up, so your comments would be safe!
 
 * Inspiration
-:PROPERTIES:
-:END:
 Some of the blogs that inspired this in terms of content, structure, design decisions, so I'd like to give them credit:
 
 - [[https://www.gwern.net/][Gwern]]. His [[https://www.gwern.net/static/css/default.css][CSS sheet]] is a pretty great source of inspiration.
@@ -81,7 +69,7 @@ Some of the blogs that inspired this in terms of content, structure, design deci
 
 - [[https://wiki.nikitavoloboev.xyz][Everything I Know]]
 
-  - this inspired me to share parts of my own wiki in [[https://beepb00p.xyz/./exobrain][Exobrain]]
+  - this inspired me to share parts of my own wiki in [[file:./exobrain][Exobrain]]
 
 - [[https://www.oilshell.org/blog][Oil Shell Blog]]
 
@@ -92,11 +80,7 @@ Some of the blogs that inspired this in terms of content, structure, design deci
   - nice headerlinks for paragraph [[https://git-scm.com/docs/git-rebase#_interactive_mode][anchors]]
 
 * TODO How to make static blogging easier?
-:PROPERTIES:
-:END:
 ** TODO VCS integration
-:PROPERTIES:
-:END:
 
 - not everything is easy to put under version control
 
@@ -110,8 +94,6 @@ Some of the blogs that inspired this in terms of content, structure, design deci
 - it would be nice to generate public history of changes for each page directly from git history
 
 ** TODO comments
-:PROPERTIES:
-:END:
 Disqus is a bit shit.
 I think of people's thoughts and comments are sacred and while I make sure mine are backed up, losing others' information is somewhat irresponsible.
 
@@ -131,14 +113,12 @@ Other downsides of Disqus:
 
 Selfhosting however is somewhat tedious and requires technical skill, so it's understandable many people prefer just inserting a bit of javascript from Disqus that does the job.
 
-Ideally I'd want comments to be some sort of [[https://beepb00p.xyz/./annotating.html#social_function][annotation overlay]].
+Ideally I'd want comments to be some sort of [[file:annotating.org::#social_function][annotation overlay]].
 So you could comment at any place in text, without having to jump back and forth.
 Perhaps one could choose any annotation platform they like and I would just need to query the comments from each of these platforms and display all of them.
 It's a bit vague though, so needs a proper think!
 
 ** TODO dead links
-:PROPERTIES:
-:END:
 Link rot is pretty bad, Gwern [[https://www.gwern.net/Archiving-URLs#link-rot][writes about it]] in high detail.
 
 I don't want to contribute to the problem, so at the moment I'm using [[https://github.com/linkchecker/linkchecker][linkchecker]] running every night in Cron, seems to work well.
@@ -152,27 +132,19 @@ Ideally it'd be more automatic, perhaps some sort of service that crawls your we
 archive.org seems like an appropriate platform to kick this off.
 
 ** TODO hosting
-:PROPERTIES:
-:END:
 Technical skill, tedious as well.
 
 ** TODO spell checking and other forms of linting
-:PROPERTIES:
-:END:
 At the moment I'm using ispell in emacs, seems to work well, but ideally I'd like it to be integrated as a 'pre-publish' hook or something.
 
 Also would be useful to have semantic (e.g. grammar) checks as well, I often skip words when typing.
 
 ** TODO diffing
-:PROPERTIES:
-:END:
 No easy way to compare htmls. For content you can use git, but that doesn't help with design (e.g. CSS) changes that might be quite catastrophic.
 
 At the moment, I'm using some hacky semi-automatic screenshot comparison.
 
 * TODO todo-list
-:PROPERTIES:
-:END:
 Public list of features I'd like to see on my site.
 
 ** STRT [#B] have a 'stable' and 'unstable' versions of blog?    :staticblog:
@@ -202,8 +174,6 @@ nbinteract was designed to make interactive explanations easy to create. In this
 referring to [[https://www.w3schools.com/tags/tag_details.asp][~<details>~]] tag
 
 ** STRT [#B] [2019-11-22 Fri 00:05] [[https://overreacted.io/things-i-dont-know-as-of-2018][Things I Don't Know as of 2018]] :inspiration:
-:PROPERTIES:
-:END:
 Pretty cool, I want a similar page.
 ** STRT [#D] would be nice to have semibold, e.g. for error handling post
 :PROPERTIES:
@@ -216,8 +186,6 @@ Pretty cool, I want a similar page.
 :END:
 - TODO [2019-07-20 23:03] something in screenshots dir (do git diff HEAD)
 ** Bells and whistles
-:PROPERTIES:
-:END:
 *** TODO [#C] Each blog post has automatic changes coming from git?
 :PROPERTIES:
 :CREATED:  [2018-11-08 Thu 09:09]
@@ -238,8 +206,6 @@ Pretty cool, I want a similar page.
 
 
 ** Inspiration                                                  :inspiration:
-:PROPERTIES:
-:END:
 *** [#B] [[https://dec41.user.srcf.net/h/III_M/quantum_field_theory][III Quantum Field Theory]] :inspiration:
 :PROPERTIES:
 :CREATED:  [2019-03-12 Tue 20:13]
@@ -275,19 +241,11 @@ More background on good practices and relating documents together can be found i
 :CREATED:  [2019-11-08 Fri 09:22]
 :END:
 *** [[https://languagetool.org][languagetool]] got a firefox addon that checks up to 40K characters at once, using that for now
-:PROPERTIES:
-:END:
 **** TODO [2019-12-16 Mon 00:22] use [[https://github.com/mhayashi1120/Emacs-langtool][emacs-langtool]]
-:PROPERTIES:
-:END:
 *** TODO [2020-01-16 Thu 23:22] grammarly checks grammar way better (articles, punctuation, etc.), but it's a cloud service
-:PROPERTIES:
-:END:
 In addition there are some concerns about ownership, but Grammarly claims copyright remains under your control: [[https://support.grammarly.com/hc/en-us/articles/360003816012-Does-Grammarly-own-everything-I-write-][FAQ]], [[https://www.grammarly.com/terms#ownership][TOS: Ownership]].
 
 Overall even if there is some legal loophole, I find it pretty unlikely that they would want to steal my rights, especially considering I publish under CC BY 4.0 license.
 
 * License
-:PROPERTIES:
-:END:
 All material on this site is licensed under a [[http://creativecommons.org/licenses/by/4.0][Creative Commons Attribution 4.0 International License]].

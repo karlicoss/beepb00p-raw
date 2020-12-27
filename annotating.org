@@ -9,6 +9,9 @@ In this post I'm gonna elaborate on all of that and give some motivation, review
 I won't try to convince you that my method of reading and interacting with information is superior for you: it doesn't have to be, and there are people out there more eloquent than me who do that. I assume you want this too and wondering about the practical details.
 
 * Motivation
+:PROPERTIES:
+:CUSTOM_ID: motivation
+:END:
 At some point in my life I realized I didn't remember most of the books/papers/posts/videos I had consumed few years before. (For brevity I'll just refer to all of this as 'content' further on)
 
 That bothered me increasingly until I bought a Kindle which had 'highlight' functionality and virtual keyboard; and I had discovered it to help a lot with recalling.
@@ -21,14 +24,20 @@ I've become increasingly obsessed with this and these days ability to highlight 
   In particular, often I'd run on something on the internet that I remember reading before. If I have annotations for that, I can quickly go through them and restore the context.
 - it's easier to recommend content to other people because you can refer to specific moments or points you liked/disliked
 - it's got social value if highlights are visible to other people (e.g. [[#hypothesis][Hypothesis]], Medium, Goodreads)
-- it helps with [[https://beepb00p.xyz/./notes.html#book_scoring][book scoring]]. If I don't have any highlights, it probably means that the content was not interesting at all for me. Fiction books are not an exception: I tend to highlight use of language I liked, inspirational things, etc.
-- it serves as activity log if you are into [[https://beepb00p.xyz/tags.html#lifelogging][#lifelogging]].
+- it helps with [[file:notes.org::#book_scoring][book scoring]]. If I don't have any highlights, it probably means that the content was not interesting at all for me. Fiction books are not an exception: I tend to highlight use of language I liked, inspirational things, etc.
+- it serves as activity log if you are into [[file:tags.org::#lifelogging][#lifelogging]].
 - you can [[#todos][populate your TODO list]] and [[#spaced_repetition][step up your spaced repetition game]].
 
 I'm going to review some of the tools I tried using and still using and highlight their different positive and negative aspects. If you're getting impatient, you can skip straight to my [[#comparison][comparison table]].
 
 * Annotating web
+:PROPERTIES:
+:CUSTOM_ID: web
+:END:
 ** [[https://getpocket.com][Pocket]]
+:PROPERTIES:
+:CUSTOM_ID: pocket
+:END:
 I won't really write much about it for one reason which is a big deal: while you can highlight text, you can't leave notes. Nearest functionality is 'recommending' a highlight while reading a comment, but that's only displayed on your 'timeline'.
 
 Pocket API doesn't support exporting highlights too, or to be precise it seems to be hidden. If you need it you can use [[https://github.com/karlicoss/pockexport][my script]] where I hacked around it.
@@ -40,6 +49,9 @@ Pocket was acquired by Mozilla in 2017, which might be a good thing, but so far 
 You can also read [[https://news.ycombinator.com/item?id=19763106][a rant]] raising similar issues to what I mentioned.
 
 ** [[https://www.instapaper.com][Instapaper]]
+:PROPERTIES:
+:CUSTOM_ID: instapaper
+:END:
 I won't go into Instapaper's readability capabilities (e.g. fonts and article formatting) because it's not something I care much about, so you might be better off googling that for yourself, here I'll concentrate on annotating aspect. 
 Here are couple of recent extensive comparisons of Instapaper and Pocket, which feature screenshots and other aspects of Instapaper:
 
@@ -60,6 +72,9 @@ Instapaper got [[https://www.instapaper.com/api][Json API]], through which you c
 One red flag was in 2018 when Instapaper wasn't available in Europe for few months until they resolved GDPR issues. While I don't blame it on Instapaper, this is a kind of thing that happens when you don't own your data and use a closed source product.
 
 ** [[https://github.com/wallabag/wallabag][Wallabag]]
+:PROPERTIES:
+:CUSTOM_ID: wallabag
+:END:
 Wallabag is the most mature open source/selfhosted read-it-later kind of project I know of. [[https://opensource.com/article/18/7/wallabag][Here's]] a review featuring some screenshots of their web app and Android app.
 
 It's very similar to Instapaper in terms of **having to import** the article in Wallabag in order to annotate it. I used it for a while and only had some issues with importing articles heavy on MathJax backed Latex.
@@ -70,6 +85,9 @@ If you don't want to selfhost it, you can use [[https://www.wallabag.it/en][wall
 
 I wish it had more attention from the community, and might try to work on Android annotation when I got more time.
 ** [[https://web.hypothes.is/#see-how-it-works][Hypothes.is]]
+:PROPERTIES:
+:CUSTOM_ID: hypothesis
+:END:
 Hypothesis is simply awesome and my favorite web annotation tool. Their killer feature is that it embeds a bit of JS in the page to provide an **in-browser overlay**, so you don't have to leave the page you were reading and can highlight and add comments natively.
 They use something cool called [[https://web.hypothes.is/blog/fuzzy-anchoring][fuzzy anchoring]] to achieve this.
 That also makes annotations **resilient to document markup changes**, and if they can't locate your annotations it would be still shown in metadata as [[https://web.hypothes.is/blog/showing-orphaned-annotations]['orphaned']], so you never lose your notes.
@@ -98,7 +116,10 @@ While you potentially can annotate offline without querying API and preserving d
 Hypothesis got [[https://h.readthedocs.io/en/latest/api-reference/v1/#tag/annotations/paths/~1search/get][JSON API]] which gives access to your and other people's public annotations.
 I'm using [[https://github.com/judell/Hypothesis][judell/Hypothesis]] python wrapper to access and back up this data.
 
-** [[https://beepb00p.xyz/./grasp.html][Grasp]]
+** [[file:./grasp.html][Grasp]]
+:PROPERTIES:
+:CUSTOM_ID: grasp
+:END:
 Shameless plug! If you just want to send annotations directly into a plaintext (e.g. org-mode) file and don't really care about displaying them within the original web page you can use my [[https://github.com/karlicoss/grasp][grasp]] browser addon for that.
 
 I typically use it for highlights that would be good candidates for TODO items, e.g. something actionable like piece of advice or further reading.
@@ -106,9 +127,15 @@ I typically use it for highlights that would be good candidates for TODO items, 
 Not available for [[https://github.com/karlicoss/grasp/issues/15][mobile yet]], but perhaps on Android native select and share capabilities (e.g. into [[https://github.com/orgzly/orgzly-android][orgzly]]) makes more sense anyway.
 
 ** Summary
+:PROPERTIES:
+:CUSTOM_ID: web_summary
+:END:
 [[#hypothesis][Hypothes.is]] is a clear winner for me on desktop and I'm using [[#instapaper][Instapaper]] for offline reading on Android.
 
 * Annotating PDFs
+:PROPERTIES:
+:CUSTOM_ID: pdfs
+:END:
 Small disclaimer: I don't own Mac/Windows/iPhone so have very little idea what's going on in their world. Sorry! You can take a look at a section I added with [[#other_tools][other people's suggestions]].
 
 PDF format is a complicated beast, and its native annotations are a whole different story to annotating web.
@@ -124,6 +151,9 @@ At worst it could be impossible due to DRM, but in any case, you'd need to someh
 I get around it by making a copy of the file I'm about to annotate first, and giving it =[annotated]= prefix so I wouldn't confuse it with the original file.
 
 ** Okular, Evince, Atril
+:PROPERTIES:
+:CUSTOM_ID: okular_evince_atril
+:END:
 Probably most widely used PDF readers, all of these use [[https://poppler.freedesktop.org][Poppler]] library for working with PDF, which in particular does the messy business of annotation handling.
 
 All of them would let you view existing annotations, but there are some nuances and limitations:
@@ -135,7 +165,7 @@ All of them would let you view existing annotations, but there are some nuances 
 
 - <<okular>>[[https://okular.kde.org][Okular]] (as of 1.6.3) allows **editing and adding pretty much every type of annotation** that you would expect: highlights, popup and inline notes, freehand and [[https://docs.kde.org/stable5/en/kdegraphics/okular/annotations.html][more]].
 
-  Annotation process ([[https://beepb00p.xyz/./annotating/okular.jpg][screenshot]]) is pretty pleasant, hitting Ctrl-S results in saving the file you're working on without any problems.
+  Annotation process ([[file:./annotating/okular.jpg][screenshot]]) is pretty pleasant, hitting Ctrl-S results in saving the file you're working on without any problems.
 
   <<docarchive>>Okular also got support for something called [[https://docs.kde.org/stable5/en/kdegraphics/okular/annotations.html]['document archive']], which saves the original document in a zip file along with =metadata.xml=, which allows you to **annotate non-PDF files** (e.g. DJVU), which is a very neat feature. It's obviously Okular specific, in theory though it's possible to process =metadata.xml= with other tools.
 
@@ -144,14 +174,20 @@ All of them would let you view existing annotations, but there are some nuances 
   Even though Okular is part of KDE, there is no reason not to use it in other desktops environments, it's not that complicated in terms of UI; looks quite native in GTK, and few extra dependencies are barely a problem these days.
 
 ** [[https://github.com/politza/pdf-tools#pdf-tools-readme][Emacs: pdf-tools]]
+:PROPERTIES:
+:CUSTOM_ID: pdftools
+:END:
 Pdf-tools (as of 0.90) is a PDF viewer for Emacs that meant to be more efficient than the builtin one (in terms of rendering), but is also capable of interacting with PDF metadata.
 
-Here's a [[https://beepb00p.xyz/./annotating/pdf-tools.jpg][screenshot]] and a short [[https://www.dailymotion.com/video/x2bc1is][screencast]], interesting stuff starts somewhere around 02:00 mark.
+Here's a [[file:./annotating/pdf-tools.jpg][screenshot]] and a short [[https://www.dailymotion.com/video/x2bc1is][screencast]], interesting stuff starts somewhere around 02:00 mark.
 
 One big drawback is that to highlight and add new annotations you **still have to use mouse**, which loses half of the benefits of using Emacs for me.
 Also it's got some minor issue displaying inline annotations text in the 'Content' buffer and annotations list (you can edit it if you click on it with your mouse though).
 
 ** Other Linux readers
+:PROPERTIES:
+:CUSTOM_ID: linux_other
+:END:
 There are few other apps I tried using so figured it's worth mentioning.   
 
 - [[https://mupdf.com][mupdf]] (as of 1.14.0) is both rendering library (claimed to be faster than poppler) and PDF viewers. It's capable of displaying all types of highlights and annotations, but there is no way to add or edit them.
@@ -161,6 +197,9 @@ There are few other apps I tried using so figured it's worth mentioning.
 - [[https://wiki.archlinux.org/index.php/Zathura][zathura]] (as of 0.4.3) is capable of both poppler and mupdf backends, but suffers from the same problem that you can't edit and add new highlights. It's pretty sad, because I like it as a viewer: it's minimalist and capable of VI style keybindings.
 
 ** [[https://github.com/weirdNox/org-noter][Emacs: org-noter]]
+:PROPERTIES:
+:CUSTOM_ID: orgnoter
+:END:
 Org-noter (as of 1.3.0) allows you to annotate a PDF while keeping the text annotations in a separate =org= file which keep track of PDF locations in Org note properties.
 [[https://github.com/weirdNox/org-noter#screencast][Here's]] a short demo.
 
@@ -169,11 +208,17 @@ For me the main drawback is that it **doesn't let you highlight**, which I tend 
 Existing annotations in PDF can be imported via [[https://github.com/weirdNox/org-noter/blob/920798e2a977ca74b77cf728ee40bb48450f941b/org-noter.el#L1455][~org-noter-create-skeleton~]] function (it didn't work for me for some reason though, and I wasn't motivated enough to investigate).
 
 ** [[https://github.com/xournalpp/xournalpp#xournal][Xournal]]
+:PROPERTIES:
+:CUSTOM_ID: xournal
+:END:
 Xournal is different from the above PDF viewers, since it isn't using types of annotations described in the PDF standard and instead uses its own [[http://xournal.sourceforge.net/manual.html#tools][tools]].
 
 It doesn't modify the original files and instead keeps =.xoj= file containing the metadata and pointing at the original PDF, so in that sense it's pretty similar to [[docarchive][okular]]. Similarly, it's xournal-specific and can't be viewed anywhere else unless you export it in PDF before sharing (at which point your annotations wold basically become background images).
 
 ** [[https://web.hypothes.is/#see-how-it-works][Hypothes.is]] (again)
+:PROPERTIES:
+:CUSTOM_ID: hypothesis_pdf
+:END:
 Already mentioned in the previous section, it's also capable of annotating PDFs via [[https://github.com/mozilla/pdf.js][pdf.js]]. 
 
 Check out [[https://web.hypothes.is/help/annotating-locally-saved-pdfs][their guide]], especially if you're using Chrome, apart from it it's as easy as opening the PDF in your browser and activating Hypothesis.
@@ -182,6 +227,9 @@ It fingerprints the PDFs so you don't have to worry about losing your annotation
 It seems to work fast enough for big PDF books as well, however generally reading long things in browser is not very convenient as you lose reading position if you close the tab.
 
 ** [[https://github.com/burtonator/polar-bookshelf#polar-bookshelf][Polar]]
+:PROPERTIES:
+:CUSTOM_ID: polar
+:END:
 Polar is a new project which aims to be not just reader, but 'personal knowledge repository'. 
 
 - supports highlights and comments
@@ -198,11 +246,14 @@ If you like it, please consider donating them!
 The only downside is that annotation format is **Polar specific**, so it'd be hard to share with other people unless they are willing to use Polar as well.
 
 ** Annotating on Android
+:PROPERTIES:
+:CUSTOM_ID: android_ann
+:END:
 Similar disclaimer: I've never had Iphone, so have no idea what people use. If anyone sends me a link to a decent overview, I'd be happy to include it!
 
 - [[https://play.google.com/store/apps/details?id=com.adobe.reader][Adobe Reader]]
 
-  Supports most reasonable ways of annotation: highlights, popup/inline comments, strikethough, styling, etc. ([[https://beepb00p.xyz/./annotating/adobe-annot.jpg][screenshot]]). "Comment List" gives overview of your document: [[https://beepb00p.xyz/./annotating/adobe-list.jpg][screenshot]].
+  Supports most reasonable ways of annotation: highlights, popup/inline comments, strikethough, styling, etc. ([[file:./annotating/adobe-annot.jpg][screenshot]]). "Comment List" gives overview of your document: [[file:./annotating/adobe-list.jpg][screenshot]].
 
   It offers Adobe Cloud and Dropbox integration, but I rely on Syncthing for syncing my stuff anyway.
 
@@ -210,7 +261,7 @@ Similar disclaimer: I've never had Iphone, so have no idea what people use. If a
 
   Basically supports same things that Adobe does.
 
-  For me, Xodo wins by a very thin margin because its interface tends to be a bit more denser and 'material': [[https://beepb00p.xyz/./annotating/xodo-annot.jpg][interface]], [[https://beepb00p.xyz/./annotating/xodo-list.jpg][annotations list]]. Otherwise, it's virtually no different from Adobe Reader.
+  For me, Xodo wins by a very thin margin because its interface tends to be a bit more denser and 'material': [[file:./annotating/xodo-annot.jpg][interface]], [[file:./annotating/xodo-list.jpg][annotations list]]. Otherwise, it's virtually no different from Adobe Reader.
 
 - [[https://f-droid.org/en/packages/com.artifex.mupdf.viewer.app][mupdf]]
 
@@ -221,17 +272,27 @@ Similar disclaimer: I've never had Iphone, so have no idea what people use. If a
 - [[https://github.com/cgogolin/penandpdf][Pen&Pdf]]: I tried this one since it was open source and claimed to support annotation, but it didn't even manage to pick up any of the existing ones.
 
 ** Summary
+:PROPERTIES:
+:CUSTOM_ID: pdf_summary
+:END:
 If you want the convenience of editing and viewing on phone and working with other people, **Okular** wins on desktop and **Adobe Reader/Xodo** could be used on your phone.
 
 If you care about preserving the original PDF files and want convenience in
 accessing the annotations programmatically, **Polar** is the best.
 
 * Annotating E-ink
+:PROPERTIES:
+:CUSTOM_ID: eink
+:END:
 Two e-ink readers that support highlights and notes I know of are Kindle (I used to own Paperwhite 2) and Kobo (I own Kobo Aura One).
 Highlighting works as you would expect on E-ink touchscreen (long press and dragging the selection); and you can leave notes by typing on a virtual keyboard (somewhat laggy, but ok for up to few sentences).
 Perhaps the only differences are how you can search and access the annotations.
 
 ** Kindle
+:PROPERTIES:
+:CUSTOM_ID: kindle
+:END:
+
 Kindle stores bookmarks, notes and highlights in ~My Clippings.txt~ on the device.
 The good thing about the format is that it's already plaintext and fairly human readable, so you might be happy with that alone.
 The format is a bit nasty for parsing (as you would expect from something with =.txt= extension). Dates are locale dependent, document locators may or may not have roman numerals, separators are inconsistent at times, etc. 
@@ -248,6 +309,10 @@ But that's also restricted to books bought from Amazon.
 Funny enough though, the ~My Clipping.txt~ file can be opened on Kindle itself (as any other ~txt~ file), and then you can search in it. It's not super convenient, but better than nothing. (I wasn't brave enough to try and see what happens if you try to highlight in this file.)
 
 ** Kobo
+:PROPERTIES:
+:CUSTOM_ID: kobo
+:END:
+
 Stores all of it's stuff in ~.kobo/KoboReader.sqlite~ on the device.
 
 <<kobo_db>>The database has got lots of cool stuff: in addition to highlights and notes you can also access reading progress, time spend reading and possibly some other interesting data I didn't manage to reverse engineer yet.
@@ -266,6 +331,9 @@ However annotations **don't sync between Kobo and phone** for me, and other peop
 Kobo lets you conveniently search over all of your highlights and notes.
 
 ** [[https://github.com/koreader/koreader#main-features-for-users][Koreader]]
+:PROPERTIES:
+:CUSTOM_ID: koreader
+:END:
 Koreader is an alternative **open source** software for Kindle, Kobo and other E-ink devices.
 
 It's got some very cool [[https://github.com/koreader/koreader/wiki/Features-list][features]], in particular most common document formats, dictionary and Wikipedia lookups, and various plugins.
@@ -274,7 +342,13 @@ It also supports highlighting, but (as of v2019.06), note taking is unsupported 
 
 
 * Miscellaneous
+:PROPERTIES:
+:CUSTOM_ID: misc
+:END:
 ** Annotating paper books
+:PROPERTIES:
+:CUSTOM_ID: paper
+:END:
 So far, for me the only downside of using nice tools for annotating digital content is that it ruined the experience of reading paper books for me. 
 
 Usually I don't own the books I read, so using a highlighter or pencil would be just mean to the owner.
@@ -288,7 +362,7 @@ To get around this I've tried few of tricks:
 
   This one I'm particularly proud of coming up to as I haven't found anyone else doing that, and I rarely come up with useful meatspace things.
 
-  This is how it looks in action: [[https://beepb00p.xyz/./annotating/paper-strips.jpg][photo]].
+  This is how it looks in action: [[file:./annotating/paper-strips.jpg][photo]].
 
   Basically, before reading, I prepare a bunch of paper strips slightly longer than the page height, kinda like bookmarks.
   You will use it as a 'sidebar overlay' for writing notes and highlighting, so the width depends on your handwriting and how much you're expected to do that, I usually use something like 1/4 of the page.
@@ -296,11 +370,14 @@ To get around this I've tried few of tricks:
   If you want to annotate the page, you'll align strip's bottom to the bottom of the page and mark lines you found interesting on this strip and write comments on it as well. You can also use the other side of the strip to annotate the other page.
 
   The downside of this is that in order to annotations to make sense, it requires a physical copy of exact same book.
-  Another one is that it doesn't have automatic timestamps, which somewhat bothers my [[https://beepb00p.xyz/tags.html#lifelogging][#lifelogging]] OCD. You can get around it by writing down time as well, but that's quite distracting.
+  Another one is that it doesn't have automatic timestamps, which somewhat bothers my [[file:tags.org::#lifelogging][#lifelogging]] OCD. You can get around it by writing down time as well, but that's quite distracting.
 
 When I'm done with a book, I'd spend a bit of time digitizing annotations and manually typing them into plaintext. Luckily, I don't have to do that often.
 
 ** Annotating plaintext
+:PROPERTIES:
+:CUSTOM_ID: plaintext
+:END:
 Often, I want to leave a quick comment to an org-mode item.
 I've got a handy Emacs [[https://github.com/karlicoss/dotemacs/blob/45be8125988514decf6484f981ab3a61e17ee5d7/org.el#L4-L29][binding]] which appends a child note with a timestamp and enters edit mode, so the whole process is smooth.
 If you're not using org-mode you still can benefit from something similar, most of modern text editors allow you binding snippets on hotkeys.
@@ -310,6 +387,9 @@ it would structurally break it in two parts, so you'd have to append your commen
 On the other hand, plain list items, which you can insert in arbitrary place, are very limited and don't support most of things outline support like tags, timestamps, priorities etc.
 
 ** Annotating videos
+:PROPERTIES:
+:CUSTOM_ID: videos
+:END:
 Often when I watch lectures or some talks on Youtube or in VLC, I want to leave a bookmark or write a note with a reference to a specific timestamp. 
 This is pretty much not possible apart from opening your text editor and manually recording the position in video. All the video annotation software I know of is more oriented towards video editing/effects etc.
 
@@ -323,6 +403,9 @@ I'd say this is somewhat unsolved problem, which is surprising since presumably 
 
 
 ** Other notable mentions
+:PROPERTIES:
+:CUSTOM_ID: misc_other
+:END:
 Due to the lack of common standard for annotated content, some services try to implement their own:
 
 - [[https://web.archive.org/web/20191115132606/https://medium.com/@wiobyrne/getting-started-in-medium-reading-annotating-commenting-and-recommending-757f43be83ee][Medium]]. Highlights and annotation also serve a social function: when you read a Medium post you can see whether a certain bit of text was highlighted by other people (and how often).
@@ -342,6 +425,9 @@ Due to the lack of common standard for annotated content, some services try to i
 
 
 ** Other tools
+:PROPERTIES:
+:CUSTOM_ID: other_tools
+:END:
 These are tools suggested by other people, I haven't had time to try them all properly yet, but will list nevertheless.   
 If someone sends me links to other people's experience with these, I'd be happy to add them!
 
@@ -388,6 +474,9 @@ If someone sends me links to other people's experience with these, I'd be happy 
   Suggested by [[https://news.ycombinator.com/user?id=daok][daok]].
 
 ** Hall of shame!
+:PROPERTIES:
+:CUSTOM_ID: hall_of_shame
+:END:
 These are services that wouldn't let you select text. Not sure why that happens: could be some sort of copyright restriction, being assholes, or just accidental pointless restriction.
 
 - [[https://www.quora.com/How-do-I-copy-text-from-Facebook-and-paste-somewhere-else-on-Android-mobile][Facebook]]: Android app and mobile site prevent text selection.
@@ -400,6 +489,10 @@ These are services that wouldn't let you select text. Not sure why that happens:
   *UPD (20190818)* I actually managed to dump my highlight data before canceling Blinkist subscription by using (apparently private) API, here's the [[https://github.com/karlicoss/blinkist-backup][script]].
 
 * What makes a good annotation system?
+:PROPERTIES:
+:CUSTOM_ID: vision
+:END:
+
 In my quest for the perfect annotation engine I've figured certain aspects that make or would make an annotation tool pleasant to use.
 
 - **Uniform**
@@ -465,6 +558,9 @@ In my quest for the perfect annotation engine I've figured certain aspects that 
   That also gives way more potential for integrating them with other services.
 
 ** Comparison
+:PROPERTIES:
+:CUSTOM_ID: comparison
+:END:
 I'm only listing tools that support proper highlighting and commenting.
 
 #+macro: Y      @@html:<span style='color:green'  >Y</span>@@
@@ -490,6 +586,10 @@ I'm only listing tools that support proper highlighting and commenting.
 | [[#kobo][**Kobo**]]                   | , [[kobo_mobile][broken]]                                                  |                |                                                                |                   | , [[kobo_sync][but possible]]                         | , [[#koreader][but koreader]] |
 
 * Using annotation data
+:PROPERTIES:
+:CUSTOM_ID: infra
+:END:
+
 Considering there are multiple tools I have to use none of which is fully capable of doing everything I would ideally want from annotation system, I've developed my ways of getting closer to my [[#vision][ideal]].
 For that I've got some infrastructure set up.
 
@@ -499,9 +599,12 @@ That serves not just as data backup, but also as **data providers** for my tools
 
 I'm using a **special Python package to access the data**, which I called [[https://github.com/karlicoss/my][~my~]]. It's always in my ~PYTHONPATH~ so I can use it from any script/tool or REPL. It's got bunch of different submodules, e.g. ~my.instapaper~, ~my.kobo~, ~my.polar~ (and there are other modules as well). 
 
-I'm in progress of cleaning it up and documenting, you can read a draft [[https://beepb00p.xyz/hpi.html][here]].
+I'm in progress of cleaning it up and documenting, you can read a draft [[file:hpi.org][here]].
 
 ** Extracting reading stats
+:PROPERTIES:
+:CUSTOM_ID: reading_stats
+:END:
 As a specific example how I do it: recently my friend asked me if I could recommend them posts I found interesting on [[https://slatestarcodex.com/][Slate Star Codex]]. With a tiny python script I was quickly able to give them some stats on posts I read, so they could choose among them.
 
 #+begin_src python
@@ -524,16 +627,23 @@ As a specific example how I do it: recently my friend asked me if I could recomm
 | https://slatestarcodex.com/2014/09/30/i-can-tolerate-anything-except-the-outgroup/                           |  9 |
 
 ** Searching in annotations
+:PROPERTIES:
+:CUSTOM_ID: search
+:END:
+
 <<orger>>I've got bunch of scripts and a rendering tool which I named [[https://github.com/karlicoss/orger][orger]] (yep, haven't invested that much thought into naming).
 Basically, these scripts take specific data source as input and produce org-mode output, e.g. renders =json= backed up from Instapaper into =instapaper.org= file. That runs every few hours and keeps the contents relatively up to date.
 
 I chose org-mode as I was already used to its features, keybindings and metadata. Also the hierarchy (e.g. book \rightarrow highlight \rightarrow comments) fits naturally into outline format. But not that it's a real necessity, I feel that as long as it's searchable plaintext, it's good enough.
 
-To search them, I've got a **global keybinding**, which invokes Emacs with incremental search prompt against the directory with rendered =org= files, which lets me interact with them in a blink on my computer. On Android I'm using [[https://play.google.com/store/apps/details?id=com.docsearch][DocSearch]] indexer (sadly it's not incremental, and app is not open source, so I'm looking for alternative). I describe this extensively [[https://beepb00p.xyz/pkm-search.html#personal_information][here]].
+To search them, I've got a **global keybinding**, which invokes Emacs with incremental search prompt against the directory with rendered =org= files, which lets me interact with them in a blink on my computer. On Android I'm using [[https://play.google.com/store/apps/details?id=com.docsearch][DocSearch]] indexer (sadly it's not incremental, and app is not open source, so I'm looking for alternative). I describe this extensively [[file:pkm-search.org::#personal_information][here]].
 
 Finally, I've got a [[https://www.lesbonscomptes.com/recoll][Recoll]] indexer instance + web interface running on my VPS; so if necessary I can access and search annotations via the internet.
 
 ** Providing TODO items
+:PROPERTIES:
+:CUSTOM_ID: todos
+:END:
 While reading, I often encounter something I want to google or check or read about later; or just come up to something actionable inspired by what I'm reading.
 But I also don't want to interrupt from reading and losing context: that especially matters while reading on a E-ink device: distracting from the book, fetching your phone etc is really annoying.
 
@@ -541,9 +651,13 @@ So, as a workaround, I have programmed rules that pick out notes that start with
 
 [[https://github.com/karlicoss/orger/blob/350e76000e34db49cf6b574041b98bd813040851/ip2org.py#L16][Here's]] an example of me using using ~my.instapaper~ module for that.
 
-I'm writing about it in more detail in post about [[https://beepb00p.xyz/orger-todos.html][Orger]].
+I'm writing about it in more detail in post about [[file:orger-todos.org][Orger]].
 
 ** Spaced repetition
+:PROPERTIES:
+:CUSTOM_ID: spaced_repetition
+:END:
+
 It's kind of an extension of the previous use case: again, often you want to send something straight into your [[https://en.wikipedia.org/wiki/Spaced_repetition][spaced repetition]] queue without having to remember to add that.
 
 I've got two rules for that:
@@ -554,12 +668,19 @@ I've got two rules for that:
 [[https://github.com/karlicoss/orger/blob/350e76000e34db49cf6b574041b98bd813040851/krill.py#L13][Here's]] how I'm using it for Kobo highlights.
 
 ** Life log
-I'm a big fan of [[https://beepb00p.xyz/tags.html#lifelogging][#lifelogging]] and all the timestamped highlights, comments and [[kobo_db][reading progress]] from Kobo are an effortless (no manual logging!) contribution to my personal timeline, which I render and sync on my devices every few hours.
+:PROPERTIES:
+:CUSTOM_ID: lifelog
+:END:
+
+I'm a big fan of [[file:tags.org::#lifelogging][#lifelogging]] and all the timestamped highlights, comments and [[kobo_db][reading progress]] from Kobo are an effortless (no manual logging!) contribution to my personal timeline, which I render and sync on my devices every few hours.
 
 I sometimes use it when conversation with other people comes to awkward silence, so I can recall something I was reading recently and spark off an interesting (well at least for me) topic.
 
 
 * --
+:PROPERTIES:
+:CUSTOM_ID: fin
+:END:
 Some extra links:
 
 - [[https://indieweb.org/annotation][Indieweb]] page on annotation, in particular with examples of silos
@@ -569,4 +690,7 @@ Some extra links:
 I'd be interested to know what do you think, and how are you managing your annotations or if you need some help with your existing workflow. Please also let me know if I missed any tools or features!
 
 *** updates
+:PROPERTIES:
+:CUSTOM_ID: updates
+:END:
 - *2019-12-02*: added [[#other_tools][section]] with suggestions by other people.

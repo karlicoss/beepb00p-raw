@@ -7,9 +7,13 @@ simple and clean [[https://mypy.readthedocs.io/en/latest/introduction.html][mypy
 
 You might learn few things about error handling in different languages, pattern matching, type variance, mypy's capabilities in general and clues for making your code and interfaces more mypy-friendly (and IDE friendly if you're using LSP/Intellij).
 * Intro aka computers are hard
+:PROPERTIES:
+:CUSTOM_ID: intro
+:END:
+
 I am somewhat obsessed with personal data and information, analyzing data for quantified self, lifelogging etc. 
 I am trying to integrate all my information sources and make it easy to access and search.
-You can see some examples in [[https://github.com/karlicoss/my][my]] package and Orger: [[https://beepb00p.xyz/orger.html][part I]], [[https://beepb00p.xyz/orger-todos.html][part II]].
+You can see some examples in [[https://github.com/karlicoss/my][my]] package and Orger: [[file:orger.org][part I]], [[file:orger-todos.org][part II]].
 
 To get this data, manipulate with it and interact with, of course, you need to extract it first (e.g. from json/csv), parse it (e.g. from plaintext),
 or even worse, reverse engineer it from vendor locked formats (e.g. in my [[https://github.com/karlicoss/kobuddy][kobo parsing library]]).
@@ -38,9 +42,13 @@ Now, I'm sure we as an engineers we could handwave about about that stuff foreve
 and introduce a motivating *real life problem* that I actually had to solve.
 
 * The problem: parsing Kindle highlights
+:PROPERTIES:
+:CUSTOM_ID: problem
+:END:
+
 Say, you own a Kindle book. Electronic books are great. Yeah okay they don't smell like the real thing, but the possibility of highlighting bits of text and typing your comment without distracting on external means of annotation is incredibly helpful.
 However, then when you want to go through your highlights after reading to refresh your memory or perhaps to share with a friend,
-you find out it's [[https://beepb00p.xyz/annotating.html#kindle][not so convenient]] to actually quickly access them.
+you find out it's [[file:annotating.org::#kindle][not so convenient]] to actually quickly access them.
 
 So you decide to write a script that would process the highlights, perhaps group them by book, displays timestamps and render a nice HTML page
 so you could easily open it from phone and recall latest books you read to discuss with friends.
@@ -206,6 +214,9 @@ So, we need some way of getting around these errors and carrying on.
 What do we do? 
 
 * A non-solution #1: logging
+:PROPERTIES:
+:CUSTOM_ID: logging
+:END:
 One simple strategy would be to make parsing fully defensive, wrap the whole ~parse_entry~ call in ~try/except~ and log:
 
 #+begin_src python -n 33
@@ -233,6 +244,9 @@ What do we want?
 So we need some way of propagating the errors up the call hierarchy instead of throwing immediately or suppressing.
 
 * A non-solution #2: special error value
+:PROPERTIES:
+:CUSTOM_ID: error_object
+:END:
 Often it's tempting to fallback to some sort of special 'default' or 'error' value. I bet you've seen this before: ~0~ or ~INT_MAX~ meaning error for integer type, or ~""~ for string types. We could try something similar and squeeze exception into the ~Highlight~ object itself. 
 
 #+begin_src python -n 33
@@ -252,6 +266,9 @@ E.g. if your ~Highlight~ object also returned book's ISBN and you filled it with
 Sometimes it's inevitable though, e.g. I'm giving an example [[#dataframe][later]].
 
 * Almost solution #1: Result container
+:PROPERTIES:
+:CUSTOM_ID: container
+:END:
 An abstraction that stood the test of time well is a container that holds a *result* representing one of two:
 - *success value*, representing the *desired outcome* of type ~T~
 - or *'error value'*, holding *error description* of type ~E~.
@@ -464,6 +481,9 @@ It does come with some downsides:
 Ok, we've learned something, let's try again. 
 
 ** By the way, what's up with [[https://docs.python.org/3/library/typing.html#typing.Iterator][~Iterator~]] everywhere?
+:PROPERTIES:
+:CUSTOM_ID: iterator
+:END:
 Glad you asked! Several reasons I'm using generators here:
 
 - it makes code cleaner because there is *no need for temporary lists*, calling ~.append~ and then returning them in the end.
@@ -474,6 +494,9 @@ If you're not very familiar with =yield= and Python's generators, I highly recom
  [[https://barahilia.github.io/blog/computers/2017/01/04/to-yield-or-not-to-yield.html][To yield or not to yield]].
 
 * Almost solution #2: use error combinators
+:PROPERTIES:
+:CUSTOM_ID: combinators
+:END:
 Now, let's try out [[https://github.com/dry-python/returns#result-container][returns.result]] library ([[https://github.com/dry-python/returns/releases/tag/0.11.0][v0.11.0]] at the time of writing), clearly inspired by Haskell's ~Either~ monad and ~do~ notation.
 I'm quite glad someone already implemented it and I didn't have to reinvent the wheel here.
 
@@ -599,6 +622,10 @@ But as much as I like ideas from functional programming, I'm almost certain that
  and won't be welcome warmly in your team.
 
 * Still-not-quite-a-solution #3: (Value, Error) pairs
+:PROPERTIES:
+:CUSTOM_ID: pair
+:END:
+
 Before we go on to the solution I propose let me mention another notable pattern of error handling.
 
 It's commonly used in [[https://blog.golang.org/error-handling-and-go][Go]].
@@ -641,6 +668,10 @@ If we use it we would have to pay with sacrificing type safety or *extra code on
 #+end_src
 
 * Solution: keep it simple
+:PROPERTIES:
+:CUSTOM_ID: kiss
+:END:
+
 It seems that we were on the right track with the [[#container][container type]] and [[#combinators][combinators]], but never completely satisfied.
 Let's recall the problems we had again:
 
@@ -834,8 +865,14 @@ Not suggesting you to go and rewrite all your code from using ~try/catch~ now th
 hopefully you'll figure out parts of your projects where it's applicable.
 
 * Tips & tricks
+:PROPERTIES:
+:CUSTOM_ID: tips_tricks
+:END:
 
 ** Custom error type
+:PROPERTIES:
+:CUSTOM_ID: api
+:END:
 While [[(simple_error_api)][the three line API]] is enough in most cases, you might want something more fancy.
 
 One improvement is allowing *arbitrary error type*.
@@ -885,6 +922,9 @@ One improvement is allowing *arbitrary error type*.
 The downside now is that you do need to wrap your exception (i.e. presumably you still want to keep the message and stacktrace) in ~Error~ container.
 
 ** unwrap
+:PROPERTIES:
+:CUSTOM_ID: unwrap
+:END:
 Sometimes it's desirable to quickly switch result back to non-defensive version. You can do it by using a simple helper function ~unwrap~ (naming inspired by [[https://doc.rust-lang.org/std/result/enum.Result.html#method.unwrap][rust]]):
 
 #+begin_src mypy
@@ -919,6 +959,9 @@ Sometimes it's desirable to quickly switch result back to non-defensive version.
 #+end_example
 
 ** Global error policy
+:PROPERTIES:
+:CUSTOM_ID: global_policy
+:END:
 When you're actively working on your code and running tests, you want to make sure that there are no errors and be as non-defensive as possible.
 However, in the field, you want to keep the code more defensive. To switch behaviours quickly, you can use the following trick:
 
@@ -1012,6 +1055,9 @@ I'm using this technique in my [[https://github.com/karlicoss/kobuddy#as-a-stand
 On CI, it runs in non-defensive mode of course. However when other people use the library for the first time they, something is likely to fail. It deals with decoding binary blobs in unspecified format after all! So one can run it in defensive mode, get most of their data and just ignore (hopefully few) errors till they are fixed.
 
 ** Improving error context
+:PROPERTIES:
+:CUSTOM_ID: error_context
+:END:
 If you remember [[kindle_output][the output]], we got a rather cryptic =ERROR: Couldn't match regex!=.
 That's of course not desirable because you can't easily tell what exactly is causing the error.
 
@@ -1053,6 +1099,9 @@ The result looks like this:
 Now that's better!
 
 ** Fine grained defensiveness
+:PROPERTIES:
+:CUSTOM_ID: warnings
+:END:
 Remember [[def_parse_entry][~parse_entry~]]? Its return type is ~Highlight~, so it can return a single highlight or throw a single error,
 that will be handled by ~iter_highlights~. 
 
@@ -1091,6 +1140,9 @@ Of course, this complicates code, and you can't predict all possible errors anyw
 
 
 ** Error values, revisited
+:PROPERTIES:
+:CUSTOM_ID: dataframe
+:END:
 One case where I find [[#error_object]['special error value']] more or less appropriate is when your function returns a pandas ~DataFrame~.
 
 When manipulating dataframes, you typically don't iterate explicitly, but apply more idiomatic (and often efficient!) combinators like ~merge~, ~join~, ~concat~ etc,
@@ -1119,13 +1171,16 @@ When manipulating dataframes, you typically don't iterate explicitly, but apply 
 #+end_src
 
 It looks pretty clean since ~DataFrame~ constructor automatically creates the necessary columns and fills missing values with ~None~.
-(you can see some frame examples [[https://beepb00p.xyz/./heartbeats_vs_kcals.html][here]]).
+(you can see some frame examples [[file:./heartbeats_vs_kcals.html][here]]).
 
 Then in the dataframe processing code I would typically check for presence of non-nil value in 'error' column and act accordingly. 
 E.g. [[https://i.postimg.cc/sDxt4NPN/dash-exercise.png][here]] I'm using the timestamp attached to the parsing errors to plot them neatly close to the rest of data.
 
 
 ** Cursed pattern matching mechanism
+:PROPERTIES:
+:CUSTOM_ID: cursed_pattern_matching
+:END:
 This is forbidden knowledge liberated during the latest Area 51 raid. Tsss... don't tell the government.
 
 Have to admit, this is a pretty weird idea that I haven't got practical use for, but still.   
@@ -1191,6 +1246,9 @@ And the obvious downside is that there is a potential to forget to handle except
 
 
 * Closing points
+:PROPERTIES:
+:CUSTOM_ID: closing
+:END:
 - mypy is your best friend
 - sometimes existing and simple things work better and cleaner
 
@@ -1207,9 +1265,16 @@ And the obvious downside is that there is a potential to forget to handle except
   That saved me from otherwise massive amounts of code duplication and reference rot.
 
 * Other links
+:PROPERTIES:
+:CUSTOM_ID: links
+:END:
+
 - A good overview of different approaches to error handling: [[http://joeduffyblog.com/2016/02/07/the-error-model][Joe Duffy - The Error Model]]
 - [[http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0709r4.pdf][Zero-overhead deterministic exceptions: Throwing values]] by Herb Sutter
 - [[https://barahilia.github.io/blog/computers/2017/01/04/to-yield-or-not-to-yield.html][To yield or not to yield]]: good summary of Python's generator's strengths
 
 * --
+:PROPERTIES:
+:CUSTOM_ID: fin
+:END:
 Let me know what you think! I'm open to all feedback.

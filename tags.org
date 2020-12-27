@@ -4,6 +4,9 @@
 #+macro: exobrain    [[./exobrain/$1][exobrain: $1]]
 
 * quantified self                                            :quantifiedself:
+:PROPERTIES:
+:CUSTOM_ID: quantifiedself
+:END:
 
 
 [[https://en.wikipedia.org/wiki/Quantified_self]["Quantified self"]] refers to self tracking and coming up with metrics in order to gain more insight and potentially improve various aspects of your life such as health (physical or mental) or performance.
@@ -12,7 +15,7 @@ I personally haven't managed to gain any significant insights from the data I've
 I don't really regret it though.
 
 Body maintenance like sleep, diet or exercise are hard for most people and also boring for many, myself included.
-It sucks and given the opportunity, I'd get myself independent of the [[https://beepb00p.xyz/tags.html#meatsack][physical shell]] in a blink. However, while I'm in it:
+It sucks and given the opportunity, I'd get myself independent of the [[file:tags.org::#meatsack][physical shell]] in a blink. However, while I'm in it:
 
 - I find that the *process of quantifying is fun*, and even motivating for the routine!
 
@@ -34,36 +37,44 @@ It sucks and given the opportunity, I'd get myself independent of the [[https://
   But if you do stress over so many (often contradictory) advises like I used to, I'd recommend trying to set up proper experiments and measure.
   Numbers don't lie, or at least harder to trick.
 
-- *collecting data* is valuable for [[https://beepb00p.xyz/tags.html#lifelogging][#lifelogging]]
+- *collecting data* is valuable for [[file:tags.org::#lifelogging][#lifelogging]]
 
 - *finding my baseline* while I'm healthy for potential future health issues
 
 Some links:
-- [[https://beepb00p.xyz/./my-data.html][How I am using 50+ sources of my personal data]]
+- [[file:my-data.org][How I am using 50+ sources of my personal data]]
 - [[https://github.com/woop/awesome-quantified-self][Awesome Quantified Self]] is probably the best no-bullshit resource
 - Fantastic [[https://www.gwern.net/tags/experiments][Gwern's self-experiments]]
 - [[https://www.reddit.com/r/QuantifiedSelf][/r/QuantifiedSelf]]
 - [[http://experimentable.com/qs-guide][QS Resource Guide]]
-- [[https://beepb00p.xyz/tags.html#lifelogging][#lifelogging]]
-- [[https://beepb00p.xyz/tags.html#exercise][#exercise]]
-- [[https://beepb00p.xyz/tags.html#sleep][#sleep]]
+- [[file:tags.org::#lifelogging][#lifelogging]]
+- [[file:tags.org::#exercise][#exercise]]
+- [[file:tags.org::#sleep][#sleep]]
 
 * lifelogging                                                   :lifelogging:
+:PROPERTIES:
+:CUSTOM_ID: lifelogging
+:END:
+
 [[https://en.wikipedia.org/wiki/Lifelog][Lifelogging]] is not a completely new concept, people have kept diaries for centuries.
 However these days it's particularly easy to do because lots of it can be automated and collected passively from your digital trace.
 
-Personally I do it because I find it fun, having access to your activities from the past is very satisfying and compensates for decaying memory and it fits well along the [[https://beepb00p.xyz/tags.html#quantified-self][#quantified-self]] lines.
+Personally I do it because I find it fun, having access to your activities from the past is very satisfying and compensates for decaying memory and it fits well along the [[file:tags.org::#quantified-self][#quantified-self]] lines.
 
 Links:
 
 - [[https://matiroy.com/writings/Should-I-record-my-life.html][Should I record my life?]]: a good summary highlighting pros and cons
 - [[https://kk.org/thetechnium/lifelogging-an][Lifelogging, An Inevitability]]: describes early attempts at digital lifelogging and raises some ethical/legal questions
 - [[https://www.wired.com/1995/06/xanadu][The Curse of Xanadu]]: early attempt at lifelogging with a hope to process the logged data with a computer one day. "The amazing epic tragedy" as described by the author is a pretty good summary.
-- [[https://beepb00p.xyz/tags.html#quantified-self][#quantified-self]]
-- [[https://beepb00p.xyz/tags.html#timeline][#timeline]]
-- [[https://beepb00p.xyz/tags.html#immortality][#immortality]]
+- [[file:tags.org::#quantified-self][#quantified-self]]
+- [[file:tags.org::#timeline][#timeline]]
+- [[file:tags.org::#immortality][#immortality]]
 
 * extendedmind                                                 :extendedmind:
+:PROPERTIES:
+:CUSTOM_ID: extendedmind
+:END:
+
 [[https://en.wikipedia.org/wiki/Extended_mind_thesis][Extended mind]] is the idea that your mind isn't limited by your physical body, but augmented by external means.
 Paper notes & diaries, data in your computer/phone/cloud -- all these things contribute to your cognitive process, thinking and help you navigate the landscape of ideas.
 
@@ -71,7 +82,7 @@ One of the biggest motivations to start dumping my brain out here, write and sha
 
 - I particularly like this analogy: [[https://1000wordphilosophy.com/2014/05/19/the-extended-mind][The Extended Mind – 1000-Word Philosophy: An Introductory Anthology]], in 'Inga and Otto' section
 
-  Perhaps because it resonates with me most and was [[https://beepb00p.xyz/./annotating.html#motivation][the main reason]] I started my quest for better personal information management.
+  Perhaps because it resonates with me most and was [[file:annotating.org::#motivation][the main reason]] I started my quest for better personal information management.
 
 - Feynman on extended mind, [[https://hyp.is/VJkQwDSeEeqSYq_Uw7vQRA/www.aip.org/history-programs/niels-bohr-library/oral-histories/5020-5][AIP interview]]
 
@@ -85,15 +96,19 @@ One of the biggest motivations to start dumping my brain out here, write and sha
   : “I realized I count on this now. It’s like I expect to drive cars and have flush toilets.”
 
 Links:
-- [[https://beepb00p.xyz/tags.html#exobrain][#exobrain]]
-- [[https://beepb00p.xyz/tags.html#immortality][#immortality]]
+- [[file:tags.org::#exobrain][#exobrain]]
+- [[file:tags.org::#immortality][#immortality]]
 
 * personal knowledge/information management                             :pkm:
+:PROPERTIES:
+:CUSTOM_ID: pkm
+:END:
+
 PKM stands for Personal Knowledge Management (I agree it's a somewhat clumsy acronym).
 It refers to strategies and tools for efficient information management (i.e. processing, organizing and access), which is particularly important these days in abundance of information around us.
 
 Specifically, when I talk about it I mostly refer to digital knowledge management and ways of seamless integration with our meaty brains. 
-I write more about it [[https://beepb00p.xyz/./pkm-setup.html][here]]. 
+I write more about it [[file:pkm-setup.org][here]].
 
 Human brains seem to be best for generating new ideas. I want to learn more, think faster, distract less, interact and visualize, effortlessly remember everything; not memorize and do routine information processing, which computers seem better at.
 
@@ -105,15 +120,15 @@ I haven't thought much of a specific roadmap, but my vision is:
 
 The latter bit is what I'm trying to do and developing simple but working tools (rather than sketching prototypes that look beautiful but never make it). Even though stuff we have at disposal at the moment (often lousy internet connection, OCR, basic speech and pattern recognition, text search, 2D screens, touchscreens and basic VR/AR) is not so exciting and somewhat restricted, I feel we're not fully utilizing it anyway yet.
 
-I'm writing more on motivation and things I'd like to integrate in my workflow [[https://beepb00p.xyz/./sad-infra.html#why][here]].
+I'm writing more on motivation and things I'd like to integrate in my workflow [[file:sad-infra.org::#why][here]].
 
 Some things I'm working on and contributing:
-- [[https://beepb00p.xyz/./grasp.html][grasp]], quick org-capture in browser
+- [[file:./grasp.html][grasp]], quick org-capture in browser
 - [[https://github.com/karlicoss/promnesia][promnesia]]
-- [[https://github.com/karlicoss/orger][orger]], long story :) you can read about it [[https://beepb00p.xyz/./orger.html][here]]
-  - [[https://github.com/karlicoss/telegram2org][telegram2org]], and [[https://beepb00p.xyz/./orger-todos.html][here]]
+- [[https://github.com/karlicoss/orger][orger]], long story :) you can read about it [[file::orger.org][here]]
+  - [[https://github.com/karlicoss/telegram2org][telegram2org]], and [[file:orger-todos.org][here]]
 - [[https://github.com/karlicoss/my][my]], package to interact with my data
-- [[https://github.com/karlicoss/axol][karlicoss/axol]], personal automatic news feed. I'm writing up about it [[https://beepb00p.xyz/axol.html][here]].
+- [[https://github.com/karlicoss/axol][karlicoss/axol]], personal automatic news feed. I'm writing up about it [[file:axol.org][here]].
 - [[https://github.com/karlicoss/porg][porg]]
 - [[https://github.com/orgzly/orgzly-android][orglzy]]
 
@@ -124,21 +139,28 @@ Links:
 - [[https://writings.stephenwolfram.com/2019/02/seeking-the-productive-life-some-details-of-my-personal-infrastructure][Seeking the Productive Life]] by Stephen Wolfram
 - [[https://physicstravelguide.com/start][Physics travel guide]]: awesome wiki presenting information at different levels of abstraction/specifics
 - [[https://news.ycombinator.com/item?id=17530498][HN: Why do you keep a personal knowledge base?]]
-- [[https://beepb00p.xyz/tags.html#extendedmind][#extendedmind]]
-- [[https://beepb00p.xyz/tags.html#offline][#offline]]
-- [[https://beepb00p.xyz/tags.html#orgmode][#orgmode]]
-- [[https://beepb00p.xyz/tags.html#bci][#bci]]
+- [[file:tags.org::#extendedmind][#extendedmind]]
+- [[file:tags.org::#offline][#offline]]
+- [[file:tags.org::#orgmode][#orgmode]]
+- [[file:tags.org::#bci][#bci]]
 
 * annotation                                                     :annotation:
+:PROPERTIES:
+:CUSTOM_ID: annotation
+:END:
 [[https://en.wikipedia.org/wiki/Text_annotation][Annotation]] is the process of adding a layer of personal (with a potential for sharing) metadata on top of existing content such as highlights, notes, anchors etc.
 
 Links:
 
-- [[https://beepb00p.xyz/./annotating.html]["How to annotate literally everything"]]: my overview of annotation software
-- [[https://beepb00p.xyz/tags.html#pkm][#pkm]]
-- [[https://beepb00p.xyz/tags.html#extendedmind][#extendedmind]]
+- [[file:annotating.org]["How to annotate literally everything"]]: my overview of annotation software
+- [[file:tags.org::#pkm][#pkm]]
+- [[file:tags.org::#extendedmind][#extendedmind]]
 
 * emacs                                                               :emacs:
+:PROPERTIES:
+:CUSTOM_ID: emacs
+:END:
+
 Chances are that if you're reading this blog, you already have an idea what is Emacs, but otherwise google it.
 
 I've got a love-hate relationship with Emacs.
@@ -153,14 +175,17 @@ Links:
 - excellent [[https://sachachua.com/blog/category/geek/emacs/emacs-news][weekly Emacs news]] by Sacha Chua
 
 * exobrain                                                         :exobrain:
+:PROPERTIES:
+:CUSTOM_ID: exobrain
+:END:
 Exobrain, or "second brain", or "brain dump", or "knowledge base" is something like a public wiki where you can keep your notes, ideas and thoughts.
 Other people can search in your exobrain without having to physically interact with you.
 
-You can find mine here: [[https://beepb00p.xyz/./exobrain][Exobrain]].
+You can find mine here: [[file:./exobrain][Exobrain]].
 
 Links:
-- [[https://beepb00p.xyz/tags.html#extendedmind][#extendedmind]]
-- [[https://beepb00p.xyz/tags.html#pkm][#pkm]]
+- [[file:tags.org::#extendedmind][#extendedmind]]
+- [[file:tags.org::#pkm][#pkm]]
 
 Examples of exobrains
 - [[https://wiki.nikitavoloboev.xyz]['Everything I know']] wiki by Nikita Voloboev
@@ -171,6 +196,9 @@ Examples of exobrains
 - [[https://wiki.nikitavoloboev.xyz/other/wiki-workflow#similar-wikis-i-liked][more wiki examples]] from Nikita Voloboev
 
 * offline                                                           :offline:
+:PROPERTIES:
+:CUSTOM_ID: offline
+:END:
 For most of modern web services, data is too centralized and only accessible from the services cloud, which makes applications unusable if you lost Internet connection.
 
 What is more, imagine if something horrible happens say to Gmail servers and the emails are completely wiped from them. Geeks like me and you might do occasional backups,
@@ -190,40 +218,53 @@ Links:
 - [[https://syncthing.net][Syncthing]] is a good example of personal realtime file sync solution
 - [[https://www.inkandswitch.com/local-first.html][Ink & Switch: local-first software]]
 - [[http://offlinefirst.org][Offline first]]
-- [[https://beepb00p.xyz/./ideas.html#distributed_Dropbox][Distributed cloud sync]]: some of my findings and thoughts
-- [[https://beepb00p.xyz/./sad-infra.html][My rant]] on the sad state of offline access in particular
-- [[https://beepb00p.xyz/tags.html#selfhosted][#selfhosted]]
-- [[https://beepb00p.xyz/tags.html#prepping][#prepping]]
-- [[https://beepb00p.xyz/tags.html#extendedmind][#extendedmind]]
+- [[file:ideas.org::#distributed_Dropbox][Distributed cloud sync]]: some of my findings and thoughts
+- [[file:sad-infra.org][My rant]] on the sad state of offline access in particular
+- [[file:tags.org::#selfhosted][#selfhosted]]
+- [[file:tags.org::#prepping][#prepping]]
+- [[file:tags.org::#extendedmind][#extendedmind]]
 
 * tools                                                               :tools:
+:PROPERTIES:
+:CUSTOM_ID: tools
+:END:
+
 I write lots of various scripts and tools to simplify my life and experiment. Most of them I [[https://github.com/karlicoss?tab=repositories][open source]].
 
 Links:
-- [[https://beepb00p.xyz/tags.html#pkm][#pkm]]
-- [[https://beepb00p.xyz/tags.html#infra][#infra]]
+- [[file:tags.org::#pkm][#pkm]]
+- [[file:tags.org::#infra][#infra]]
 
 * infra                                                               :infra:
+:PROPERTIES:
+:CUSTOM_ID: infra
+:END:
 I rely on software a lot to make my life easier and try to offload as much as I can onto computers.
 
 Links:
-- [[https://beepb00p.xyz/./sad-infra.html]["The sad state of personal data and infrastructure"]]
-- [[https://beepb00p.xyz/./hpi.html][HPI]] (Human Programming Interface) to interact and access my personal data
-- [[https://beepb00p.xyz/./myinfra.html][map]] of my personal infrastructure
-- [[https://beepb00p.xyz/tags.html#meatsack][#meatsack]]
+- [[file:sad-infra.org]["The sad state of personal data and infrastructure"]]
+- [[file:hpi.org][HPI]] (Human Programming Interface) to interact and access my personal data
+- [[file:myinfra.org][map]] of my personal infrastructure
+- [[file:tags.org::#meatsack][#meatsack]]
 
 * data liberation                                            :dataliberation:
+:PROPERTIES:
+:CUSTOM_ID: dataliberation
+:END:
 I refer to data liberation as a practice of getting your personal information out of silos like cloud services, phone apps and gadgets.
 At the moment it's a fairly complicated process even for people with technical background; let alone others.
 
 Links:
 
-- [[https://beepb00p.xyz/./exports.html][Building data liberation infrastructure]]
+- [[file:exports.org][Building data liberation infrastructure]]
 - [[https://en.wikipedia.org/wiki/Google_Data_Liberation_Front][Google Data Liberation Front]]
-- [[https://beepb00p.xyz/tags.html#infra][#infra]]
-- [[https://beepb00p.xyz/tags.html#offline][#offline]]
+- [[file:tags.org::#infra][#infra]]
+- [[file:tags.org::#offline][#offline]]
 
 * physics                                                           :physics:
+:PROPERTIES:
+:CUSTOM_ID: physics
+:END:
 My alternative self (not necessarily in the sense of many worlds interpretation) is doing some cool physics research.
 
 I took a different path, so for the past few years in my spare time I'm slowly picking up modern physics, at the moment: quantum field theory and general relativity. 
@@ -239,20 +280,23 @@ Through learning physics I can:
 
 - not have existential fear 
 
-  I have my small theory of [[https://beepb00p.xyz/tags.html#immortality][#immortality]] along the lines of [[https://en.wikipedia.org/wiki/Unitary_transformation_(quantum_mechanics)][unitarity]] and 
+  I have my small theory of [[file:tags.org::#immortality][#immortality]] along the lines of [[https://en.wikipedia.org/wiki/Unitary_transformation_(quantum_mechanics)][unitarity]] and 
   [[https://en.wikipedia.org/wiki/Boltzmann_brain][Boltzmann brain]].
 
 - learn lots of otherwise useful math
 
 Links:
-- [[https://beepb00p.xyz/tags.html#ipython][#ipython]]
+- [[file:tags.org::#ipython][#ipython]]
 
 * exercise                                                  :health:exercise:
+:PROPERTIES:
+:CUSTOM_ID: exercise
+:END:
 There are some potential short term benefits: 
 
 - makes you more resilient
 
-  Something along the lines of [[https://beepb00p.xyz/tags.html#prepping][#prepping]].
+  Something along the lines of [[file:tags.org::#prepping][#prepping]].
   Realistically though, in modern world, it's nice to be able to run after a bus or up the stairs, but it's quite questionable if running, say, even 5K is useful.
 
 - makes you appear better physically
@@ -300,63 +344,85 @@ You can also achieve your weekly activity target with: several short sessions of
 #+end_quote
 Duh! I understand that NHS cares about averages (as it should!) and most people don't give a shit about details and just want some simple instructions. Also recommendations will probably vary depending on people's genetics anyway.
 
-That's one of my primary motivations behind [[https://beepb00p.xyz/tags.html#quantified-self][#quantified-self]]: I want to understand how exercise impacts *my* body. For now I'm mainly just collecting data and doing various plots/analyses.
+That's one of my primary motivations behind [[file:tags.org::#quantified-self][#quantified-self]]: I want to understand how exercise impacts *my* body. For now I'm mainly just collecting data and doing various plots/analyses.
 
 No amount of exercise is going to prevent your body from failing you.
 If I knew for sure that, say, in 20 years, there would be some sort of technology that can compensate for not doing regular exercise, I'd stop it in a blink.
-Since I don't have this certainty, I hope that by sticking to routine I can buy some time till the [[https://beepb00p.xyz/tags.html#singularity][#singularity]] happens.
+Since I don't have this certainty, I hope that by sticking to routine I can buy some time till the [[file:tags.org::#singularity][#singularity]] happens.
 
 Links:
-- [[https://beepb00p.xyz/tags.html#quantifiedself][#quantifiedself]]
-- [[https://beepb00p.xyz/tags.html#meatsack][#meatsack]]
+- [[file:tags.org::#quantifiedself][#quantifiedself]]
+- [[file:tags.org::#meatsack][#meatsack]]
 
 * immortality                                                   :immortality:
+:PROPERTIES:
+:CUSTOM_ID: immortality
+:END:
 Immortality is a highly speculative concept from many perspectives. But it aligns very well with healthy lifestyle and pursuing awesome goals, so why not?
 
 Links:
 - [[https://www.lesswrong.com/posts/PPpLCjKHHryXHzJtj/digital-immortality-map-how-to-collect-enough-information][Less Wrong: Digital Immortality Map]]: a very speculative concept, but I find it interesting
-- [[https://beepb00p.xyz/tags.html#lifelogging][#lifelogging]]
-- [[https://beepb00p.xyz/tags.html#meatsack][#meatsack]]
+- [[file:tags.org::#lifelogging][#lifelogging]]
+- [[file:tags.org::#meatsack][#meatsack]]
 
 * meatsack                                                         :meatsack:
+:PROPERTIES:
+:CUSTOM_ID: meatsack
+:END:
 "meat sack", "meat shell", "physical shell", wetware refer to the biological (aka *meatspace*) aspects of my body.
 Typically I think of them as inferior, because they are so unreliable and limited.
 
 Links:
 
-- [[https://beepb00p.xyz/tags.html#quantifiedself][#quantifiedself]]
-- [[https://beepb00p.xyz/tags.html#exercise][#exercise]]
-- [[https://beepb00p.xyz/tags.html#extendedmind][#extendedmind]]
-- [[https://beepb00p.xyz/tags.html#immortality][#immortality]]
+- [[file:tags.org::#quantifiedself][#quantifiedself]]
+- [[file:tags.org::#exercise][#exercise]]
+- [[file:tags.org::#extendedmind][#extendedmind]]
+- [[file:tags.org::#immortality][#immortality]]
 
 
 * programming                                                   :programming:
+:PROPERTIES:
+:CUSTOM_ID: programming
+:END:
+
 Programming is my main occupation, and also the means by which I can transform the world.
 Given enough time, I can bring to life almost anything I can imagine with programming. This is very empowering.
 
 
-Also see: [[https://beepb00p.xyz/./exobrain/programming][exobrain: programming]]
+Also see: [[file:./exobrain/programming][exobrain: programming]]
 
 ** programing language theory                                           :plt:
+:PROPERTIES:
+:CUSTOM_ID: plt
+:END:
+
 [[https://en.wikipedia.org/wiki/Programming_language_theory][PLT]] studies design of programming languages and their features.
 
 This is important, because better programming languages and type theory will allow us to keep software expressive and safe.
 
 ** python                                                            :python:
-Python is the language I'm using most of the time. I used to hate its dynamic nature, but [[https://beepb00p.xyz/tags.html#mypy][#mypy]] changed everything!
+:PROPERTIES:
+:CUSTOM_ID: python
+:END:
+
+Python is the language I'm using most of the time. I used to hate its dynamic nature, but [[file:tags.org::#mypy][#mypy]] changed everything!
 
 At some point I'll write up a post highlighting
 
-Also see: [[https://beepb00p.xyz/./exobrain/programming/python][exobrain: programming/python]]
+Also see: [[file:./exobrain/programming/python][exobrain: programming/python]]
 
 ** mypy                                                                :mypy:
+:PROPERTIES:
+:CUSTOM_ID: mypy
+:END:
+
 [[https://mypy.readthedocs.io][Mypy]] is a static type checker for Python.
 
 I'm heavily relying on it to make sure my Python code is working and documented.
 
 Mypy is great for:
 
-- [[https://beepb00p.xyz/mypy-error-handling.html][Error handling]]
-- [[https://beepb00p.xyz/configs-suck.html][Configuration files]]
+- [[file:mypy-error-handling.org][Error handling]]
+- [[file:configs-suck.org][Configuration files]]
 
-Also see: [[https://beepb00p.xyz/./exobrain/programming/python/mypy.html][exobrain: programming/python/mypy.html]]
+Also see: [[file:./exobrain/programming/python/mypy.html][exobrain: programming/python/mypy.html]]

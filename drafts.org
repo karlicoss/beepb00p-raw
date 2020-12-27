@@ -1,8 +1,11 @@
-* [2020-04-12 Sun] [[file:kython.org][Write your own standard library]]                                                    :programming:
-* [2020-04-12 Sun] [[file:axol.org][Axol: Google Alerts that actually work]]                                             :axol:
+This is a raw plaintext export for my blog, [[https://beepb00p.xyz][beepb00p.xyz]].
+Note that due to [[https://github.com/novoid/github-orgmode-tests][Github's inconsistencies]] at rendering org-mode, not everything might render correctly.
+You can also glone this repository and browse the blog in emacs.
+* [2020-04-12 Sun] [[file:kython.org][Write your own standard library]]                                                    [[file:tags.org::#programming][=#programming=]]
+* [2020-04-12 Sun] [[file:axol.org][Axol: Google Alerts that actually work]]                                             =#axol=
   personal automatic news feed
-* [2020-02-03 Mon] [[file:myinfra.org][Map of my infrastructure]]                                                           :infra:
-* [2019-05-27 Mon] [[file:pkm-todos.org][On todo lists]]                                                                      :pkm:orgmode:productivity:gtd:
+* [2020-02-03 Mon] [[file:myinfra.org][Map of my infrastructure]]                                                           [[file:tags.org::#infra][=#infra=]]
+* [2019-05-27 Mon] [[file:pkm-todos.org][On todo lists]]                                                                      [[file:tags.org::#pkm][=#pkm=]] =#orgmode= =#productivity= =#gtd=
   How I am managing my life and keeping track of the things I want to do
-* [2018-11-19 Mon] [[file:least-action-lie.org][Least action principle is a lie]]                                                    :physics:
+* [2018-11-19 Mon] [[file:least-action-lie.org][Least action principle is a lie]]                                                    [[file:tags.org::#physics][=#physics=]]
   Aka 'does stationary action really matter?'

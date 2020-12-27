@@ -5,10 +5,14 @@
 TLDR: I'll write about [[https://github.com/karlicoss/orger][orger]], a tool I'm using to convert my personal data into easily readable and searchable org-mode views.
 I'll present some examples and use cases, that will hopefully be helpful to you as well even if you are not sold by using my tool.
 
-There is also [[https://beepb00p.xyz/orger-todos.html][second part]] where I'm explaining how it can be used to process Reddit, create quick tasks from Telegram messages and help with spaced repetition.
+There is also [[file:orger-todos.org][second part]] where I'm explaining how it can be used to process Reddit, create quick tasks from Telegram messages and help with spaced repetition.
 If you're impatient, you can jump straight to a [[#demo][demo]].
 
 * Intro
+:PROPERTIES:
+:CUSTOM_ID: intro
+:END:
+
 #+name: for_exports_post
 #+begin_noop
 
@@ -20,7 +24,7 @@ It would be cool to be capable of always remembering and instantly recalling inf
 Until we get augmented though, there are two options: the first is just to suck it up and live with it. You might have guessed this is not an option I'm comfortable with.
 
 The second option is compensating for your sloppy meaty memory and having information you've read at hand and a quick way of searching over it. 
-(see [[https://beepb00p.xyz/tags.html#extendedmind][#extendedmind]])
+(see [[file:tags.org::#extendedmind][#extendedmind]])
 
 <<motivation>>
 That sounds simple enough but as with many simple things, in practice you run into obstacles. 
@@ -28,7 +32,7 @@ I'll give some I've personally been overcoming as examples:
 
 - convenience of access, e.g.:
   - to access highlights and notes on my Kobo ebook I need to actually *reach my reader and tap through e-ink* touch screen. Not much fun!
-  - if you want to search over annotations in your PDF collections... well good luck, I'm just not aware of such a tool. It's actually way worse: many PDF viewers *wouldn't even let you search in highlights* within the file you're currently viewing. (see PDF readers [[https://beepb00p.xyz/./annotating.html#pdfs][overview]])
+  - if you want to search over annotations in your PDF collections... well good luck, I'm just not aware of such a tool. It's actually way worse: many PDF viewers *wouldn't even let you search in highlights* within the file you're currently viewing. (see PDF readers [[file:./annotating.html#pdfs][overview]])
   - there is no easy way to quickly access all of your twitter favorites, people suggest using hacks like [[https://webapps.stackexchange.com/a/131374/68104][autoscroll extension]].
 
 - searching data, e.g.:
@@ -43,7 +47,7 @@ I'll give some I've personally been overcoming as examples:
 
   - 99% of services *don't have support for offline mode*. This may be just a small inconvenience if you're on a train or something, but there is more to it.
     What if some sort of apocalypse happens and you lose all access to data? 
-    That depends on your paranoia level of course, and apocalypse is bad enough as it is, but my take on it is that at least I'd have my data :) (see [[https://beepb00p.xyz/tags.html#offline][#offline]])
+    That depends on your paranoia level of course, and apocalypse is bad enough as it is, but my take on it is that at least I'd have my data :) (see [[file:tags.org::#offline][#offline]])
 
   - if you delete a book on Kobo, not only you can't access its annotations anymore, but they seem to get *wiped* from the database.
 #+end_noop
@@ -54,6 +58,9 @@ Thinking about that and tinkering helped me understand what I want: some sort of
 So, I present you a system that I've developed and that solves all my problems™: [[https://github.com/karlicoss/orger][orger]].
 
 * What Orger does
+:PROPERTIES:
+:CUSTOM_ID: what
+:END:
 It's really so quite trivial that it's almost stupid. Orger provides a simple python API to render any data as an Org-mode file. It's easier to give an example:
 
 #+begin_src python
@@ -99,6 +106,10 @@ So as you can see orger itself is a really not sophisticated tool, at least unti
 As always the devil is in the details (look at that cheeky ~my.github_data~ import), which I'll explain [[data_sources][further]].
 
 * Demo: displaying Pocket data via Orger
+:PROPERTIES:
+:CUSTOM_ID: demo
+:END:
+
 I've documented one of modules, [[https://github.com/karlicoss/orger/blob/master/modules/pocket_demo.py][=pocket_demo=]] so you could get the sense of using Orger.
 
 #+html: <details><summary>Click to view the code</summary>
@@ -247,6 +258,9 @@ As you can see, it's very easy to see and search in all of your highlights.
 Clicking on 'pocket' will jump straight to the Pocket web app to the article you were reading.
 
 * More examples
+:PROPERTIES:
+:CUSTOM_ID: examples
+:END:
 I'm using more than ten different Orger modules, most of which I've moved into the [[https://github.com/karlicoss/orger/tree/master/modules][repository]]. Here I'll describe some featured views I'm generating.
 
 To give you a heads up, if you read the code, you'll see bunch of imports like ~from my.hypothesis import ...~. 
@@ -260,35 +274,69 @@ Hopefully the code is readable enough and will give you some inspiration.
 If you find something confusing or you write your own module and want to contribute, please feel free to open issue/PR!
 
 ** [[gh:karlicoss/orger/blob/master/modules/instapaper.py][instapaper]]
-Instapaper [[https://beepb00p.xyz/annotating.html#instapaper][doesn't have search]] over annotations, so I implemented my own!
+:PROPERTIES:
+:CUSTOM_ID: instapaper
+:END:
+Instapaper [[file:annotating.org::#instapaper][doesn't have search]] over annotations, so I implemented my own!
 ** [[gh:karlicoss/orger/blob/master/modules/hypothesis.py][hypothesis]]
+:PROPERTIES:
+:CUSTOM_ID: hypothesis
+:END:
 [[https://hypothes.is][Hypothesis]] does have search, but it's still way quicker for me to invoke search in Emacs (takes literally less than a second) than do that in web browser.
 ** [[gh:karlicoss/orger/blob/master/modules/kobo.py][kobo]]
+:PROPERTIES:
+:CUSTOM_ID: kobo
+:END:
 Generates views for all highlights and comments along with book titles from my Kobo database export.
 ** [[gh:karlicoss/orger/blob/master/modules/pinboard.py][pinboard]]
+:PROPERTIES:
+:CUSTOM_ID: pinboard
+:END:
 Searches over my Pinboard bookmarks.
 ** [[gh:karlicoss/orger/blob/master/modules/pdfs.py][pdfs]]
+:PROPERTIES:
+:CUSTOM_ID: pdfs
+:END:
 Crawls my filesystem for PDF files and collects all highlights and comments in a single view.
 ** [[gh:karlicoss/orger/blob/master/modules/twitter.py][twitter]]
+:PROPERTIES:
+:CUSTOM_ID: twitter
+:END:
 It's got two modes
 - First mode generates a view of everything I've ever tweeted, so I can search over it.
 - Second mode generates a view of all older tweets from the previous years posted on the same day. I find it quite fascinating to read through it and observe how I've been changing over years.
 ** [[gh:karlicoss/orger/blob/master/modules/rtm2org.py][rtm2org]]
+:PROPERTIES:
+:CUSTOM_ID: rtm
+:END:
 I stopped using Remember The Milk a while ago, but there are still some tasks and notes I've left behind, which I'm slowly moving to org-mode or canceling over time.
 ** [[gh:karlicoss/telegram2org][telegram2org]]
+:PROPERTIES:
+:CUSTOM_ID: telegram
+:END:
 Lets me create todo tasks from Telegram messages in couple of taps (you can't use share function on them in Android).
 
-I write about it [[https://beepb00p.xyz/orger-todos.html#telegram2org][in the second part]].
+I write about it [[file:orger-todos.org::#telegram2org][in the second part]].
 ** [[gh:karlicoss/orger/blob/master/modules/reddit2org.py][reddit2org]]
+:PROPERTIES:
+:CUSTOM_ID: reddit
+:END:
 Displays and lets me search my Reddit saved posts/comments.
 
-I write about it [[https://beepb00p.xyz/orger-todos.html#reddit][in the second part]].
+I write about it [[file:orger-todos.org::#reddit][in the second part]].
 ** [[gh:karlicoss/orger/blob/master/modules/roamresearch.py][Roam Research]]
+:PROPERTIES:
+:CUSTOM_ID: roam
+:END:
 Mirrors Roam Research database, allowing for quick search and navigation within Emacs.
 
-I write about it in detail [[https://beepb00p.xyz/myinfra-roam.html#orger][here]], there is also a video demo.
+I write about it in detail [[file:myinfra-roam.org::#orger][here]], there is also a video demo.
 
 * It seems trivial?
+:PROPERTIES:
+:CUSTOM_ID: why_hard
+:END:
+
 Does that really deserve a post?
 
 Well yeah it really does seem simple... until you try to do it.
@@ -318,13 +366,16 @@ Well yeah it really does seem simple... until you try to do it.
 
 
 * What makes Orger good?
+:PROPERTIES:
+:CUSTOM_ID: why_orger
+:END:
 - it solves [[motivation][my problems]]! 
 
   I won't go long into Org-mode propaganda, there are people that do it better than me out there, but for me it's good because it's a decent balance between ease of use and ease of augmenting.
 
   - it's easy to do unstructured (i.e. grep) or structured (i.e. tag search in emacs) search on any of your devices be it desktop or phone
   - you can open it anywhere you can open a text file
-  - tasks as easy to create as any other Org outline so it can integrate with your todo list and agenda (see more in [[https://beepb00p.xyz/orger-todos.html][the second part]]).
+  - tasks as easy to create as any other Org outline so it can integrate with your todo list and agenda (see more in [[file:orger-todos.org][the second part]]).
 
 - it doesn't require Emacs
 
@@ -339,9 +390,12 @@ Well yeah it really does seem simple... until you try to do it.
 - agnostic to what you feed in it -- it could be offline data from your regular backups, or it could be fresh API data. Again, it's a real programming language, you can do literally anything.
 
 * Using Orger views
+:PROPERTIES:
+:CUSTOM_ID: using
+:END:
 Apart from, obviously, opening org mode file in your favorite text editor, one major strength of this system is being able to effortlessly search over them. 
 
-I'm writing extensively about my information search setup [[https://beepb00p.xyz/pkm-search.html#personal_information][here]]. In summary:
+I'm writing extensively about my information search setup [[file:pkm-search.org::#personal_information][here]]. In summary:
 
 - on my desktop I'm just using spacemacs or [[https://github.com/karlicoss/cloudmacs][cloudmacs]] from web browser
 - in Emacs, I'm usually just using [[https://github.com/syohex/emacs-helm-ag][helm-ag]] with [[https://github.com/BurntSushi/ripgrep][ripgrep]]
@@ -356,6 +410,9 @@ On my phone I'm using:
 You can also set up some proper indexing daemon like [[https://www.lesbonscomptes.com/recoll][recoll]].
 
 ** Typical use patterns
+:PROPERTIES:
+:CUSTOM_ID: usecases
+:END:
 I'll just give some of my use cases:
 
 - While running tests for [[https://github.com/karlicoss/orgparse][orgparse]] I started randomly getting  =AssertionError: Cannot find component 'A@3' for 'orgparse.A@3=. 
@@ -375,17 +432,32 @@ I'll just give some of my use cases:
 
 
 * Potential improvements
+:PROPERTIES:
+:CUSTOM_ID: improvements
+:END:
 
 *** TODO more frequent, ideally realtime updates to views
+:PROPERTIES:
+:CUSTOM_ID: NONE
+:END:
 If the API doesn't provide push-based interface (as most of them), ultimately it's a question of polling them carefully to avoid rate limiting penalties.
 
 *** TODO alternative export formats
+:PROPERTIES:
+:CUSTOM_ID: NONE
+:END:
 There is nothing really about Org-mode that's specific to this system. For instance, there are markdown-based organizers out there and people could benefit from using Orger for them.
 
 *** TODO two-way data flow
+:PROPERTIES:
+:CUSTOM_ID: NONE
+:END:
 It would be cool to implement feedback from emacs, e.g. editing Github comment when you edit the corresponding Orger item. But it requires considerably more effort and would only work within emacs.
 
 *** TODO potential for race condition
+:PROPERTIES:
+:CUSTOM_ID: NONE
+:END:
 Unfortunately there is a little space for race condition if Orger appends something while you're editing file. 
 Orger tries to detect emacs and vim swap/lock files, but it's if you're very unlucky or using different setup it's still possible.
 Hopefully your text editor warns you when the file had been overwritten while you were editing it (e.g. as emacs does).
@@ -393,6 +465,10 @@ Hopefully your text editor warns you when the file had been overwritten while yo
 Also, I run Orger jobs at night (via cron) so it's quite unlikely to overlap with editing anything.
 
 * Similar projects
+:PROPERTIES:
+:CUSTOM_ID: similar
+:END:
+
 - [[https://github.com/novoid/Memacs][Memacs]] by Karl Voit.
 
   I only discovered it after I released Orger, so frankly haven't got to try it yet! It looks very similar in terms of goals and seems we can cooperate on rendering parts at least. 
@@ -403,6 +479,10 @@ Also, I run Orger jobs at night (via cron) so it's quite unlikely to overlap wit
 
 
 * ----
+:PROPERTIES:
+:CUSTOM_ID: fin
+:END:
+
 I'd be interested in hearing your thoughts or feature requests.
 
-This post ended up longer that I expected so in the [[https://beepb00p.xyz/orger-todos.html][next part]] I will tell about more use cases, in particular how I'm using Orger to process Reddit.
+This post ended up longer that I expected so in the [[file:orger-todos.org][next part]] I will tell about more use cases, in particular how I'm using Orger to process Reddit.

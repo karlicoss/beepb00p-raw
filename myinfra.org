@@ -3,7 +3,7 @@
 
 #+html: <style> body { margin-left: 0; } </style>
 
-This is a map of my personal [[https://beepb00p.xyz/tags.html#infra][infrastructure]], with links to the scripts and tools used; and my posts explaining different parts of it.
+This is a map of my personal [[file:tags.org::#infra][infrastructure]], with links to the scripts and tools used; and my posts explaining different parts of it.
 
 This is still incomplete; work in progress! In reality it's many more nodes and edges; I'm just trying to preserve sanity and adding them gradually;
 otherwise it's going to be too overwhelming.
@@ -17,10 +17,25 @@ This is rendered via graphviz, and you can find the source [[https://github.com/
 *NOTE*: due to some svg issues, this is best viewed in Chromium based browsers!
 
 * TODO TODOs
+:PROPERTIES:
+:CUSTOM_ID: todos
+:END:
 ** STRT [#C] [2020-02-03 Mon 01:57] fix css so it's occupying full screen width
+:PROPERTIES:
+:CUSTOM_ID: NONE
+:END:
 - [2020-02-07 19:49] a bit adhoc, but works for now
 ** STRT [#C] [2020-02-03 Mon 01:57] legend
+:PROPERTIES:
+:CUSTOM_ID: NONE
+:END:
 ** STRT [#B] [2020-02-07 Fri 19:51] labels don't fit into the boxes??
+:PROPERTIES:
+:CUSTOM_ID: NONE
+:END:
 - [2020-02-14 21:25] apparently only on desktop Firefox =/
 ** STRT [#B] [2020-02-14 Fri 21:30] Chrome [[https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/side#Browser_compatibility][doesn't]] support svg side attribute, so some labels appear upside down :(
+:PROPERTIES:
+:CUSTOM_ID: NONE
+:END:
 fixing with JS for now...

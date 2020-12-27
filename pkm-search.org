@@ -3,8 +3,12 @@
 #+filetags: :pkm:search:emacs:orgmode:
 
 * Why search?
+:PROPERTIES:
+:CUSTOM_ID: why
+:END:
+
 Having information in the digital form, collecting and writing notes is incredibly valuable.
-Our brains are good at associations, pattern matching and creative thinking, not storing arrays of structured data, and external memory is one of the main thinking hacks computers aid us with. (see [[https://beepb00p.xyz/tags.html#extendedmind][#extendedmind]])
+Our brains are good at associations, pattern matching and creative thinking, not storing arrays of structured data, and external memory is one of the main thinking hacks computers aid us with. (see [[file:tags.org::#extendedmind][#extendedmind]])
 
 However this information is not so useful if you can't access and search it quickly.
 Instant search changes the way you think. Ever got sense of flow while working through some problem, and trying different things from Stackoverflow or documentation?
@@ -15,7 +19,7 @@ It's /your/ todo list, /your/ private notes, books /you/ are reading. Of course,
 
 Some examples:
 
-- To find something from /my/ Messenger history with a friend, I need to be online, open Facebook, navigate to search and use the interface Facebook's employees thought convenient (spoiler: it sucks) ([[https://beepb00p.xyz/tags.html#offline][#offline]])
+- To find something from /my/ Messenger history with a friend, I need to be online, open Facebook, navigate to search and use the interface Facebook's employees thought convenient (spoiler: it sucks) ([[file:tags.org::#offline][#offline]])
 
   It's /my/ information, something that came out from my brain. Why can't I have it available anywhere, anytime, presented the way I prefer?
 
@@ -33,6 +37,9 @@ Note: throughout the post I will link to my [[https://github.com/karlicoss/dotfi
 To prevent code references from staling, I use permalinks, but check master branch as well in case of patches or more comments in code.
 
 * What do I search?
+:PROPERTIES:
+:CUSTOM_ID: what
+:END:
 I'll write about searching in
 
 - my personal notes, tasks and knowledge repository (this blog included)
@@ -44,9 +51,15 @@ I'll write about searching in
 
 
 * Searching in personal information
+:PROPERTIES:
+:CUSTOM_ID: personal_information
+:END:
 By personal information I refer to things like todo list, personal wiki or whatever you use to store information relevant to your life.
 
 ** Org mode notes
+:PROPERTIES:
+:CUSTOM_ID: org_mode
+:END:
 For the most part, I keep things in Org mode, and I use Emacs to work with it. Apart from regular means of plaintext search (I'll write about it [[#other][later]]), for me it's important to search over tags:
 
 - [[https://orgmode.org/manual/Matching-tags-and-properties.html][~org-tags-view~]] is available by default and an easy way to run simple tag searches
@@ -68,7 +81,7 @@ Here are some typical workflows with my org-mode:
 
   I see an interesting article or think of something which would be good to share with a friend, but at the moment it's not quite a good time to send it.  I can just capture it and attach a tag (e.g. =ann= or =jeremy=). That way next time we chat I can just look up things under their tag and send them.
 
-  It works the other way around as well: imagine they sent me a link or asked me to do something, but I can't do it immediately. I have a special script that converts chat messages into todo items and automatically attaches the corresponding tag. I write more about it [[https://beepb00p.xyz/orger-todos.html#telegram2org][here]].
+  It works the other way around as well: imagine they sent me a link or asked me to do something, but I can't do it immediately. I have a special script that converts chat messages into todo items and automatically attaches the corresponding tag. I write more about it [[file:orger-todos.org::#telegram2org][here]].
 
 - assembling blog posts
 
@@ -77,6 +90,9 @@ Here are some typical workflows with my org-mode:
   When I feel it's time to prepare the post, I can just search by the tag (e.g. ~tags:search~ for this post), and refile the items into the file with the post draft.
 
 ** Other plaintext, chats and social media
+:PROPERTIES:
+:CUSTOM_ID: other
+:END:
 As I mentioned, I find having to switch to the browser, wait till the website loads and cope with crappy search implementations very distracting and frustrating.
 
 What is more, often you don't even remember whether exactly you were discussing something: on Telegram or Facebook or Reddit? So having a single point of entry to your information and unified search over all of your stuff is extremely helpful.
@@ -90,7 +106,7 @@ For instant messaging, I'm using plaintext mirrors, so chat history is always av
   Sadly export tool stopped working because of API restrictions, but I'm not using VK much anymore either. At least I got historic messages.
 
 Most services where I can comment, write or leave annotation, I'm mirroring as org-mode.
-I write about it in detail here: [[https://beepb00p.xyz/orger.html][part I]], [[https://beepb00p.xyz/orger-todos.html][part II]].
+I write about it in detail here: [[file:orger.org][part I]], [[file:orger-todos.org][part II]].
 
 That gives me source data for a search engine over anything I've ever:
 - tweeted
@@ -114,6 +130,9 @@ Here's a *demo* [[https://karlicoss.github.io/beepb00p-assets/pkm-search.files/e
 You can see that as a result, I'm getting my Kobo highlights (=kobo.org=), my reading list (=read.org=) and even some video (=youtube.org=)!
 
 * Recoll
+:PROPERTIES:
+:CUSTOM_ID: recoll
+:END:
 Recoll is an indexer that runs as daemon (or a regular cron job) and a full text search tool.
 
 It supports many [[https://www.lesbonscomptes.com/recoll/pages/features.html][formats and other features]], so I suggest checking them out for yourself.
@@ -134,11 +153,17 @@ and [[https://www.lesbonscomptes.com/recoll/usermanual/webhelp/docs/RCL.INDEXING
 I don't have that much data yet to benefit massively from proper search queries, but I can see that it could be potentially useful in future as amount of personal data grows.
 
 * Searching on Android
+:PROPERTIES:
+:CUSTOM_ID: android
+:END:
 Most of my notes and knowledge repository are plaintext, so it is easily and continuously shared on my phone via Dropbox/Syncthing.
 
 Since using Emacs on Android is hardly a meaningful experience, I'm working around it by using other apps.
 
 ** [[https://github.com/orgzly/orgzly-android][Orgzly]]
+:PROPERTIES:
+:CUSTOM_ID: orgzly
+:END:
 I can't recommend it enough, it's got many things done right, very fast and the code is extremely readable and well tested so it's easy to contribute.
 
 It has its own small [[http://www.orgzly.com/help#search][query language]] (at the time [[https://github.com/alphapapa/org-ql][org-ql]] didn't exist).
@@ -149,6 +174,10 @@ Searches can be displayed as persistent widgets, e.g. I find convenient to have 
 As I described [[friends_tags][above]], I keep few saved search queries for some friends so I can recall what I wanted to discuss with them.
 
 ** [[https://play.google.com/store/apps/details?id=com.docsearch.pro][Docsearch +]]
+:PROPERTIES:
+:CUSTOM_ID: docsearch
+:END:
+
 Docsearch is a not very well-known tool (e.g. zero search results on Reddit or Twitter), but I don't know any alternatives for it.
 
 It's a fulltext indexing and search app for plaintext files, but apparently it even supports EPUBs and PDFs.
@@ -161,10 +190,16 @@ It's a bit backwards in terms of UI (even though I like that it's compact and fu
 I'd be extremely happy to replace this with some open source application, so please let me know if you know one!
 
 ** Recoll Web
+:PROPERTIES:
+:CUSTOM_ID: recoll_web
+:END:
 On the rare occasions when I need to search in pdfs or books (which I don't sync on my phone) , I just use Recoll [[https://github.com/koniu/recoll-webui][Web UI]] that I'm selfhosting.
 
 
 * Web search
+:PROPERTIES:
+:CUSTOM_ID: web
+:END:
 If you're reading this at all, chances you're quite good at using web search already. [[https://www.gwern.net/Search#search][Gwern]] got a good writeup on the subject.
 
 Knowing how to compose a search query is one thing, but navigating to the service, waiting till it loads, moving to searchbox takes precious time. Many people forget about [[https://www.howtogeek.com/114176/how-to-easily-create-search-plugins-add-any-search-engine-to-your-browser][custom search engines]]. Here are ones I'm using:
@@ -226,8 +261,14 @@ I'm still getting used to it, but it's amazing how faster it is than jumping to 
 Finally, it may be convenient to set up [[https://github.com/hrs/engine-mode][engine-mode]] in Emacs, or [[https://github.com/syl20bnr/spacemacs/tree/master/layers/%2Bweb-services/search-engine][search-engine layer]] in Spacemacs. It lets you invoke a browser search directly from Emacs (e.g. ~SPC s G~ to do google search). I find it convenient when I need to search many things in bulk.
 
 ** Firefox enhancements
+:PROPERTIES:
+:CUSTOM_ID: firefox
+:END:
 I find it convenient to enable [[https://www.ghacks.net/2016/06/11/firefox-page-search-improvements]['highlight all']] for search within a page.
 ** Chrome enhancements
+:PROPERTIES:
+:CUSTOM_ID: chrome
+:END:
 When I used Chrome, one thing that annoyed me was that it populates search engines automatically, and [[https://support.google.com/chrome/forum/AAAAP1KN0B0DOS1J_u6N8I][there is not way to disable it]].
 
 There is a nice open source [[https://chrome.google.com/webstore/detail/dont-add-custom-search-en/dnodlcololidkjgbpeoleabmkocdhacc][extension]] that prevents Chrome from doing it.
@@ -235,9 +276,16 @@ There is a nice open source [[https://chrome.google.com/webstore/detail/dont-add
 
 
 * Searching in code
+:PROPERTIES:
+:CUSTOM_ID: code
+:END:
 TLDR: I tried different existing code search tools, was disappointed and ended up using Emacs + Ripgrep.  
 
 ** Why?
+:PROPERTIES:
+:CUSTOM_ID: code_why
+:END:
+
 I've got lots of personal projects, experiments, data processing and backup scripts on my computer.
 I also tend to create a git repository at a slightest opportunity primarily as a means of code backup/rollback and progress tracking, but often it results in actual projects, so I would need a repository anyway.
 Naturally, these repositories end up scattered across the whole filesystem, making it tricky to remember where I've put the code or that it even existed in the first place.
@@ -283,6 +331,9 @@ At the time, I was just using recursive ~grep~ and then opening some of results 
 That's a pretty pathetic workflow. 
 
 ** What do I want
+:PROPERTIES:
+:CUSTOM_ID: code_want
+:END:
 My ideal code search tool would:
 
 - run against code on my filesystem
@@ -297,6 +348,9 @@ My ideal code search tool would:
 
 
 ** Existing code search tools
+:PROPERTIES:
+:CUSTOM_ID: code_existing
+:END:
 So, I wanted some code search and indexing tool that could watch over all the source file on my filesystem and let me search through them.
 
 It sounds as a fairly straightforward wish, but to my surprise, none of existing projects I found and tried do the job:
@@ -317,6 +371,9 @@ It sounds as a fairly straightforward wish, but to my surprise, none of existing
 As you can see, none of these are convenient for searching in personal code.
 
 ** Solution: use Emacs and Ripgrep
+:PROPERTIES:
+:CUSTOM_ID: emacs_ripgrep
+:END:
 Disappointed, I figured that least I could do is at somehow improve my workflow with grep.
 
 So, what are the problems with using ~grep~?
@@ -360,9 +417,15 @@ Here's a [[https://karlicoss.github.io/beepb00p-assets/pkm-search.files/pyautogu
 
 
 * Appendix: searching away from computer
-I'm running Spacemacs on my VPS, so if I'm not near my computer and [[#android][phone search]] doesn't help for some reason, I can still access and search my data. You can read about it [[https://beepb00p.xyz/cloudmacs.html][here]].
+:PROPERTIES:
+:CUSTOM_ID: appendix_cloudmacs
+:END:
+I'm running Spacemacs on my VPS, so if I'm not near my computer and [[#android][phone search]] doesn't help for some reason, I can still access and search my data. You can read about it [[file:cloudmacs.org][here]].
 
 * Appendix: Lightning fast Emacs
+:PROPERTIES:
+:CUSTOM_ID: appendix_daemon
+:END:
 As you might have noticed, I'm relying on Emacs as my primary means of interacting with my information, whether it's capturing, accessing or searching.
 That means that I want it as fast as possible, in a matter of milliseconds. Seconds spent waiting to launch discourage break your concentration and workflow.
 
@@ -388,9 +451,15 @@ I've got a global keybinding (~Win+m~) that invokes this script. In addition the
 #+end_src
 
 ** running daemon on startup
+:PROPERTIES:
+:CUSTOM_ID: NONE
+:END:
 It might be convenient to always have the emacs daemon running, you can use a method described [[https://www.emacswiki.org/emacs/EmacsAsDaemon#toc2][here]] to run it via Systemd.
 
 * Appending: general Emacs tips
+:PROPERTIES:
+:CUSTOM_ID: appendix_emacs
+:END:
 These tips might be pretty obvious, but they belong to this post, so here you go:
 
 - if you're on Spacemacs, use [[https://github.com/syl20bnr/spacemacs/tree/develop][~develop~]] branch. Master is pretty backwards.
@@ -420,6 +489,9 @@ These tips might be pretty obvious, but they belong to this post, so here you go
 
 
 * Future and my holy grail of search
+:PROPERTIES:
+:CUSTOM_ID: future
+:END:
 My ultimate goal is to have my 'external' knowledge as highly integrated as possible, as if it was imprinted on my brain neurons. 
 
   Ideally I want to be able to do fulltext realtime search over anything that I ever had in my visual field.
@@ -442,6 +514,9 @@ However each of these is a pretty hard problem and hardly with high demand from 
 Considering Google Glass hasn't made it, the technology is not exactly there, so we have to rely on kludges like the ones I described above.
 
 * --
+:PROPERTIES:
+:CUSTOM_ID: fin
+:END:
 My closing tips would be:
 
 - start simple

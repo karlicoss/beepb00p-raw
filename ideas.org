@@ -165,8 +165,6 @@ It's somewhat [[https://en.wikipedia.org/wiki/Generalizations_of_the_derivative#
 Can we squeeze more from that?
 
 ** TODO [2018-12-15 Sat 01:44] what would be an analogue of 3-sphere for data types? what are the different topologies of data types?
-:PROPERTIES:
-:END:
 Haven't thought about that seriously yet, so not sure how much sense it makes to ask such questions.
 * TODO [#C] dependent type checker tool, similar to [[http://mypy-lang.org][mypy]] :plt:mypy:
 :PROPERTIES:
@@ -315,8 +313,6 @@ However, this should be fairly easy to implement on client side (i.e. greasemonk
 Considering that topics don't need to be set often, it should be okay performance wise.
 
 * Half baked stuff                                                    :think:
-:PROPERTIES:
-:END:
 Completely speculative and unprocessed straight out of my brain.
 Will get promoted above when I think a bit more about it.
 ** TODO [#A] tinder for code reviews/testing projects           :programming:
@@ -412,8 +408,6 @@ What would be similar effect for other forms of art, e.g. visual?
 - [2019-12-07 20:24] For some reason thinking of Escher's [[https://i.imgur.com/GROZpnp.jpg][Metamorphose]], when abstract shapes transform into more realistic.
 
 ** TODO [#C] [2019-07-30 Tue 18:29] [[https://www.youtube.com/watch?v=BSypUV6QUNw][Tiny Bombs in your Blood - The Complement System]] :vis:humanbody:
-:PROPERTIES:
-:END:
 Holy fuck! That's so complicated and beautiful at the same time! I wonder if some sort of simulation is possible?
 
 ** TODO [#C] call/cc ; coroutine style thing but for defensive error handling/yielding? not sure how it'd look :lisp:errors:
@@ -435,8 +429,6 @@ What's an intermediate unit? It's probably syntax dependent?
 :CREATED:  [2016-11-16 Wed 19:00]
 :END:
 ** TODO [#D] negative types, complex types. Is there something related to terms the same way as terms related to types? :plt:
-:PROPERTIES:
-:END:
 - [2018-10-30 21:12] think about isomorphisms? What is the essence of complex numbers that makes them so special?
   maybe start with integer and positive only complex numbers? eh, that wouldn't make too much sense though would it? it's like inner product. what's an inner product of types?
 
@@ -466,8 +458,6 @@ What's an intermediate unit? It's probably syntax dependent?
 
 
 * Shower thoughts                                                     :think:
-:PROPERTIES:
-:END:
 ** STRT [#B] what occupations are the computer programming of 1980s? :future:
 :PROPERTIES:
 :CREATED:  [2019-01-26 Sat 01:21]
@@ -563,8 +553,6 @@ Apparently I wasn't the first to think about that:
 :CREATED:  [2018-12-14 Fri 23:17]
 :END:
 * Similar pages
-:PROPERTIES:
-:END:
 
 - [[https://jborichevskiy.com/ideas]["Ideas I want to see soon"]] by Jonathan Borichevskiy
 - [[https://samsquire.github.io/ideas]["100 Ideas for Computing"]] by Sam Squire

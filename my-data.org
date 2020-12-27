@@ -10,22 +10,33 @@ It's still incomplete and I'm going to update it regularly.
 
 My goal is *automating data collection to the maximum extent possible* and making it work in the background, so one can set up pipelines once and hopefully never think about it again.
 
-This is kind of a follow-up on my previous post on the [[https://beepb00p.xyz/sad-infra.html][sad state of personal data]], and part of my personal way of getting around this sad state.
+This is kind of a follow-up on my previous post on the [[file:sad-infra.org][sad state of personal data]], and part of my personal way of getting around this sad state.
 
 If you're terrified by the long list, you can jump straight into [[#consumers]["Data consumers"]] section to find out how I use it.
 
 #+toc: headlines 2
 
 * Why do you collect X? How do you use your data?
+:PROPERTIES:
+:CUSTOM_ID: why
+:END:
+
 All things considered, I think it's a fair question!
-Why bother with all this [[https://beepb00p.xyz/tags.html#infra][infrastructure]] and hoard the data if you never use it?
+Why bother with all this [[file:tags.org::#infra][infrastructure]] and hoard the data if you never use it?
 
 In the next section, I will elaborate on each specific data source, but to start with I'll list the rationales that all of them share:
 
 ** backup
+:PROPERTIES:
+:CUSTOM_ID: backup
+:END:
 It may feel unnecessary, but shit happens. What if your device dies, account gets suspended for some reason or the company goes bust?
 
 ** [[tag:lifelogging][lifelogging]]
+:PROPERTIES:
+:CUSTOM_ID: lifelogging
+:END:
+
 Most data in digital form got timestamps, so automatically, without manual effort, constitutes data for your timeline.
 
 I want to remember more, be able to review my past and bring back and reflect on memories. Practicing lifelogging helps with that.
@@ -35,6 +46,10 @@ It's understandable from the neuroscience point of view, i.e. the brain has limi
 That said, I want to have a *choice* whether to forget or remember events, and I'd like to be able to potentially access forgotten ones.
 
 ** [[tag:quantifiedself][quantified self]]
+:PROPERTIES:
+:CUSTOM_ID: qs
+:END:
+
 Most collected digital data is somewhat quantitative and can be used to analyze your body or mind.
 
 
@@ -42,6 +57,9 @@ Most collected digital data is somewhat quantitative and can be used to analyze 
 #+macro: promnesia   [[#promnesia][better browsing history]]
 
 * What do I collect/want to collect?
+:PROPERTIES:
+:CUSTOM_ID: what
+:END:
 As I mentioned, most of the collected data serve as a means of backup/lifelogging/quantified self, so I won't mention them again in the 'Why' sections.
 
 All my data collection pipelines are *automatic unless mentioned otherwise*.
@@ -49,6 +67,10 @@ All my data collection pipelines are *automatic unless mentioned otherwise*.
 Some scripts are still private so if you want to know more, let me know so I can prioritize sharing them.
 
 ** Amazon
+:PROPERTIES:
+:CUSTOM_ID: amazon
+:END:
+
 How: [[https://github.com/jbms/finance-dl][jbms/finance-dl]]
 
 Why:
@@ -56,6 +78,10 @@ Why:
 - was planning to correlate them with [[#monzo][monzo]]/[[#hsbc][HSBC]] transactions, but haven't got to it yet
 
 ** Arbtt (desktop time tracker)
+:PROPERTIES:
+:CUSTOM_ID: arbtt
+:END:
+
 How: [[https://arbtt.nomeata.de][arbtt-capture]]
 
 Why:
@@ -63,6 +89,9 @@ Why:
 - haven't used it yet, but it could be a rich source of lifelogging context
 
 ** Bitbucket (repositories)
+:PROPERTIES:
+:CUSTOM_ID: bitbucket
+:END:
 How: [[https://github.com/samkuehn/bitbucket-backup][samkuehn/bitbucket-backup]]
 
 Why: 
@@ -72,6 +101,9 @@ Why:
   I've got lots of private mercurial repositories with university homework and other early projects, and it's sad to think of people who will lose theirs during this wipe.
 
 ** [[https://bluemaestro.com/products/product-details/bluetooth-environmental-monitor-and-logger][Bluemaestro]] (environment sensor)
+:PROPERTIES:
+:CUSTOM_ID: bluemaestro
+:END:
 How: sensor syncs with phone app via Bluetooth, =/data/data/com.bluemaestro.tempo_utility/databases/= is regularly copied to grab the data.
 
 Why:
@@ -81,6 +113,10 @@ Why:
 
   E.g. I can potentially see temperature/humidity readings along with my photos from hiking or skiing.
 ** Blood
+:PROPERTIES:
+:CUSTOM_ID: blood
+:END:
+
 How: via [[https://thriva.co][thriva]], data imported manually into an org-mode table (not doing too frequently so wasn't worth automated scraping)
 
 Also tracked glucose and ketones (with [[https://freestylediabetes.co.uk/freestyle-libre][freestyle libre]]) for a few days out of curiosity, also didn't bother automating it.
@@ -90,6 +126,10 @@ Why:
 - contributes to the [[#dashboard][dashboard]], could be a good way of establishing your baselines
 
 ** Browser history (Firefox/Chrome)
+:PROPERTIES:
+:CUSTOM_ID: browser_history
+:END:
+
 How: [[https://github.com/karlicoss/promnesia/tree/master/scripts][custom scripts]], copying the underlying sqlite databases directly, running on my computers and phone.
 
 Why:
@@ -97,6 +137,10 @@ Why:
 - [[#promnesia][better browsing history]]
 
 ** [[https://shop-eu.emfit.com/products/emfit-qs][Emfit QS]] (sleep tracker)
+:PROPERTIES:
+:CUSTOM_ID: emfit
+:END:
+
 Emfit QS is kind of a medical grade sleep tracker. It's more expensive than wristband ones (e.g. [[#fitbit][fitbit]], [[#jawbone][jawbone]]) but also more reliable and gives more data.
 
 How: [[https://github.com/karlicoss/backup-emfit][emfitexport]].
@@ -106,6 +150,9 @@ Why:
 - sleep data for the [[#dashboard][dashboard]]
 
 ** Endomondo
+:PROPERTIES:
+:CUSTOM_ID: endomondo
+:END:
 How: Endomondo collects GPS data, and HR data (via [[https://uk.wahoofitness.com/devices/heart-rate-monitors/wahoo-tickr-x-heart-rate-strap][Wahoo Tickr X strap]]). Then, [[https://github.com/karlicoss/endoexport][karlicoss/endoexport]].
 
 Why:
@@ -113,11 +160,18 @@ Why:
 - exercise data for the [[#dashboard][dashboard]]
 
 ** Facebook
+:PROPERTIES:
+:CUSTOM_ID: facebook
+:END:
 How: manual archive export.
 
 I barely use Facebook, so don't even bother doing it regularly.
 
 ** Facebook Messenger
+:PROPERTIES:
+:CUSTOM_ID: messenger
+:END:
+
 How: [[https://github.com/karlicoss/fbmessengerexport][karlicoss/fbmessengerexport]] 
 
 Why:
@@ -126,6 +180,10 @@ Why:
 - [[#promnesia][better browsing history]]
 
 ** Feedbin
+:PROPERTIES:
+:CUSTOM_ID: feedbin
+:END:
+
 How: via API
 
 Why:
@@ -133,12 +191,18 @@ Why:
 - [[#promnesia][better browsing history]]
 
 ** Feedly
+:PROPERTIES:
+:CUSTOM_ID: feedly
+:END:
 How: via API
 
 Why:
 
 - [[#promnesia][better browsing history]]
 ** Fitbit
+:PROPERTIES:
+:CUSTOM_ID: fitbit
+:END:
 How: manual CSV export, as I only used it for few weeks. Then the sync stopped working and I had to return it.
 However, it seems [[https://dev.fitbit.com/build/reference/web-api/intraday-requests][possible]] via API.
 
@@ -146,8 +210,14 @@ Why:
 
 - activity data for the [[#dashboard][#dashboard]]
 ** Foursquare/Swarm
+:PROPERTIES:
+:CUSTOM_ID: foursquare
+:END:
 How: via API
 ** Github (repositories)
+:PROPERTIES:
+:CUSTOM_ID: github_repos
+:END:
 How: [[https://github.com/josegonzalez/python-github-backup][github-backup]]
 
 Why:
@@ -155,6 +225,9 @@ Why:
 - capable of exporting starred repositories as well, so if the authors delete them I will still have them
 
 ** Github (events)
+:PROPERTIES:
+:CUSTOM_ID: github_events
+:END:
 How: manually requested archive (once), after that automatic [[https://github.com/karlicoss/ghexport][karlicoss/ghexport]]
 
 Why:
@@ -162,6 +235,10 @@ Why:
 - [[#promnesia][better browsing history]]
 - [[#search][better search]] in comments/open issues, etc.
 ** Gmail
+:PROPERTIES:
+:CUSTOM_ID: gmail
+:END:
+
 How: [[https://github.com/joeyates/imap-backup][imap-backup]], [[#takeout][Google Takeout]]
 
 Why:
@@ -170,9 +247,15 @@ Why:
 - [[#promnesia][better browsing history]]
 
 ** Goodreads
+:PROPERTIES:
+:CUSTOM_ID: goodreads
+:END:
 How: [[https://github.com/karlicoss/goodrexport][karlicoss/goodrexport]]
 
 ** Google takeout
+:PROPERTIES:
+:CUSTOM_ID: takeout
+:END:
 How: semi-automatic. 
 
 - only manual step: enable scheduled exports (you can schedule 6 per year at a time), and choose to keep it on Google Drive in export settings
@@ -180,12 +263,15 @@ How: semi-automatic.
 - keep a script that checks mounted Google Drive for fresh takeout and moves it somewhere safe
 
 Why:
-- Google collects lots of data, which you could put to some good use. However, old data is getting [[https://beepb00p.xyz/./takeout-data-gone.html][wiped]], so it's important to export Takeout regularly.
+- Google collects lots of data, which you could put to some good use. However, old data is getting [[file:./takeout-data-gone.html][wiped]], so it's important to export Takeout regularly.
 - [[#promnesia][better browsing history]]
 - (potentially) search history for [[#promnesia][promnesia]]
 - [[#search][search]] in youtube watch history
 - location data for lifelogging and the [[#dashboard][dashboard]] (activity)
 ** TODO Hackernews
+:PROPERTIES:
+:CUSTOM_ID: hackernews
+:END:
 How: haven't got to it yet. It's going to require:
 
 - extracting upvotes/saved items via web scraping since Hackernews doesn't offer an API for that. Hopefully, there is an existing library for that.
@@ -196,12 +282,19 @@ How: haven't got to it yet. It's going to require:
 Why: same reasons as [[#reddit]].
 
 ** HSBC bank
+:PROPERTIES:
+:CUSTOM_ID: hsbc
+:END:
+
 How: manual exports of monthly PDFs with transactions. They don't really offer API, so unless you want to web scrape and deal with 2FA, it seems it's the best you can do.
 
 Why
 - personal finance; used it with [[https://github.com/karlicoss/hsbc-parser][karlicoss/hsbc-parser]] to feed into [[https://hledger.org][hledger]]
 
 ** [[https://hypothes.is][Hypothesis]]
+:PROPERTIES:
+:CUSTOM_ID: hypothesis
+:END:
 How: [[https://github.com/karlicoss/hypexport][karlicoss/hypexport]]
 
 Why:
@@ -211,6 +304,9 @@ Why:
 - quick todos via [[#orger][orger]]
 
 ** Instapaper
+:PROPERTIES:
+:CUSTOM_ID: instapaper
+:END:
 How: [[https://github.com/karlicoss/instapexport][karlicoss/instapexport]]
 
 Why:
@@ -219,6 +315,9 @@ Why:
 - [[#promnesia][better browsing history]], in particular implementing overlay with highlights
 - quick todos via [[#orger][orger]]
 ** Jawbone
+:PROPERTIES:
+:CUSTOM_ID: jawbone
+:END:
 How: via API.
 Jawbone is dead now, so if you haven't exported it already, likely your data is lost forever.
 
@@ -226,35 +325,54 @@ Why:
 
 - sleep data for the [[#dashboard][dashboard]]
 ** Kindle
+:PROPERTIES:
+:CUSTOM_ID: kindle
+:END:
 How: manually exported =MyClippings.txt= from Kindle. Potentially can be automated similarly to [[#kobo][Kobo]].
 
 Why:
 
 - [[#search][better search]]
 ** [[https://www.kobo.com][Kobo]] reader
+:PROPERTIES:
+:CUSTOM_ID: kobo
+:END:
 How: almost automatic via [[https://github.com/karlicoss/kobuddy][karlicoss/kobuddy]]. Manual step: having to connect your reader via USB now and then.
 
 Why:
 
 - [[#search][better search]]
-- [[https://beepb00p.xyz/orger-todos.html#krill][spaced repetition]] for unfamiliar words/new concepts via [[#orger][orger]]
+- [[file:orger-todos.org::#krill][spaced repetition]] for unfamiliar words/new concepts via [[#orger][orger]]
 ** Last.fm
+:PROPERTIES:
+:CUSTOM_ID: lastfm
+:END:
 How: [[https://github.com/karlicoss/lastfm-backup][karlicoss/lastfm-backup]]
 
 
 ** Monzo bank
+:PROPERTIES:
+:CUSTOM_ID: monzo
+:END:
 How: [[https://github.com/karlicoss/monzoexport][karlicoss/monzoexport]]
 
 Why:
 
 - automatic personal finance, fed into [[https://hledger.org][hledger]]
 ** [[https://nomie.app][Nomie]]
+:PROPERTIES:
+:CUSTOM_ID: nomie
+:END:
 How: regular copies of =/data/data/io.nomie.pro/files/_pouch_events= and =/data/data/io.nomie.pro/files/_pouch_trackers=
 
 Why:
 
 - could be a great tool for detailed lifelogging if you're into it
 ** Nutrition
+:PROPERTIES:
+:CUSTOM_ID: nutrition
+:END:
+
 I tracked almost all nutrition data for stuff I ingested over the course of a year.
 
 How: I found most existing apps/projects clumsy and unsatisfactory, so I developed my own system.
@@ -317,6 +435,9 @@ Why:
 
 
 ** Photos
+:PROPERTIES:
+:CUSTOM_ID: photos
+:END:
 How: no extra effort required if you sync/organize your photos and videos now and then.
 
 Why:
@@ -324,17 +445,24 @@ Why:
 - obvious source of lifelogging, in addition comes with GPS data
 
 ** PDF annotations
-As in, [[https://beepb00p.xyz/annotating.html#pdfs][native PDF annotations]]. 
+:PROPERTIES:
+:CUSTOM_ID: pdfs
+:END:
+
+As in, [[file:annotating.org::#pdfs][native PDF annotations]]. 
 
 How: nothing needs to be done, PDFs are local to your computer. You do need [[https://github.com/karlicoss/my/blob/master/my/pdfs.py][some tools]] to crawl your filesystem and extract the annotations.
 
 Why:
 
-- experience of using your PDF annotations (e.g. searching) is [[https://beepb00p.xyz/annotating.html#comparison][*extremely poor*]]
+- experience of using your PDF annotations (e.g. searching) is [[file:annotating.org::#comparison][*extremely poor*]]
 
   I'm improving this by using [[#orger][orger]].
 
 ** Pinboard
+:PROPERTIES:
+:CUSTOM_ID: pinboard
+:END:
 How: [[https://github.com/karlicoss/pinbexport][karlicoss/pinbexport]]
 
 Why:
@@ -343,6 +471,9 @@ Why:
 - [[#promnesia][better browsing history]]
 
 ** Plaintext notes
+:PROPERTIES:
+:CUSTOM_ID: notes
+:END:
 Mostly this refers to org-mode files, which I use for notekeeping and logging.
 
 How: nothing needs to be done, they are local. 
@@ -353,6 +484,9 @@ Why:
 - [[#promnesia][better browsing history]]
 
 ** Pocket
+:PROPERTIES:
+:CUSTOM_ID: pocket
+:END:
 How: [[https://github.com/karlicoss/pockexport][karlicoss/pockexport]]
 
 Why:
@@ -361,14 +495,20 @@ Why:
 - [[#promnesia][better browsing history]], in particular implementing overlay with highlights
 
 ** Reddit
+:PROPERTIES:
+:CUSTOM_ID: reddit
+:END:
 How: [[https://github.com/karlicoss/rexport][karlicoss/rexport]]
 
 Why:
 
 - [[#search][better search]]
 - [[#promnesia][better browsing history]]
-- [[https://beepb00p.xyz/orger-todos.html#reddit][org-mode interface]] for processing saved Reddit posts/comments, via [[#orger][orger]]
+- [[file:orger-todos.org::#reddit][org-mode interface]] for processing saved Reddit posts/comments, via [[#orger][orger]]
 ** Remember the Milk
+:PROPERTIES:
+:CUSTOM_ID: rtm
+:END:
 How: ical export from the API.
 
 Why:
@@ -378,12 +518,18 @@ Why:
   I stopped using RTM in favor of org-mode, but I can still easily find my old task and notes, which allowed for a smooth transition.
 
 ** Rescuetime
+:PROPERTIES:
+:CUSTOM_ID: rescuetime
+:END:
 How: [[https://github.com/karlicoss/rescuexport][karlicoss/rescuexport]]
 
 Why:
 
 - richer contexts for lifelogging
 ** Shell history
+:PROPERTIES:
+:CUSTOM_ID: shell
+:END:
 How: many shells support keeping timestamps along your commands in history.
 
 E.g. [[http://jesrui.sdf-eu.org/remember-all-your-bash-history-forever.html]["Remember all your bash history forever"]].
@@ -393,6 +539,9 @@ Why:
 
 
 ** Sleep
+:PROPERTIES:
+:CUSTOM_ID: sleep
+:END:
 Apart from [[#emfit][automatic collection]] of HR data, etc., I collect some extra stats like:
 
 - whether I woke up on my own or after alarm
@@ -410,9 +559,15 @@ Why:
 - dreams are quite fun part of lifelogging
 
 ** Sms/calls
+:PROPERTIES:
+:CUSTOM_ID: sms_calls
+:END:
 How: [[https://play.google.com/store/apps/details?id=com.riteshsahu.SMSBackupRestore][SMS Backup & Restore]] app, automatic exports.
 
 ** Spotify
+:PROPERTIES:
+:CUSTOM_ID: spotify
+:END:
 How: export script, using [[https://github.com/plamere/spotipy][plamere/spotipy]]
 
 Why:
@@ -420,6 +575,9 @@ Why:
 - can be used for custom recommendation algorithms
 
 ** Stackexchange
+:PROPERTIES:
+:CUSTOM_ID: stackexchange
+:END:
 How: [[https://github.com/karlicoss/stexport][karlicoss/stexport]]
 
 Why:
@@ -427,6 +585,9 @@ Why:
 - [[#search][better search]]
 - [[#promnesia][better browsing history]]
 ** [[https://play.google.com/store/apps/details?id=com.waterbear.taglog][Taplog]]
+:PROPERTIES:
+:CUSTOM_ID: taplog
+:END:
 (not using it anymore, in favor of org-mode)
 
 How: regular copying of =/data/data/com.waterbear.taglog/databases/Buttons Database=
@@ -435,6 +596,9 @@ Why:
 
 - a quick way of single tap logging (e.g. weight/sleep/exercise etc), contributes to the [[#dashboard][dashboard]]
 ** Telegram
+:PROPERTIES:
+:CUSTOM_ID: telegram
+:END:
 How: [[https://github.com/fabianonline/telegram_backup][fabianonline/telegram_backup]]
 
 Why:
@@ -443,6 +607,9 @@ Why:
 - [[#promnesia][better browsing history]]
 
 ** Twitter
+:PROPERTIES:
+:CUSTOM_ID: twitter
+:END:
 How: twitter archive (manually, once), after that regular automatic exports via API
 
 Why:
@@ -450,6 +617,9 @@ Why:
 - [[#search][better search]]
 - [[#promnesia][better browsing history]]
 ** VK.com
+:PROPERTIES:
+:CUSTOM_ID: vk
+:END:
 How: [[https://github.com/Totktonada/vk_messages_backup][Totktonada/vk_messages_backup]].
 
 Sadly VK broke their API so the script stopped working. I'm barely using VK now anyway so not motivated enough to work around it.
@@ -460,6 +630,9 @@ Why:
 - [[#promnesia][better browsing history]]
 
 ** Weight
+:PROPERTIES:
+:CUSTOM_ID: weight
+:END:
 How: manually, used [[#nomie][Nomie]] and [[#taplog][Taplog]], but now just using org-mode and extracting data with [[https://github.com/karlicoss/orgparse][orgparse]].
 Could be potentially automated via wireless scales, but not much of a priority for me.
 
@@ -468,6 +641,9 @@ Why:
 - obvious data source for the [[#dashboard][dashboard]]
 
 ** TODO Whatsapp
+:PROPERTIES:
+:CUSTOM_ID: whatsapp
+:END:
 Barely using it so haven't bothered yet.   
 
 How: Whatsapp doesn't offer API, so potentially going to require grabbing sqlite database from Android app (=/data/data/com.whatsapp/databases/msgstore.db=)
@@ -478,6 +654,10 @@ Why:
 - [[#promnesia][better browsing history]]
 
 ** [[https://www.23andme.com][23andme]]
+:PROPERTIES:
+:CUSTOM_ID: 23andme
+:END:
+
 How: manual [[https://customercare.23andme.com/hc/en-us/articles/212196868-Accessing-Your-Raw-Genetic-Data][raw data export]] from 23andme website. I hope your genome doesn't change so often to bother with automatic exports!
 
 Why:
@@ -487,15 +667,24 @@ Why:
   Haven't really had time to think about it yet, and it feels like a hard project out of my realm of competence.
 
 * Data consumers
+:PROPERTIES:
+:CUSTOM_ID: consumers
+:END:
 
 ** Instant search
+:PROPERTIES:
+:CUSTOM_ID: search
+:END:
 Typical search interfaces make me unhappy as they are *siloed, slow, awkward to use and don't work offline*.
-So I built my own ways around it! I write about it in detail [[https://beepb00p.xyz/pkm-search.html#personal_information][here]].
+So I built my own ways around it! I write about it in detail [[file:pkm-search.org::#personal_information][here]].
 
 In essence, I'm mirroring most of my online data like chat logs, comments, etc., as plaintext.
 I can overview it in any text editor, and incrementally search over *all of it* in a single keypress.
 
 ** orger
+:PROPERTIES:
+:CUSTOM_ID: orger
+:END:
 [[https://github.com/karlicoss/orger][orger]] is a tool that helps you generate an org-mode representation of your data.
 
 It lets you benefit from the existing tooling and infrastructure around org-mode, the most famous being Emacs.
@@ -508,19 +697,30 @@ I'm using it for:
 
 Orger comes with some existing [[https://github.com/karlicoss/orger/tree/master/modules][modules]], but it should be easy to adapt your own data source if you need something else.
 
-I write about it in detail [[https://beepb00p.xyz/orger.html][here]] and [[https://beepb00p.xyz/orger-todos.html][here]].
+I write about it in detail [[file:orger.org][here]] and [[file:orger-todos.org][here]].
 ** promnesia
+:PROPERTIES:
+:CUSTOM_ID: promnesia
+:END:
 [[https://github.com/karlicoss/promnesia#demo][promnesia]] is a browser extension I'm working on to escape silos by *unifying annotations and browsing history* from different data sources.
 
 I've been using it for more than a year now and working on final touches to properly release it for other people.
 
 ** dashboard
-As a big fan of [[https://beepb00p.xyz/tags.html#quantified-self][#quantified-self]], I'm working on personal health, sleep and exercise dashboard, built from various data sources.
+:PROPERTIES:
+:CUSTOM_ID: dashboard
+:END:
+
+As a big fan of [[file:tags.org::#quantified-self][#quantified-self]], I'm working on personal health, sleep and exercise dashboard, built from various data sources.
 
 I'm working on making it public, you can see some screenshots [[https://www.reddit.com/r/QuantifiedSelf/comments/cokt4f/what_do_you_all_do_with_your_data/ewmucgk][here]].
 
 ** timeline
-Timeline is a [[https://beepb00p.xyz/tags.html#lifelogging][#lifelogging]] project I'm working on.
+:PROPERTIES:
+:CUSTOM_ID: timeline
+:END:
+
+Timeline is a [[file:tags.org::#lifelogging][#lifelogging]] project I'm working on.
 
 I want to see all my digital history, search in it, filter, easily jump at a specific point in time and see the context when it happened.
 That way it works as a sort of external memory.
@@ -530,14 +730,22 @@ he open sources it. I highly recommend watching his talk for inspiration.
 
 
 ** [[gh:HPI][~HPI~]] python package
+:PROPERTIES:
+:CUSTOM_ID: mypkg
+:END:
+
 This python package is a my personal (python) API to access all collected data.
 
-I'm elaborating on it [[https://beepb00p.xyz/hpi.html][here]].
+I'm elaborating on it [[file:hpi.org][here]].
 
 * --
+:PROPERTIES:
+:CUSTOM_ID: fin
+:END:
+
 Happy to answer any questions on my approach and help you with liberating your data.  
 
-In the [[https://beepb00p.xyz/exports.html][next post]] I'm elaborating on design decisions behind my data export and access infrastructure.
+In the [[file:exports.org][next post]] I'm elaborating on design decisions behind my data export and access infrastructure.
 
 *Updates*:
 - [2020-01-14]: added 'Nutrition', 'Shell history' and 'Sleep' sections

@@ -6,14 +6,14 @@
 #+macro: map      @@html:<span style='color:darkgreen; font-weight: bolder'>@@$1@@html:</span>@@
 
 Our personal data is siloed, held hostage, and very hard to access for various technical and business reasons.
-I wrote and vented a lot about it in the [[https://beepb00p.xyz/sad-infra.html][previous post]].
+I wrote and vented a lot about it in the [[file:sad-infra.org][previous post]].
 
 People suggest a whole spectrum of possible solutions to these issues, starting from proposals on dismantling capitalism and ending with high tech vaporwavy stuff like [[https://en.wikipedia.org/wiki/Urbit][urbit]].
 
 I, however, want my data *here and now*. I'm also fortunate to be a software engineer so I can bring this closer to reality by myself.
 
 As a pragmatic intermediate solution, feasible with existing technology and infrastructure without reinventing everything from scratch, 
-I suggested a [[https://beepb00p.xyz/sad-infra.html#data_mirror][*'data mirror'*]], a piece of software that continuously syncs/mirrors user's personal data.
+I suggested a [[file:sad-infra.org::#data_mirror][*'data mirror'*]], a piece of software that continuously syncs/mirrors user's personal data.
 
 So, as I promised, this post will be somewhat more +boring+ specific.
 
@@ -27,7 +27,7 @@ In hindsight, some things feel so obvious, they hardly deserve mention, but I ho
 
 I will be presenting and elaborating on different technical decisions, patterns and tricks I figured out while developing data mirrors by myself.
 
-I will [[https://beepb00p.xyz/myinfra.html][link]] to my infrastructure map throughout the post, hopefully you'll enjoy exploring it. Links will point at specific clusters of the map and highlight them, so hopefully it will be helpful in communicating the design decisions.
+I will [[file:myinfra.org][link]] to my infrastructure map throughout the post, hopefully you'll enjoy exploring it. Links will point at specific clusters of the map and highlight them, so hopefully it will be helpful in communicating the design decisions.
 
 I'm also *very open* for questions like "Why didn't you do Y instead of X?". 
 It's quite possible that I'm slipping in extra complexity somewhere and I would be very happy to eliminate it.
@@ -36,9 +36,12 @@ It's quite possible that I'm slipping in extra complexity somewhere and I would 
 #+toc: headlines 2
 
 * Design principles
+:PROPERTIES:
+:CUSTOM_ID: design
+:END:
 Just as a reminder: the idea of the data mirror is having personal data *continuously/periodically synchronized* to the file system, and having *programmatic access* to it.
 
-It might not be that hard to achieve for one particular data source, but when you want to use [[https://beepb00p.xyz/my-data.html][ten or more]],
+It might not be that hard to achieve for one particular data source, but when you want to use [[file:my-data.org][ten or more]],
 each of which with its own quirks it becomes quite painful to implement and maintain over time.
 While there are many reasons to make it simple, generic, reliable and flexible at the same time, it is not an easy goal.
 
@@ -50,10 +53,10 @@ Most of my pipelines for data liberation consist of the following layers
 
 - [[#export_layer][export layer]]: knows how to get your data from the silos
 
-  The purpose of the export layer is to reliably fetch and serialize raw data on your disk. It roughly corresponds to the concept of the [[https://beepb00p.xyz/sad-infra.html#data_mirror]['data mirror app']]. 
+  The purpose of the export layer is to reliably fetch and serialize raw data on your disk. It roughly corresponds to the concept of the [[file:sad-infra.org::#data_mirror]['data mirror app']]. 
 
   Export scripts deal with the tedious business of authorization, pagination, being tolerant of network errors, etc.
-  (: [[https://beepb00p.xyz/myinfra.html#exports][exports]])
+  (: [[file:myinfra.org::#exports][exports]])
 
   Example: the export layer for [[https://github.com/karlicoss/endoexport/blob/e322b44ca1e6e5a779b4e7ea49564ba60d425bfe/export.py#L10-L15][Endomondo data]] 
   is simply fetching exercise data from the API (using existing library bindings) and prints the JSON out. That's all it does.
@@ -67,7 +70,7 @@ Most of my pipelines for data liberation consist of the following layers
 
   The purpose of DAL is simply to deserialize whatever the export script dumped and provide minimalistic data bindings.
   It shouldn't worry about tokens, network errors, etc., once you have your data on the disk DAL should be able to handle it even when you're offline.
-  (: [[https://beepb00p.xyz/myinfra.html#dal][data access layer]])
+  (: [[file:myinfra.org::#dal][data access layer]])
 
   It's not meant to be too high level; otherwise, you might lose the generality and restrict the bindings in such ways that they leave some users out.
 
@@ -83,15 +86,18 @@ Most of my pipelines for data liberation consist of the following layers
 - downstream data consumers
 
   You could also count it as the third layer, although the boundaries are not very well defined at this stage.
-  (: [[https://beepb00p.xyz/myinfra.html#mypkg][my.]])
+  (: [[file:myinfra.org::#mypkg][my.]])
 
   As an input it takes abstract (i.e. non-raw) data from the DAL and actually does interesting things with it: analysis, visualizations, interactions across different data sources, etc.
 
-  For me, it's manifested as [[https://beepb00p.xyz/sad-infra.html#mypkg][a Python package]]. I can simply import it in any Python script, and it knows how to read and access any of my data.
+  For me, it's manifested as [[file:sad-infra.org::#mypkg][a Python package]]. I can simply import it in any Python script, and it knows how to read and access any of my data.
 
 Next, I'm going to elaborate on implementing the export layer.
 
 * Retrieving data
+:PROPERTIES:
+:CUSTOM_ID: retrieve
+:END:
 The first step in exporting and liberating your data is figuring out what and how are you actually supposed to fetch.
 
 I'll mostly refer to Python libraries (since that's what I'm using and most familiar with), but I'm quite sure there are analogs in other languages.
@@ -99,9 +105,12 @@ I'll mostly refer to Python libraries (since that's what I'm using and most fami
 Also remember, this is just to fetch the data! If you get a regular file on your disk as a result, you can use any other programming language you like to access it.
 That's the beauty of decoupling.
 
-Here, I won't elaborate much on potential difficulties during exports, as I wrote about them [[https://beepb00p.xyz/sad-infra.html#exports_are_hard][before]].
+Here, I won't elaborate much on potential difficulties during exports, as I wrote about them [[file:sad-infra.org::#exports_are_hard][before]].
 
 ** public API
+:PROPERTIES:
+:CUSTOM_ID: api_public
+:END:
 You register your app, authorize it, get a token, and you are free to call various endpoints and fetch whatever you want.   
 
 I won't really elaborate on this as if you're reading this you probably have some idea how to use it.
@@ -112,6 +121,9 @@ Otherwise, I'm sure there are tutorials out there that would help you.
 Examples: thankfully, most services out there offer public API to some extent
 
 ** private API
+:PROPERTIES:
+:CUSTOM_ID: api_private
+:END:
 Sometimes a service doesn't offer an API. 
 But from the service developer's perspective, it's still very reasonable to have one if you've got backend/frontend communication.
 
@@ -128,6 +140,9 @@ Some examples:
 - even though Pocket has an API, to get highlights from it you need to [[https://github.com/karlicoss/pockexport#setting-up][spy on the API key]] they use in the web app
 
 ** scraping
+:PROPERTIES:
+:CUSTOM_ID: export_scrape
+:END:
 Sometimes a service doesn't offer an API, doesn't use it even internally and serves HTML pages directly instead.
 Or, reverse engineering the API is so painful scraping becomes a more attractive option.
 
@@ -151,6 +166,9 @@ Examples:
 - my bank, HSBC doesn't have an API. Not that I expected it from HSBC, I don't live in a fairy tale; but even their manual transactions exports are in PDF which I have to [[https://github.com/karlicoss/hsbc-parser][parse]].
 
 ** manual export (GDPR/takeout)
+:PROPERTIES:
+:CUSTOM_ID: export_manual
+:END:
 It's great they exist, and it is the easiest way to get your data if you just want a backup.
 However it doesn't really help in the long run:
 
@@ -160,7 +178,7 @@ However it doesn't really help in the long run:
 
 That said, with some effort it can potentially be automated as well.
 
-They can be useful to get the 'initial' bit of your data, past the [[https://beepb00p.xyz/sad-infra.html#data_is_vanishing][API limits]].
+They can be useful to get the 'initial' bit of your data, past the [[file:sad-infra.org::#data_is_vanishing][API limits]].
 
 Examples:
 
@@ -169,6 +187,9 @@ Examples:
 - [[https://github.blog/2018-12-19-download-your-data][Github]] data export
 
 ** phone apps
+:PROPERTIES:
+:CUSTOM_ID: export_phone
+:END:
 I don't have an iPhone, so will only be referring to Android in this section, but I'd imagine the situation is similar.
 
 These days, a service might not even offer a desktop version at all and considering that scraping data off mobile apps is way harder getting it from the phone directly might be an easier option. The data is often kept as an sqlite database which in many ways is even more convenient than an API!
@@ -184,6 +205,10 @@ Examples:
 - exporting [[https://bluemaestro.com][Bluemaestro]] environment sensor data
 
 ** devices
+:PROPERTIES:
+:CUSTOM_ID: export_devices
+:END:
+
 Here I am referring to standalone specific-purpose gadgets like sleep trackers, e-ink readers, etc. The distinguishing thing is the device doesn't have Internet access or doesn't talk to any API.
 
 You've got some options here:
@@ -211,6 +236,10 @@ Examples:
 
 
 * Types of exports: a high-level view
+:PROPERTIES:
+:CUSTOM_ID: types
+:END:
+
 Hopefully, the previous section answered your questions about 'where do I get my data from'.
 The next step is figuring out what you actually need to request and how to store it.
 
@@ -219,21 +248,30 @@ Since data exports by their nature are somewhat similar to [[https://en.wikipedi
 
 The way I see it, there are three styles of data exports:
 ** full export
+:PROPERTIES:
+:CUSTOM_ID: full
+:END:
 Every time you want your data, go exhaustively through all the endpoints and fetch the data.
 The result is some sort of JSON file (reflecting the complete state of your data) which you can save to disk.
 
 *** summary
+:PROPERTIES:
+:CUSTOM_ID: full_summary
+:END:
 - advantages
   - very straightforward to implement
 
 - disadvantages
-  - *might be impossible* due to [[https://beepb00p.xyz/sad-infra.html#data_is_vanishing][API restrictions]]
+  - *might be impossible* due to [[file:sad-infra.org::#data_is_vanishing][API restrictions]]
   - takes *more resources*, i.e. time/bandwidth/CPU
   - takes *more space* if you're keeping old versions
   - might be *flaky* due to excessive network requests
 
 
 *** examples
+:PROPERTIES:
+:CUSTOM_ID: full_examples
+:END:
 When would you use that kind of export?
 When there isn't much data to retrieve and you can do it in one go.
 
@@ -242,6 +280,10 @@ When there isn't much data to retrieve and you can do it in one go.
   There are no apparent API limitations preventing you from fetching everything, and it seems like a plausible option. Presumably, it's just a matter of transferring a few hundred kilobytes. YMMV though: if you are using it extremely heavily you might want to use a [[#synthetic][synthetic export]].
 
 ** incremental export
+:PROPERTIES:
+:CUSTOM_ID: incremental
+:END:
+
 'Incremental' means that rerunning an export starts from the last persisted point and only fetches missing data.
 
 Implementation wise, it looks like this:
@@ -250,19 +292,26 @@ Implementation wise, it looks like this:
 - merge it back with previously exported data, persist on disk
 
 *** summary
+:PROPERTIES:
+:CUSTOM_ID: incremental_summary
+:END:
+
 - advantages
   - takes less resources
   - more resilient (if done right) as it needs fewer network operations
 
 - disadvantages
   - potentially very error-prone, harder to implement
-    - if you're not careful with [[https://beepb00p.xyz/sad-infra.html#pagination][pagination]] and misinterpret documentation you might never request some data
-    - if you're not careful with [[https://beepb00p.xyz/sad-infra.html#consistency][transactional logic]], you might leave your export in an inconsistent and corrupt state
+    - if you're not careful with [[file:sad-infra.org::#pagination][pagination]] and misinterpret documentation you might never request some data
+    - if you're not careful with [[file:sad-infra.org::#consistency][transactional logic]], you might leave your export in an inconsistent and corrupt state
 
 Incremental exports are *always* harder to program. Indeed, [[#full][full export]] is just an edge case of an incremental one.
 (Fun fact: most of your phone apps already implement incremental sync. It's a shame the logic can't be reused.)
 
 *** examples
+:PROPERTIES:
+:CUSTOM_ID: incremental_examples
+:END:
 If it's so tricky, why would you bother with exporting data incrementally?
 
 - too much data
@@ -289,6 +338,9 @@ If it's so tricky, why would you bother with exporting data incrementally?
 
 
 ** synthetic export
+:PROPERTIES:
+:CUSTOM_ID: synthetic
+:END:
 This is a blend between full export and incremental export.   
 (If someone thinks of a better term for describing this concept, please let me know!)
 
@@ -333,7 +385,7 @@ There are various reasons for that:
   But that's the only example of such behavior I've seen so far, and it does complicate things.
 
 One important difference from other types of exports is that you *have to* do them regularly/often enough.
-Otherwise you inevitably miss some data and in the best case scenario have to get it [[#export_manual][manually]], or in the worst case [[https://beepb00p.xyz/./takeout-data-gone.html][lose it forever]].
+Otherwise you inevitably miss some data and in the best case scenario have to get it [[#export_manual][manually]], or in the worst case [[file:./takeout-data-gone.html][lose it forever]].
 
 Now, you could deal with these complications the same way you would with incremental exports by retrieving the missing data only.
 The *crucial difference* is that if you do make a mistake in the logic, it's not just a matter of waiting to re-download everything. 
@@ -354,6 +406,9 @@ So I take a hybrid approach instead:
   If you do spot a problem you only have to change the code with no need for data migrations.
 
 *** illustrative example
+:PROPERTIES:
+:CUSTOM_ID: synthetic_example_temperature
+:END:
 I feel like the explanations are a bit abstract, so let's consider a specific scenario.
 
 Say you've got a temperature sensor that takes a measurement every minute and keeps it in its internal database.
@@ -397,6 +452,10 @@ It seems like a perfect fit for synthetic export.
   I hope it's clear how much easier this is compared with maintaining some sort of master sqlite database and updating it.
 
 *** summary
+:PROPERTIES:
+:CUSTOM_ID: synthetic_summary
+:END:
+
 - advantages
   - much easier way to achieve incremental exports without having to worry about introducing inconsistencies
   - *very resilient*, against pretty much everything: deleted content, data corruption, flaky APIs, programming errors
@@ -413,21 +472,27 @@ It seems like a perfect fit for synthetic export.
     When we access the data we have to merge all snapshots every time. I'll elaborate on this [[#dal_performance][later as well]].
 
 *** more examples
+:PROPERTIES:
+:CUSTOM_ID: synthetic_example
+:END:
 - Github API is restricted to 300 latest events, so synthetic logic is used in [[https://github.com/karlicoss/ghexport/blob/master/dal.py][ghexport]] tool
 - Reddit API is restricted to 1000 items, so synthetic logic is used in [[https://github.com/karlicoss/rexport/blob/874e6116bfba8cbd63fa3b4d93810a1488cb8464/dal.py#L136][rexport]] tool
 
-  I elaborate on Reddit [[https://beepb00p.xyz/unnecessary-db.html#example_reddit][here]].
+  I elaborate on Reddit [[file:unnecessary-db.org::#example_reddit][here]].
 
 - Chrome only keeps 90 days of browsing history in its database
 
-  [[https://beepb00p.xyz/unnecessary-db.html#chrome_dal][Here]] I write in detail about why synthetic exports make a lot of sense for Chrome.
+  [[file:unnecessary-db.org::#chrome_dal][Here]] I write in detail about why synthetic exports make a lot of sense for Chrome.
 
 * Export layer
-Map: [[https://beepb00p.xyz/myinfra.html#exports][export layer]].
+:PROPERTIES:
+:CUSTOM_ID: export_layer
+:END:
+Map: [[file:myinfra.org::#exports][export layer]].
 
 No matter which [[#types][of these]] ways you have to use to export your data, there are some common difficulties, hence patterns that I'm going to explore in this section.
 
-Just a quick reminder of [[https://beepb00p.xyz/sad-infra.html#exports_are_hard][the problems]] that we're dealing with:
+Just a quick reminder of [[file:sad-infra.org::#exports_are_hard][the problems]] that we're dealing with:
 
 - authorization: how to log in?
 - pagination: how to query the data correctly?
@@ -441,6 +506,9 @@ This is kind of vague (perhaps even obvious), so I will try to elaborate on what
 This section doesn't cover the exact details, it's more of a collection of tips for minimizing the work and boilerplate. If you are interested in reading the code, <a href='https://github.com/search?type=Repositories&q=user%3Akarlicoss+++topic%3Aexport'>here</a> are some of the export scripts and tools I've implemented.
 
 ** use existing bindings
+:PROPERTIES:
+:CUSTOM_ID: bindings
+:END:
 This may be obvious, but I still feel it has to be said.
 Unless retrieving data is trivial (i.e. single GET request), chances that someone has already invested effort in dealing with various API quirks.
 Bindings often deal with dirty details like rate limiting, retrying, pagination, etc. So if you're lucky you might end up spending very little effort on actually exporting data.
@@ -450,7 +518,7 @@ If there is something in bindings you don't like or lack, it's still easier to [
 Also if you're the author of bindings, I have some requests. Please:
 
 - don't print in stdout, it's a pain to filter out and suppress. Ideally use proper logging modules
-- don't be overly defensive, or allow to [[https://beepb00p.xyz/mypy-error-handling.html#global_policy][configure]] non-defensive behavior
+- don't be overly defensive, or allow to [[file:mypy-error-handling.org::#global_policy][configure]] non-defensive behavior
 
   It's quite sad when the library silently catches all exceptions and replaces them with empty strings/nulls/etc., without you even suspecting it.
   It's especially problematic in Python, where "Ask forgiveness, not permission" is very common.
@@ -467,6 +535,10 @@ Also if you're the author of bindings, I have some requests. Please:
   Same argument: if you forgot to handle some API calls, it makes it much easier for consumers to quickly add them.
 
 *** examples
+:PROPERTIES:
+:CUSTOM_ID: export_layer_examples
+:END:
+
 To export [[https://github.com/karlicoss/hypexport][Hypothes.is]] data I'm using existing [[https://github.com/judell/Hypothesis][judell/Hypothesis]] bindings.
 
 - the bindings handle [[https://github.com/judell/Hypothesis/blob/91f881693546aaddc4096327a97f5cf342c3770a/hypothesis.py#L69][pagination and rate limits]] for you
@@ -488,6 +560,9 @@ Another example: to export [[https://github.com/karlicoss/rexport/blob/master/ex
   If praw kept original data from the API, the [[https://github.com/karlicoss/rexport/blob/master/export.py][code for export]] would be half as long.
 
 ** don't mess with the raw data
+:PROPERTIES:
+:CUSTOM_ID: keep_raw
+:END:
 Keep the data you retrieved *as intact as possible*.
 
 That means:
@@ -501,9 +576,13 @@ Move data interpretation burden to the [[#dal][data access layer]] instead.
 
 The rationale here is it's a potential source of inconsistencies. If you make a bug during data conversion, you might end corrupting your data forever.
 
-I'm elaborating on this point [[https://beepb00p.xyz/unnecessary-db.html#asis][here]].
+I'm elaborating on this point [[file:unnecessary-db.org::#asis][here]].
 
 ** don't  be too defensive
+:PROPERTIES:
+:CUSTOM_ID: defensive
+:END:
+
 - never silently fallback on default values in case of errors, unless you're really certain about what you're doing
 
 - don't add retry logic just in case
@@ -514,6 +593,10 @@ I'm elaborating on this point [[https://beepb00p.xyz/unnecessary-db.html#asis][h
   If you know what you're doing (e.g. some endpoint is notoriously flaky) and do need retries, I recommend using an existing library that handles that like [[https://github.com/litl/backoff#examples][backoff]].
 
 ** allow reading credentials from a file
+:PROPERTIES:
+:CUSTOM_ID: credentials
+:END:
+
 - you don't want them in your shell history or in crontabs
 - keeping them in a file can potentially allow for fine access control
 
@@ -523,7 +606,10 @@ I'm elaborating on this point [[https://beepb00p.xyz/unnecessary-db.html#asis][h
   Personally, I found it so boilerplaty I extracted this logic to a separate [[https://github.com/karlicoss/exporthelpers/blob/master/export_helper.py][helper module]]. You can find an example [[https://github.com/karlicoss/instapexport#exporting][here]].
 
 * How to store it: organizing data
-Map: [[https://beepb00p.xyz/myinfra.html#fs][filesystem]].
+:PROPERTIES:
+:CUSTOM_ID: storage
+:END:
+Map: [[file:myinfra.org::#fs][filesystem]].
 
 
 As I mentioned, for the most part I'm just keeping the raw API data.
@@ -543,6 +629,9 @@ For storage I'm just using the filesystem; all exports are kept or symlinked in 
 : /exports/goodreads
 
 ** naming and timestamping
+:PROPERTIES:
+:CUSTOM_ID: timestamps
+:END:
 I find that the only important bit is if you keep multiple export files (e.g. [[#synthetic][synthetic]]), make sure their names include timestamps and the time order is consistent with lexicographic order.
 
 This means the only acceptable date/time format is some variation of [[https://en.wikipedia.org/wiki/ISO_8601][~YYYY MM DD HH MM SS Z~]]. 
@@ -567,13 +656,22 @@ The reason is it's automatically sort/max friendly, which massively reduces the 
 To make timestamping automatic and less boilerplaty, I'm using a [[#arctee][wrapper script]].
 
 ** backups
+:PROPERTIES:
+:CUSTOM_ID: backups
+:END:
 Backups are trivial: I can just run [[https://borgbackup.readthedocs.io/en/stable][borg]] against =/exports=.
 What is more, borg is deduplicating, so it's very friendly to incremental and synthetic exports.
 
 ** synchronizing between computers
+:PROPERTIES:
+:CUSTOM_ID: sync
+:END:
 I synchronize/replicate it across my computers with Syncthing, also used Dropbox in the past.
 
 ** disk space concerns
+:PROPERTIES:
+:CUSTOM_ID: disk_space
+:END:
 Some back of the envelope math arguing it shouldn't be a concern for you:
 
 - the amount of data you generate grows linearly. That means that running exports periodically would take 'quadratic' space
@@ -597,7 +695,10 @@ There are also ways to benefit from compression without having to do it explicit
   I haven't personally tried it.
 
 * Data access layer (DAL)
-Map: [[https://beepb00p.xyz/myinfra.html#dal][data access layer]].
+:PROPERTIES:
+:CUSTOM_ID: dal
+:END:
+Map: [[file:myinfra.org::#dal][data access layer]].
 
 As I [[#design][mentioned]], all that DAL does is maps raw data (saved on the disk by the [[#export_layer][export layer]]) onto abstract objects making it easier to work with in your programs. "Layer" sounds a bit intimidating and enterprisy but usually it's just a single short script.
 
@@ -623,6 +724,10 @@ Just as a reminder what we get as a result:
   Keeping raw data makes them trivial
 
 ** performance concerns
+:PROPERTIES:
+:CUSTOM_ID: dal_performance
+:END:
+
 A natural question is: if you run through all your data snapshots each time you access it, wouldn't it be too slow?
 
 First, it's somewhat similar to the worries about the [[#disk_space][disk space]]. Data grows at the quadratic rate; and while processing power doesn't seem to follow Moore's law anymore there is still some potential to scale horizontally and use multiple threads. In practice, for most data sources that I use this process is almost instantaneous without parallelizing anyway.
@@ -630,9 +735,12 @@ First, it's somewhat similar to the worries about the [[#disk_space][disk space]
 In addition:
 
 - if you're using iterators/generators/coroutines (e.g. [[https://github.com/karlicoss/rexport/blob/874e6116bfba8cbd63fa3b4d93810a1488cb8464/dal.py#L130-L136][example]]), that overhead will be amortized and basically unnoticeable
-- you can still use caching. Just make sure it doesn't involve boilerplate or cognitive overhead to use. E.g. [[https://beepb00p.xyz/unnecessary-db.html#cachew_cachew][cachew]].
+- you can still use caching. Just make sure it doesn't involve boilerplate or cognitive overhead to use. E.g. [[file:unnecessary-db.org::#cachew_cachew][cachew]].
 
 ** examples
+:PROPERTIES:
+:CUSTOM_ID: dal_examples
+:END:
 #+name: dal_messenger
 #+begin_noop
 Example: [[https://github.com/karlicoss/fbmessengerexport/blob/a8f65a259dfa36ab6d175461994356947ded142a/model.py#L27-L47][DAL for Facebook Messenger]] knows how to read messages from the database on your disk, access certain fields (e.g. message body) and how to handle obscure details like converting timestamps to =datetime= objects. 
@@ -642,29 +750,41 @@ Example: [[https://github.com/karlicoss/fbmessengerexport/blob/a8f65a259dfa36ab6
 
 You can find more specific examples along with the motivation and explanations here:
 
-- [[https://beepb00p.xyz/unnecessary-db.html#example_reddit][Reddit]]
-- [[https://beepb00p.xyz/unnecessary-db.html#relational][Instapaper/Endomondo]]
-- [[https://beepb00p.xyz/unnecessary-db.html#maintaining][Pocket]]
-- [[https://beepb00p.xyz/unnecessary-db.html#example_chrome][Chrome]]
+- [[file:unnecessary-db.org::#example_reddit][Reddit]]
+- [[file:unnecessary-db.org::#relational][Instapaper/Endomondo]]
+- [[file:unnecessary-db.org::#maintaining][Pocket]]
+- [[file:unnecessary-db.org::#example_chrome][Chrome]]
 
 * Automating exports
+:PROPERTIES:
+:CUSTOM_ID: automatic_exports
+:END:
+
 In my opinion, it's absolutely essential to automate data exports when possible. 
 You really don't want to think about it and having a recent version of your data motivates you to actually use it, otherwise there is much less utility.
 
 In addition, it serves as a means of backup, so you don't have to worry about what happens if the service ceases to exist.
 
 ** scheduling
+:PROPERTIES:
+:CUSTOM_ID: scheduling
+:END:
+
 I run most of my data exports at least daily.
 
-I wrote a whole [[https://beepb00p.xyz/scheduler.html][post]] on scheduling and job running with respect to the personal infrastructure. In short:
+I wrote a whole [[file:scheduler.org][post]] on scheduling and job running with respect to the personal infrastructure. In short:
 
-- on desktop: at the moment, I'm mostly using cron (to be more specific, [[https://beepb00p.xyz/scheduler.html#fcron][fcron]]).
+- on desktop: at the moment, I'm mostly using cron (to be more specific, [[file:scheduler.org::#fcron][fcron]]).
 
-  I'm still [[https://beepb00p.xyz/scheduler.html#solution][thinking]] of an alternative, but overall using cron is okay.
+  I'm still [[file:scheduler.org::#solution][thinking]] of an alternative, but overall using cron is okay.
 
-- on Android phone: [[https://beepb00p.xyz/scheduler.html#phone][I'm using Automate app and cron]]
+- on Android phone: [[file:scheduler.org::#phone][I'm using Automate app and cron]]
 
 ** arctee
+:PROPERTIES:
+:CUSTOM_ID: arctee
+:END:
+
 This is a [[https://github.com/karlicoss/arctee][wrapper script]] I'm using to run most of my data exports.
 
 Many things are very common to all data exports, regardless of the source.
@@ -693,6 +813,10 @@ That said, it feels kind of wrong having an extra script for all these things si
 
 
 * --
+:PROPERTIES:
+:CUSTOM_ID: fin
+:END:
+
 Approaches that I described here have worked pretty well for me so far. It feels fairly composable, flexible and easy to maintain.
 
 I'm sharing this because I would *really* like to make it accessible to more people, so they can also benefit from using their data.

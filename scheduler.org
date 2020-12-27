@@ -2,11 +2,11 @@
 #+filetags: :infra:
 #+upid: scheduler
 
-To support my [[https://beepb00p.xyz/tags.html#infra][personal infrastructure]], I need a fair amount of regular automatic jobs:
+To support my [[file:tags.org::#infra][personal infrastructure]], I need a fair amount of regular automatic jobs:
 
-- for exporting [[https://beepb00p.xyz/my-data.html][my personal data]] from the cloud
-- for generating [[https://beepb00p.xyz/orger.html][plaintext]] views of my digital trace
-- for updating my [[https://beepb00p.xyz/orger-todos.html][todo lists]]
+- for exporting [[file:my-data.org][my personal data]] from the cloud
+- for generating [[file:orger.org][plaintext]] views of my digital trace
+- for updating my [[file:orger-todos.org][todo lists]]
 - updating [[https://github.com/karlicoss/promnesia#demo][promnesia]] index
 - lots of other backups and supplementary scripts
 
@@ -21,6 +21,10 @@ I'm sure there will be some aspects I'm missing out on, more specific to industr
 #+toc: headlines 2
 
 * [[https://en.wikipedia.org/wiki/Cron][cron]]
+:PROPERTIES:
+:CUSTOM_ID: cron
+:END:
+
 *Pros*:  
 
 - once you get used to the cron scheduling syntax, it's very easy to actually add new jobs.
@@ -61,6 +65,10 @@ Cron has some variations that help with some of these problems:
     - [[http://fcron.free.fr/doc/en/fcrontab.5.html#FCRONTAB.5.EXESEV][~exesev~]] to prevent multiple instances of the same job (although it doesn't treat it as error)
 
 * [[https://en.wikipedia.org/wiki/Systemd][systemd]] / [[https://en.wikipedia.org/wiki/Launchd][launchd]]
+:PROPERTIES:
+:CUSTOM_ID: systemd
+:END:
+
 Disclaimer: I'm not very familiar with Mac OS, but as far as I understand, launchd is very similar to systemd.
 
 Systemd is very powerful and flexible, supports timers, dependencies, restart policies, monitoring, logging, etc.
@@ -106,6 +114,9 @@ Systemd is very powerful and flexible, supports timers, dependencies, restart po
 Systemd feels like something desirable when scheduling services is your full time job, but not for personal scripts when everything is a bit more chaotic.
 
 * What do I need?
+:PROPERTIES:
+:CUSTOM_ID: what_do_i_want
+:END:
 I feel a serious lack of user-friendly job scheduling software for *personal* needs. I want it to be:
 
 - *possible for regular people* to use
@@ -154,6 +165,10 @@ I feel a serious lack of user-friendly job scheduling software for *personal* ne
   Currently, I'm using [[https://wiki.archlinux.org/index.php/Mutt][mutt]] for that which is fine, but TODO
 
 * Alternative schedulers
+:PROPERTIES:
+:CUSTOM_ID: other
+:END:
+
 Some of the tools I tried, none of which really satisfied me:
 
 - [[https://github.com/mesos/chronos][mesos/chronos]]: too heavyweight to use personally
@@ -189,6 +204,10 @@ Some of the tools I tried, none of which really satisfied me:
 Sadly, most of them are pretty heavy: often distributed, aiming at orchestrating clusters and grids, which is quite an overkill for my humble personal needs.
 
 * Solution?
+:PROPERTIES:
+:CUSTOM_ID: solution
+:END:
+
 [[#systemd][Systemd]] feels almost perfect except for its boilerplate and being somewhat user-unfriendly.
 
 What if we took the good bit that cron has (easy means of editing jobs), and tried to do the same within systemd?
@@ -219,14 +238,22 @@ This doesn't have to be a replacement or something, =systemdtab= can manage its 
 One tool in a similar spirit is [[https://github.com/systemd-cron/systemd-cron][systemd-cron/systemd-cron]], but it simply maps existing cron job specs into systemd jobs. This seems very useful if you're trying to transition, but doesn't help with my [[#what_do_i_want][needs]]..
 
 ** dron
+:PROPERTIES:
+:CUSTOM_ID: dron
+:END:
+
 [2020-01-26]   
 
 After writing this post, I realized that even if there are no existing tools, the shortcomings of systemd might be fairly easy to overcome. So I hacked together [[https://github.com/karlicoss/dron][dron]].
 
 * Phone jobs?
+:PROPERTIES:
+:CUSTOM_ID: phone
+:END:
+
 That's another problem I sort of solved for myself, but not fully satisfied.
 
-I need to export app data regularly from my (rooted) Android phone (e.g. see [[https://beepb00p.xyz/my-data.html#bluemaestro][here]]). Export scripts themselves are trivial, it's just a matter of copying files from =/data/data/= directory. However, there is no software for Android to run these scripts regularly.
+I need to export app data regularly from my (rooted) Android phone (e.g. see [[file:my-data.org::#bluemaestro][here]]). Export scripts themselves are trivial, it's just a matter of copying files from =/data/data/= directory. However, there is no software for Android to run these scripts regularly.
 
 At the moment, I'm using [[https://llamalab.com/automate][Automate app]] to run them. Automate is great, but it feels a bit wrong running a shell script using a complex flowchart, so I'd be interested to know if there are simpler alternatives.
 
@@ -235,6 +262,10 @@ Ideally, it would be a simple app that allows running shell scripts at regular i
  Please let me know if you know one!
 
 ** cron?
+:PROPERTIES:
+:CUSTOM_ID: android_cron
+:END:
+
 Thanks to a commenter who [[https://beepb00p.xyz/scheduler.html#isso-103][suggested]] that [[https://play.google.com/store/apps/details?id=com.termux][Termux]] got cron daemon. I tried it out, and it works!
 
 The downsides are:
@@ -249,6 +280,10 @@ The downsides are:
 - I'm not sure how it behaves with respect to the power saving mode, etc. Ideally you'd want it to integrate with [[https://developer.android.com/reference/android/app/job/JobScheduler][JobScheduler]] Android APIs.
 
 * --
+:PROPERTIES:
+:CUSTOM_ID: fin
+:END:
+
 Updates:
 
 - [2020-01-19] added section on [[huginn][huginn]]

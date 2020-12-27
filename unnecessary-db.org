@@ -1,12 +1,12 @@
 #+summary: Parse, don't normalize
 #+filetags: :infra:dataliberation:cachew:
 #+upid: against_db
-In my previous post about the [[https://beepb00p.xyz/my-data.html][data I collect]], I mentioned numerous scripts I implemented, to export my personal data from the cloud, locally.
+In my previous post about the [[file:my-data.org][data I collect]], I mentioned numerous scripts I implemented, to export my personal data from the cloud, locally.
 
 In this post, I want to start sharing some of the design principles I discovered for making these scripts *robust, generic and flexible*.
-This is part of a series on building your own [[https://beepb00p.xyz/sad-infra.html#data_mirror]['data mirror']], and there are also more posts to follow!
+This is part of a series on building your own [[file:sad-infra.org::#data_mirror]['data mirror']], and there are also more posts to follow!
 
-Once you've managed to get through [[https://beepb00p.xyz/sad-infra.html#exports_are_hard][various difficulties]] and retrieve your data from the cloud, you want to persist it on the disk.
+Once you've managed to get through [[file:sad-infra.org::#exports_are_hard][various difficulties]] and retrieve your data from the cloud, you want to persist it on the disk.
 
 If the exported data is already in an sqlite database, that's great (lucky you!). Keep it and don't let go 🙃
 
@@ -48,7 +48,7 @@ Now before someone thinks I'm some sort of weirdo database hater, I want to make
 
 - I want to argue about this not because I don't like databases/SQL or any other personal preferences
 
-  Quite the opposite, *I wish I could run SQL queries against Instapaper's or Twitter's servers*. Needless to say, it's [[https://beepb00p.xyz/sad-infra.html#why][not quite the way things work]].
+  Quite the opposite, *I wish I could run SQL queries against Instapaper's or Twitter's servers*. Needless to say, it's [[file:sad-infra.org::#why][not quite the way things work]].
 
   I want to argue on this point because I feel like an unnecessary use of databases is a source of friction for implementing, and more importantly, maintaining your personal data exports, and [[#api_extended][restricts you]] from using your data to the full capacity when you want it.
 
@@ -57,6 +57,10 @@ My main claim is that for personal data, databases have benefits as a means of *
 #+toc: headlines 2
 
 * What do you suggest?
+:PROPERTIES:
+:CUSTOM_ID: asis
+:END:
+
 Before I jump into explaining what's my problem with databases, let me summarize my current approach, so that it's clear what I'm suggesting as an alternative.
 
 Liberating your data involves fairly different, if not complementary, parts (or 'layers'):
@@ -85,6 +89,10 @@ My suggestions are:
 And as a specific example:
 
 ** example: Reddit export
+:PROPERTIES:
+:CUSTOM_ID: example_reddit
+:END:
+
 [[https://github.com/karlicoss/rexport][rexport]] is a script to export user's Reddit data like saved post/comments/submissions and upvotes.
 
 - export layer
@@ -117,6 +125,10 @@ And as a specific example:
 
   One annotation, that's it. Look ma, no SQL! Okay, okay, there is quite a bit of SQL involved, but it's all hidden inside [[https://github.com/karlicoss/cachew#how-it-works][cachew]]. It would also work for any other source of personal data.
 * Databases are good
+:PROPERTIES:
+:CUSTOM_ID: databases_good
+:END:
+
 In this section, I'll present typical arguments *for* using databases, and will try to argue, that in most circumstances (for keeping personal data), the benefits are not pragmatic and not worth [[#databases_hard][the tradeoffs]].
 
 Note that generally, databases have numerous other benefits, however, I'll emphasize again, here I'm only considering aspects that are relevant to *personal data storage*.
@@ -124,6 +136,9 @@ Note that generally, databases have numerous other benefits, however, I'll empha
 When I say 'database' here, I typically mean Sqlite, which is most commonly used for personal data, although specific database, relational or not, shouldn't matter.
 
 ** take less space
+:PROPERTIES:
+:CUSTOM_ID: space
+:END:
 Yes, however in most cases your data export will take few megabytes anyway. If you compress it, it's hundreds of kilobytes.
 
 Storage saved by using a database instead of plaintext is marginal and not worth the effort.
@@ -136,11 +151,17 @@ Only exceptions I can think of are:
   If you have a minute by minute stream of *uniform data*, a database is probably the way to go.
 
 ** efficient data access
+:PROPERTIES:
+:CUSTOM_ID: performance
+:END:
 The same point applies as in the [[#space][previous section]]. If a your data export contains several thousand items, you won't notice the difference.
 
 In addition, there are [[#cachew][ways]] of getting most of the database benefits without having to sacrifice simplicity and without writing SQL boilerplate.
 
 ** query language
+:PROPERTIES:
+:CUSTOM_ID: sql
+:END:
 SQL is extremely powerful and helps you to interact with your data without distracting on low-level retrieval details.
 
 That's a very good point, but query language doesn't necessarily mean a database. 
@@ -153,6 +174,9 @@ And finally, nothing prevents you from providing a database as an [[#cachew][add
 *Example*: exposing [[https://github.com/karlicoss/my/blob/6787c9c0d6a6e0aff49565cf299464a7a9b40e9f/my/jawbone/__init__.py#L267-L280][jawbone sleep data]] as a dataframe.
 
 ** SQL rows are a better 'data interface' than JSON
+:PROPERTIES:
+:CUSTOM_ID: rows
+:END:
 That's kind of a subjective point (although I'd rather agree).
 
 However, raw rows, while good enough for simple queries, can only get you so far.
@@ -187,6 +211,9 @@ We're comparing two options:
 Note that you have fewer steps if you follow the first approach. And it's not only about the time saved on implementing: the less you transform the data, the less the chance you screw something up. I'll elaborate with a specific example of a royal screw up [[#example_chrome][later]].
 
 ** types and constraints
+:PROPERTIES:
+:CUSTOM_ID: constraints
+:END:
 Even though schemas in Sqlite are annotated with types, that *doesn't give you strong typing guarantees in runtime*, a concept that is gently called [[https://www.sqlite.org/quirks.html#flexible_typing][*"flexible typing"*]]. In other words, your data is implicitly coerced which may be convenient but might cause some unanticipated failures later.
 
 SQL [[https://www.tutorialspoint.com/sql/sql-check.htm][constraints]] are a potentially great way to guarantee intrinsic consistency of your data.
@@ -208,6 +235,9 @@ The alternative I suggest, storing raw data as is, means that at least:
 - you will massively save on your time and mental resources
 
 ** easy to map onto any language
+:PROPERTIES:
+:CUSTOM_ID: easy_bindings
+:END:
 That's a good point, also somewhere along the lines of [[#rows]['better data interfaces']].
 
 Exporting data is one part, and it doesn't particularly matter who implemented it and how, as long as it works for you.
@@ -227,9 +257,15 @@ I write in Python, so hopefully, it's covering enough people.
 That said, I'll repeat my point that you can still use a database [[#cachew][as an intermediate layer]], without relying on it as a primary data storage. 
 
 * Databases are hard
+:PROPERTIES:
+:CUSTOM_ID: databases_hard
+:END:
 Now let's go through things that directly make databases hard.
 
 ** relational model
+:PROPERTIES:
+:CUSTOM_ID: relational
+:END:
 These days we often just say 'database' when we mean [[https://en.wikipedia.org/wiki/Relational_database]['relational database]]'. 
 Relational databases can be vaguely thought of as "a set of tables, each table storing typed data tuples".
 Such simplicity allows for query language expressiveness and enables the optimizer to reason about data retrieval.
@@ -238,6 +274,9 @@ At the same time, this simplicity is a curse and imposes structure that might be
 Often, the relational model requires you to rearrange data before inserting, which might break data consistency.
 
 *** Examples
+:PROPERTIES:
+:CUSTOM_ID: relational_examples
+:END:
 - Imagine you want to export your Instapaper bookmarks.
 
   API offers you a [[https://www.instapaper.com/api][=/bookmarks/list=]] method, that lists user's bookmarks.
@@ -260,11 +299,18 @@ Often, the relational model requires you to rearrange data before inserting, whi
   - in separate tables, with timestamps as the primary keys? Then you'd need to refer to them as 'timestamp ranges' which would make it pretty tedious to insert and access.
 
 ** coming up with a schema
+:PROPERTIES:
+:CUSTOM_ID: schema
+:END:
 Kind of similar to the points on [[#constraints][types]] and the [[#relational][relational model]], often you need first-hand knowledge of the API to come up with a correct and reasonable schema.
 
 Schemas use a fixed number of fields, which requires you to scrupulously inspect the data and make sure you've covered everything by your schema.
 
 ** maintaining
+:PROPERTIES:
+:CUSTOM_ID: maintaining
+:END:
+
 Inevitably, APIs change and extend, often without you knowing that (or not having time to follow the API news).
 If the API starts returning more data, that means the database scheme needs to change.
 
@@ -281,6 +327,10 @@ Depending on the way you implemented it, that means one of two things:
 
 Consider the following scenarios and how we handle them:
 *** API is extended, i.e. returns more data
+:PROPERTIES:
+:CUSTOM_ID: api_extended
+:END:
+
 Let's consider a specific example, Pocket API.      
 
 At the moment it only lets you access your 'articles', i.e. URLs you bookmarked to Pocket.
@@ -326,6 +376,10 @@ The alternative [[#asis][I suggest]] is keeping raw data and dealing normalizing
   Modifying code is way easier than messing with databases and modifying the data.
 
 *** API breaks backward compatibility
+:PROPERTIES:
+:CUSTOM_ID: api_backward
+:END:
+
 Imagine that for some reason [[#example_reddit][Reddit API]] started returning [[https://en.wikipedia.org/wiki/ISO_8601][isoformatted]] date strings instead of epochs (i.e. =20200126T19:43:21Z= instead of =1580067801=).
 
 Your existing ~Comment~ table assumed ~INTEGER~ for the comment creation date. Suddenly you started receiving strings, which Sqlite can't handle anymore.
@@ -345,6 +399,10 @@ In contrast, if you [[#asis][keep raw data]]:
 Database migrations are very hard, and you want to avoid them at all costs.
 
 * Append, don't modify
+:PROPERTIES:
+:CUSTOM_ID: append
+:END:
+
 When it comes to exporting data, there are two very different cases:
 
 - you can access all data at once
@@ -421,8 +479,12 @@ This is not a new approach and a common software engineering practice:
 I've already mentioned that regarding [[#example_reddit][Reddit]] a few times, but let me illustrate the 'inconsistency' aspect with a more specific example:
 
 ** Example: Chrome history
+:PROPERTIES:
+:CUSTOM_ID: example_chrome
+:END:
+
 As I mentioned, Chrome only keeps the history for the last 90 days.
-Imagine you want to retain all your past browsing history. And no, you [[https://beepb00p.xyz/./takeout-data-gone.html][can't rely on Takeout]] for that, or you might not be using Google at all.
+Imagine you want to retain all your past browsing history. And no, you [[file:./takeout-data-gone.html][can't rely on Takeout]] for that, or you might not be using Google at all.
 
 So you want a script that exports your history, say, every week and maintains full browsing history over the years.
 
@@ -567,6 +629,10 @@ When we update the database, we use something like:
 Note that by the time you do realize that and fix it, you may have already lost (and even worse, corrupted) older history.
 
 *** An alternative
+:PROPERTIES:
+:CUSTOM_ID: chrome_dal
+:END:
+
 According to what I suggest:
 
 - export script is a matter of copying =Profile/History= database along with a timestamp. E.g. if we do it weekly, we end up with:
@@ -597,11 +663,19 @@ According to what I suggest:
   Again, an obvious downside is that in runtime, it might take several minutes to assemble the full history (although that may be acceptable, depending on your usecase). And that makes sense to try and use a database for [[#cachew][intermediate caching]]; just don't rely on it for primary data storage.
 
 * Appendix: when you really really want a database
+:PROPERTIES:
+:CUSTOM_ID: cachew
+:END:
+
 As I mentioned so many times, databases are actually great for caching, as they can persist data in between program's runs.  
 
 After noticing similar similar database access patterns used all over again, I realized that it's possible to isolate the complexity and boilerplate in a separate Python library, [[https://github.com/karlicoss/cachew#motivation][cachew]].
 
 ** cachew
+:PROPERTIES:
+:CUSTOM_ID: cachew_cachew
+:END:
+
 TLDR: cachew lets you *cache function calls* into an sqlite database on
 your disk in a matter of *single decorator* (similar to
 [[https://docs.python.org/3/library/functools.html#functools.lru_cache][=functools.lru_cache=]]).
@@ -631,6 +705,10 @@ In essence, filenames along with their modification times are used as the key fo
 - in between data updates, data is read straight from the cache and  the access is pretty much instantaneous: [[#performance][databases are indeed fast]]
 
 * --
+:PROPERTIES:
+:CUSTOM_ID: fin
+:END:
+
 The post subtitle refers to an excellent article [[https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate]["Parse, don't validate"]].
 It's on a different topic, but in a somewhat similar spirit: making our programs more robust while writing less code.
 

@@ -17,6 +17,10 @@ This article got long enough, I also didn't want to mix discussions on motivatio
 #+macro: green      @@html:<span style='color:green'  >$1</span>@@
 
 * Intro: your data is trapped
+:PROPERTIES:
+:CUSTOM_ID: data_is_trapped
+:END:
+
 Note: for clarity, I will use * to refer to anything holding your data* and manipulating it, whether it's a website, phone app or a device (i.e. not necessarily something having an online presence).
 
 On one hand, in 2019 things are pretty great. 
@@ -54,11 +58,15 @@ You are completely at the mercy of service's developers and management.
 Personal data is in a sad state these days. Let me elaborate.
 
 * Why does it bother me?
+:PROPERTIES:
+:CUSTOM_ID: why
+:END:
+
 #+html: <style> #why ~ .outline-3 li p:not(:first-child)  { color: #666; } </style>
 
 To be fair, I don't understand how does it *not* bother you!
 
-To start with, allow me to quote [[https://beepb00p.xyz/orger.html#intro][myself]] here:
+To start with, allow me to quote [[file:orger.org::#intro][myself]] here:
 
 #+begin_quote
 I consume lots of digital content (books, articles, Reddit, Youtube, Twitter, etc.) and most of it I find somewhat useful and insightful.
@@ -68,7 +76,7 @@ It would be cool to be capable of always remembering and instantly recalling inf
 Until we get augmented though, there are two options: the first is just to suck it up and live with it. You might have guessed this is not an option I'm comfortable with.
 
 The second option is compensating for your sloppy meaty memory and having information you've read at hand and a quick way of searching over it. 
-(see [[https://beepb00p.xyz/tags.html#extendedmind][#extendedmind]])
+(see [[file:tags.org::#extendedmind][#extendedmind]])
 
 <<motivation>>
 That sounds simple enough but as with many simple things, in practice you run into obstacles. 
@@ -76,7 +84,7 @@ I'll give some I've personally been overcoming as examples:
 
 - convenience of access, e.g.:
   - to access highlights and notes on my Kobo ebook I need to actually *reach my reader and tap through e-ink* touch screen. Not much fun!
-  - if you want to search over annotations in your PDF collections... well good luck, I'm just not aware of such a tool. It's actually way worse: many PDF viewers *wouldn't even let you search in highlights* within the file you're currently viewing. (see PDF readers [[https://beepb00p.xyz/./annotating.html#pdfs][overview]])
+  - if you want to search over annotations in your PDF collections... well good luck, I'm just not aware of such a tool. It's actually way worse: many PDF viewers *wouldn't even let you search in highlights* within the file you're currently viewing. (see PDF readers [[file:./annotating.html#pdfs][overview]])
   - there is no easy way to quickly access all of your twitter favorites, people suggest using hacks like [[https://webapps.stackexchange.com/a/131374/68104][autoscroll extension]].
 
 - searching data, e.g.:
@@ -91,7 +99,7 @@ I'll give some I've personally been overcoming as examples:
 
   - 99% of services *don't have support for offline mode*. This may be just a small inconvenience if you're on a train or something, but there is more to it.
     What if some sort of apocalypse happens and you lose all access to data? 
-    That depends on your paranoia level of course, and apocalypse is bad enough as it is, but my take on it is that at least I'd have my data :) (see [[https://beepb00p.xyz/tags.html#offline][#offline]])
+    That depends on your paranoia level of course, and apocalypse is bad enough as it is, but my take on it is that at least I'd have my data :) (see [[file:tags.org::#offline][#offline]])
 
   - if you delete a book on Kobo, not only you can't access its annotations anymore, but they seem to get *wiped* from the database.
 #+end_quote
@@ -101,6 +109,9 @@ As you can see, my main frustrations are around the lack of the very basic thing
 I'll carry on, just listing some examples. Let's see if any of them resonate with you:
 
 ** search and information access
+:PROPERTIES:
+:CUSTOM_ID: why_search
+:END:
 - Why can't I search over all of my personal chat history with a friend, whether it's ICQ logs from 2005 or Whatsapp logs from 2019?
 - Why can't I have incremental search over my tweets? Or browser bookmarks? Or over everything I've ever typed/read on the Internet?
 - Why can't I search across my watched youtube videos, even though most of them have subtitles hence allowing for full text search?
@@ -109,6 +120,9 @@ I'll carry on, just listing some examples. Let's see if any of them resonate wit
   It's just a matter of extracting links to maps from the chat apps and generating a list of coordinates. It's got to be trivial.
 
 ** productivity
+:PROPERTIES:
+:CUSTOM_ID: why_productivity
+:END:
 - Why can't my Google Home add shopping list items to Google Keep? Let alone other todo-list apps.
 
   Instead, it puts them in a completely separate product, [[https://shoppinglist.google.com][Shopping list]].
@@ -121,6 +135,9 @@ I'll carry on, just listing some examples. Let's see if any of them resonate wit
   Instead, these apps *actively prevent* me from using builtin Android share functions (because it means leaving the app presumably).
 
 ** journaling and history
+:PROPERTIES:
+:CUSTOM_ID: why_journalling
+:END:
 - Why do I have to lose all my browser history if I decide to switch browsers?
 
   Even when you switch between major ones like Chrome/Firefox. Let alone for less common alternatives.
@@ -136,6 +153,9 @@ I'll carry on, just listing some examples. Let's see if any of them resonate wit
 - Why can't I easily transfer all my books and metadata if I decide to switch from Kindle to PocketBook or vice versa?
 
 ** consuming digital content
+:PROPERTIES:
+:CUSTOM_ID: why_content
+:END:
 - Why can't I see stuff I highlighted on Instapaper as an overlay on top of web page?
 
   [[https://hypothes.is][Hypothes.is]] and plenty other services can do it, so it's a solved problem, right?
@@ -162,7 +182,10 @@ I'll carry on, just listing some examples. Let's see if any of them resonate wit
 - [2019-12-15 05:35] Why my otherwise perfect hackernews [[https://play.google.com/store/apps/details?id=io.github.hidroh.materialistic][app for Android]] doesn't share saved posts/comments with the website?
 
 ** health and body maintenance
-Aka [[https://beepb00p.xyz/tags.html#quantified-self][#quantified-self]].
+:PROPERTIES:
+:CUSTOM_ID: why_health
+:END:
+Aka [[file:tags.org::#quantified-self][#quantified-self]].
 
 - Why can't I tell if I was more sedentary than usual during the past week and whether I need to compensate by doing a bit more exercise?
 
@@ -188,16 +211,28 @@ Aka [[https://beepb00p.xyz/tags.html#quantified-self][#quantified-self]].
 - Why can't I run a short snippet of code and check some random health advice on the Internet against *my* health data.
 
 ** personal finance
+:PROPERTIES:
+:CUSTOM_ID: why_pfinance
+:END:
 - Why am I forced to manually copy transactions from different banking apps into a spreadsheet?
 - Why can't I easily match my Amazon/Ebay orders with my bank transactions?
 ** why I can't do anything when I'm offline or have a wonky connection?
-Aka [[https://beepb00p.xyz/tags.html#offline][#offline]].
+:PROPERTIES:
+:CUSTOM_ID: why_offline
+:END:
+Aka [[file:tags.org::#offline][#offline]].
 On one hand it's less and less of an issue as the Internet gets more reliable.
 On the other if you start relying on it too much, it's becoming more and more of a single point of failure.
 ** tools for thinking and learning
+:PROPERTIES:
+:CUSTOM_ID: why_thinking
+:END:
 - Why when something like [[https://en.wikipedia.org/wiki/Method_of_loci]['mind palace']] is *literally possible* with VR technology, we don't see any in use?
 - Why can't I easily convert select Instapaper highlights or new foreign words I encountered on my Kindle into Anki flashcards?
 ** mediocre interfaces
+:PROPERTIES:
+:CUSTOM_ID: why_uis
+:END:
 - Why do I have to suffer from poor management and design decisions in UI changes, even if the interface is not the main reason I'm using the product?
 - Why can't I leave priorities and notes on my saved Reddit/Hackernews items?
 
@@ -210,14 +245,24 @@ On the other if you start relying on it too much, it's becoming more and more of
   Not to undervalue Inbox developers, but fundamentally it's *just* a different interface.
   I'm sure there are plenty of engineers who would happily support it in their spare time if only they had access to the APIs.
 ** communication and collaboration
+:PROPERTIES:
+:CUSTOM_ID: why_social
+:END:
 - Why can't I easily share my web or book highlights with a friend? Or just make highlights in select books public?
 - Why can't I easily find out other person's expertise without interrogating them, just by looking what they read instead?
 ** backups
+:PROPERTIES:
+:CUSTOM_ID: why_backups
+:END:
 - Why do I have to think about it and actively invest time and effort?
 
   What about regular people who *have no idea* how unreliable computers can be and might find out the hard way?
 
 ** --
+:PROPERTIES:
+:CUSTOM_ID: why_fin
+:END:
+
 I think all of this is pretty sad. Note that I haven't mentioned any mad science fiction stuff like tapping directly into the brain (as much as I wish it was possible).
 All these things are totally doable with the *technology we already possess*.
 
@@ -232,6 +277,9 @@ Imagine if all of this was on your fingertips? If you didn't have to think about
 If you could let computers handle the boring bits of your life and spend time on fun and creative things?
 
 * Your data is vanishing
+:PROPERTIES:
+:CUSTOM_ID: data_is_vanishing
+:END:
 Things I listed above are frustrating enough as they are.
 There is another aspect to this: your data is *slipping away*.
 
@@ -239,7 +287,7 @@ Privacy concerns are important and it's understandable when people are pissed ab
 
 However, oftentimes the opposite is the case and you find that your data is gone or very hard to access:
 
-- Google Takeout data, that is, all your browser activity, Youtube watch history, etc., are only kept by Google for [[https://beepb00p.xyz/./takeout-data-gone.html][few years]]
+- Google Takeout data, that is, all your browser activity, Youtube watch history, etc., are only kept by Google for [[file:./takeout-data-gone.html][few years]]
 
   If you only began exporting it today, chances are you've already lost some of your history.
 
@@ -281,10 +329,13 @@ And a bit more:
 
   This one is particularly bad.
 
-If you consider your digital trace [[https://beepb00p.xyz/tags.html#extendedmind][part of yourself]], this is completely unacceptable. But sadly it's happening all the time.
+If you consider your digital trace [[file:tags.org::#extendedmind][part of yourself]], this is completely unacceptable. But sadly it's happening all the time.
 You *can't rely on third parties* to keep it safe.
 
 * What do I want?
+:PROPERTIES:
+:CUSTOM_ID: what_do_i_want
+:END:
 I want all these inconveniences somehow solved, but I live in the real world and it's not gonna magically happen.
 So let me be more specific: I argue that one *major* reason these tools and integration I want don't exist is that people don't have easy uniform access to their data in the first place.
 
@@ -313,6 +364,9 @@ Whether it's plaintext, sqlite or some sort of binary data -- doesn't matter, al
 As you've probably noticed, it's almost never the case that you have your personal data locally at hand. You need to spend extra effort to achieve this.
 
 * So what's the problem?
+:PROPERTIES:
+:CUSTOM_ID: exports_are_hard
+:END:
 Hopefully we can agree that the current situation isn't so great.
 But I am a software engineer. And chances that if you're reading it, you're very likely a programmer as well. Surely we can deal with that and implement, right?
 
@@ -332,6 +386,10 @@ Even if you have the capacity and are willing to do it, it's still damn hard.
 You're gonna have to deal with the following problems:
 
 ** authorization
+:PROPERTIES:
+:CUSTOM_ID: auth
+:END:
+
 That's where it all starts with and it's a mess.
 
 - easiest scenario: the service lets you generate an API token from its settings and you can just use it. Example: [[https://pinboard.in][pinboard]]
@@ -368,6 +426,10 @@ That's where it all starts with and it's a mess.
   All the 'worst' scenarios are extremely flaky and basically impossible for nonprogrammers to use.
 
 ** pagination
+:PROPERTIES:
+:CUSTOM_ID: pagination
+:END:
+
 Whether you're using API or not, typically you'll have to retrieve multiple chunks of data and merge them after.
 
 In principle, it's not hard to implement it on a one off basis, but unclear how to do it in some universal way because there is no common standard.
@@ -376,6 +438,9 @@ Pages might be addressed by page numbers and counts, offsets from start/end of d
 
 It's quite error prone: content might change under your feet, and if the API developers or you are not careful, you might end up with missing data or even some logical corruption.
 ** consistency
+:PROPERTIES:
+:CUSTOM_ID: consistency
+:END:
 If you simply start fetching a json and writing to disk, you'd very quickly end up with a corrupt file on the first network failure.
 You've gotta be really careful and ensure atomic writing and updating.
 
@@ -383,6 +448,10 @@ Even if you work around the atomicity issues, chances are you won't be able to g
 and the data is changing as you retrieve it.
 
 ** [[https://nordicapis.com/everything-you-need-to-know-about-api-rate-limiting][rate limiting]]
+:PROPERTIES:
+:CUSTOM_ID: ratelimit
+:END:
+
 No one likes their API hammered, fair enough.
 However, rate limits often vary from API endpoint to endpoint and are inherently tedious to get right.
 
@@ -391,6 +460,10 @@ If you're not using the API, you might get banned by DDOS prevention (e.g. Cloud
 Overall, painful and not fun to implement.
 
 ** error handling
+:PROPERTIES:
+:CUSTOM_ID: errorhandling
+:END:
+
 Authorization, network, serializing, parsing, storing, synchronizing. 
 There are among the most common error sources (as in, actual unrecoverable errors, not necessarily bugs) in software engineering. Generally, getting it right is required for reliably retrieving your data.
 
@@ -400,16 +473,28 @@ In addition, you want to be somewhat *semi-defensive*, and this is the hardest k
 - you want to make sure it only fails in completely unrecoverable scenarios, otherwise it's going to require constant tending
 - and you want to somehow let user know of problems/suspicious data
 ** documentation and discovery
+:PROPERTIES:
+:CUSTOM_ID: documentation
+:END:
+
 If you want *all* your data, you have to look carefully through all the documentation and make sure you've got it all covered.
 
 If the service adds some new endpoints, you might never find out.
 
 ** parsing
+:PROPERTIES:
+:CUSTOM_ID: parsing
+:END:
+
 For the most part not an issue, but some websites do not offer an API so you've got not choice but scraping and parsing HTML.
 
 Notorious example: some Hackernews (!) endpoints like 'favorites' are not exposed via [[https://github.com/HackerNews/API][API]].
 
 ** abstract representation
+:PROPERTIES:
+:CUSTOM_ID: abstract
+:END:
+
 Having raw export data (e.g. sqlite database/json file/etc) is nice, but to actually use it you need an abstract representation.
 You basically have to reinvent whatever the service developer does on the backend already. 
 
@@ -419,6 +504,10 @@ Notable examples:
 - which situations are valid, e.g. can id be used as a dictionary key, can you assume that they are increasing, etc.
 
 ** no access to data
+:PROPERTIES:
+:CUSTOM_ID: locked_in
+:END:
+
 Sometimes you have no way to access your data at all:
 
 - you are offline: nuff said
@@ -438,12 +527,20 @@ Sometimes you have no way to access your data at all:
 - Some devices/apps and formats are [[https://en.wikipedia.org/wiki/Vendor_lock-in][vendor locked]]
 
 ** --
+:PROPERTIES:
+:CUSTOM_ID: what_fin
+:END:
+
 Now, remember when I said it was tedious for programmers? 
 Constant boilerplate, shitty APIs (you're lucky if the service offers one at all), latency, flakiness, having to code defensively, etc. 
 
 Now think about ordinary people who have no clue what 'API' is.
 They deserve to use their data too.
 * How to make it easier: data mirror
+:PROPERTIES:
+:CUSTOM_ID: data_mirror
+:END:
+
 The way I see it, ideally the service you're using provides you with:
 
 - a *data mirror* app
@@ -489,6 +586,10 @@ But to be honest, we're so far away from that that even some small steps towards
 These suggestions would *decouple data from the UI* and let the community develop better tools for consuming and working with it.
 
 ** potential caveats
+:PROPERTIES:
+:CUSTOM_ID: caveats
+:END:
+
 - this might be *hard to support* for everyone
 
   On the other hand, service developers would have more control on data access patterns, so in a way it might work better.
@@ -514,6 +615,10 @@ These suggestions would *decouple data from the UI* and let the community develo
 Hopefully all of these issues would be solved by distributed/federated services, but we're pretty far from it.
 
 ** unsolved problems
+:PROPERTIES:
+:CUSTOM_ID: unsolved
+:END:
+
 - deleted content
 
   E.g. imagine you liked someone's post on Facebook, it got mirrored locally, and then the author removed the post.
@@ -542,6 +647,10 @@ Hopefully all of these issues would be solved by distributed/federated services,
   From a user's perspective not everyone wants the hassle of running things locally either and many people are happy with online services for the most part.
 
 * What do I do?
+:PROPERTIES:
+:CUSTOM_ID: what_do_i_do
+:END:
+
 Of course, I'm not expecting someone to come and implement all of this for me.
 I could start some sort of movement to demand it from services and platforms, but I hardly see myself as a good fit for that role.
 
@@ -551,9 +660,12 @@ Putting this in writing helped me motivate and summarize many technical and infr
 I'll be describing my setup in more detail in future posts, however here are some bits and pieces:
 
 ** regular data exports
+:PROPERTIES:
+:CUSTOM_ID: exports
+:END:
 This corresponds to the 'data mirror' bit.
 
-I [[https://beepb00p.xyz/my-data.html][exported/scraped/reverse engineered]] pretty much my entire digital trace and figured out automation and infrastructure which works for me.
+I [[file:my-data.org][exported/scraped/reverse engineered]] pretty much my entire digital trace and figured out automation and infrastructure which works for me.
 
 I've shared <a href='https://github.com/search?type=Repositories&q=user%3Akarlicoss+++topic%3Aexport'>some</a> of my personal export scripts and tools.
 
@@ -562,37 +674,54 @@ I also have some helper scripts to keep individual exporter's code as clean as p
 As I mentioned, I'll share all of this later in a separate post.
 
 ** python package to access data
+:PROPERTIES:
+:CUSTOM_ID: mypkg
+:END:
+
 Each data exporter comes with minimal bindings that merely map json/sqlite export into simple datatypes and data classes.
 
 That way anyone who wishes to use data can kick off some reasonable representation, which is not overfitted to my specific needs.
 
-Higher level querying and access, specific to myself is implemented in [[https://beepb00p.xyz/hpi.html#examples][my.]] package (note that this post is still in draft stage).
+Higher level querying and access, specific to myself is implemented in [[file:hpi.org::#examples][my.]] package (note that this post is still in draft stage).
 
 [[https://github.com/karlicoss/my][~my.~]] package allows me to query my data from anywhere, enabling me to use familiar data processing, analysis and visualization tools, and various integrations.
 
-As a nice byproduct I've also finally figured out a reliable and elegant way to deal with [[https://beepb00p.xyz/mypy-error-handling.html][error handling in Python]].
+As a nice byproduct I've also finally figured out a reliable and elegant way to deal with [[file:mypy-error-handling.org][error handling in Python]].
 
 ** how do I use the data?
+:PROPERTIES:
+:CUSTOM_ID: how_it_is_used
+:END:
 Finally, some tools and scripts I've implemented to make possible the interactions [[#why][that I want]]:
 
-- A [[https://beepb00p.xyz/pkm-search.html][personal search engine]] for quick incremental search of my data and digital trace
-- [[https://beepb00p.xyz/orger.html][orger]]: tool to convert data into org-mode views for instant and offline search and overview
-  - [[https://beepb00p.xyz/orger-todos.html#reddit][also]] for prioritizing content consumption (e.g. processing Reddit saves)
-  - [[https://beepb00p.xyz/orger-todos.html#krill][also]] for populating my spaced repetition queue
-  - [[https://beepb00p.xyz/orger-todos.html#telegram2org][also]] for creating TODOs straight from Telegram messages
-- [[https://beepb00p.xyz/./grasp.html][grasp]], browser extension to clip links straight into my org-mode notes
+- A [[file:pkm-search.org][personal search engine]] for quick incremental search of my data and digital trace
+- [[file:orger.org][orger]]: tool to convert data into org-mode views for instant and offline search and overview
+  - [[file:orger-todos.org::#reddit][also]] for prioritizing content consumption (e.g. processing Reddit saves)
+  - [[file:orger-todos.org::#krill][also]] for populating my spaced repetition queue
+  - [[file:orger-todos.org::#telegram2org][also]] for creating TODOs straight from Telegram messages
+- [[file:./grasp.html][grasp]], browser extension to clip links straight into my org-mode notes
 - [[https://github.com/karlicoss/promnesia][promnesia]], a browser extension to escape silos by unifying annotations and browsing history from different data sources (still somewhat WIP and needs final touches, but planning to release soon)
 - personal health, sleep and exercise dashboard, built from various data sources. I'm in the process of making it public, you can see some screenshots [[https://www.reddit.com/r/QuantifiedSelf/comments/cokt4f/what_do_you_all_do_with_your_data/ewmucgk][here]]
 
-I wrote how each specific data source I export contributes to my personal infrastructure [[https://beepb00p.xyz/my-data.html#why][here]].
+I wrote how each specific data source I export contributes to my personal infrastructure [[file:my-data.org::#why][here]].
 
 ** data availability
+:PROPERTIES:
+:CUSTOM_ID: sync
+:END:
 I'm synchronizing everything across my computers with [[https://syncthing.net][syncthing]].   
 
 ** backups
+:PROPERTIES:
+:CUSTOM_ID: backups
+:END:
 I'm simply using [[https://borgbackup.readthedocs.io/en/stable][borg backup]] against exported data, whether it's kept in json files or sqlite databases.
 
 * Related links
+:PROPERTIES:
+:CUSTOM_ID: links
+:END:
+
 - jborichevskiy: [[https://news.ycombinator.com/item?id=21659876][Digital Tools I Wish Existed (HN)]]
 - IndieWeb wiki on [[https://indieweb.org/silo][silos]]
 - Ink & Switch: [[https://www.inkandswitch.com/local-first.html][Local-first software: You own your data, in spite of the cloud]]
@@ -608,10 +737,17 @@ Attempts of resolving this sad state:
   #+end_quote
 
 * --
+:PROPERTIES:
+:CUSTOM_ID: fin
+:END:
+
 I'd be interested to know your opinion or questions, whether on my motivation, or particularities of my suggestions or implementation.
 
 Let me know if you can think of any other data integrations you are missing and perhaps we can think of something together!
 
 ** followups
-- *[2020-01-12]* [[https://beepb00p.xyz/my-data.html][What data on myself I collect and why?]]
-- *[2020-01-18]* [[https://beepb00p.xyz/scheduler.html][In search of a friendlier scheduler]]
+:PROPERTIES:
+:CUSTOM_ID: followups
+:END:
+- *[2020-01-12]* [[file:my-data.org][What data on myself I collect and why?]]
+- *[2020-01-18]* [[file:scheduler.org][In search of a friendlier scheduler]]

@@ -13,7 +13,7 @@ So I've been looking for some cloud solution since I've got a VPS.
 The closest tool to what I wanted was [[https://github.com/mickael-kerjean/filestash][Filestash]]: it supports vim/emacs bindings and some [[https://www.filestash.app/2018/05/31/release-note-v0.1/][org-mode goodies]].
 However, it wasn't anywhere as convenient as  Emacs.
 I'm also moving from Dropbox to Syncthing, so was planning to abandon Filestash anyway as it doesn't allow local files, only ftp or git.
-(*UPD*: [[https://beepb00p.xyz/./cloudmacs.html#isso-36][author]] mentions some planned support for Syncthing)
+(*UPD*: [[file:./cloudmacs.html#isso-36][author]] mentions some planned support for Syncthing)
 
 Dropbox is not capable of previewing arbitrary text files let alone edit; and even if it could you obviously wouldn't get anything close to your usual emacs workflow.
 

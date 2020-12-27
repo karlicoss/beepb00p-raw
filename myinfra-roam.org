@@ -3,10 +3,10 @@
 #+filetags: :infra:hpi:orger:promnesia:
 #+upid: myinfra_roam
 
-I have a [[https://beepb00p.xyz/sad-infra.html][frustration]] around the fact that our personal data is scattered, siloed and incredibly hard
+I have a [[file:sad-infra.org][frustration]] around the fact that our personal data is scattered, siloed and incredibly hard
 to use for any purposes, not anticipated by the original developers.
 
-[[https://beepb00p.xyz/my-data.html][One of my big efforts]] is unifying all of this scattered data into a system that makes it easier
+[[file:my-data.org][One of my big efforts]] is unifying all of this scattered data into a system that makes it easier
 to oversee, combine, interact with and build *new tools* around it.
 
 In this post I want to illustrate how to integrate a new data source in the system, with [[https://roamresearch.com][Roam Research]] data as an example.
@@ -14,14 +14,18 @@ In this post I want to illustrate how to integrate a new data source in the syst
 I've chosen Roam for this post because:
 
 - it's a cool, useful and rich data source
-- it hasn't been integrated before [[https://beepb00p.xyz/myinfra.html][in my system]], so it's easy to follow and document all the steps necessary
+- it hasn't been integrated before [[file:myinfra.org][in my system]], so it's easy to follow and document all the steps necessary
 
-Throughout the post, I will link to my previous writing on building the [[https://beepb00p.xyz/tags.html#infra][#infra]], so I won't go into explaining every tiny detail and technical rationales here.
+Throughout the post, I will link to my previous writing on building the [[file:tags.org::#infra][#infra]], so I won't go into explaining every tiny detail and technical rationales here.
 But if you have some questions, feel free to ask anyway!
 
 #+toc: headlines 1
 
 * What is Roam Research?
+:PROPERTIES:
+:CUSTOM_ID: what_is_roam
+:END:
+
 [[https://roamresearch.com][Roam]] is a new note taking/thinking tool.
 If you're an org-mode user, you can think of it as having a web app with a directory of org files with the main focus (as I see it) on:
 
@@ -39,10 +43,13 @@ So, let's say you've been using Roam and want to use its data outside of the web
 
 For this demo, I'll be using a *public* [[https://roamresearch.com/#/app/covid19/graph][covid19 Roam database]].
 * Export raw data
+:PROPERTIES:
+:CUSTOM_ID: export
+:END:
 The first step is figuring out how to get the raw data.
 
 Roam doesn't have a public API yet, but they let you export a JSON from the web interface, which is good enough for us.
-How to proceed with this knowledge? I apply the principles from [[https://beepb00p.xyz/exports.html#export_layer]["Building data liberation infrastructure"]]:
+How to proceed with this knowledge? I apply the principles from [[file:exports.org::#export_layer]["Building data liberation infrastructure"]]:
 
 - use an existing library to fetch the data
 
@@ -55,19 +62,22 @@ How to proceed with this knowledge? I apply the principles from [[https://beepb0
 
   I simply store the *JSON without any changes* on my filesystem.
   There is not much point trying to squeeze inherently hierarchical Roam data into a database.
-  If performance ever becomes an issue, a transparent [[https://beepb00p.xyz/unnecessary-db.html#cachew][caching layer]] can always be added.
+  If performance ever becomes an issue, a transparent [[file:unnecessary-db.org::#cachew][caching layer]] can always be added.
 
   Roam is under active development, so it's likely that the export format will change.
   It would be pretty sad if it breaks exports, and keeping the data unchanged means I always have a recent version on my disk.
 
 * Automate export
+:PROPERTIES:
+:CUSTOM_ID: automate
+:END:
 Ok, now we can get a snapshot of Roam data with a single script run: ~./roamresearch.py > export.json~. What's next?
 
 The idea is that we run it *periodically*, for example, few times a day. It does mean that the data on your disk is lagging behind slightly, but that gives you 90% of the benefits without all the downsides of
 implementing a realtime synchronization. You also need an API for two-way synchronization anyway (unless you want to poll the service like crazy).
 
 Running it manually is not much fun, and there are several tools that can aid us in it.
-I've done an overview in [[https://beepb00p.xyz/scheduler.html][this post]], and personally, I'm using an experimental tool, [[https://github.com/karlicoss/dron][dron]], which is basically a nice Systemd frontend.
+I've done an overview in [[file:scheduler.org][this post]], and personally, I'm using an experimental tool, [[https://github.com/karlicoss/dron][dron]], which is basically a nice Systemd frontend.
 But it really doesn't matter what exactly to use, so the simplest is a good old *cron job*:
 
 : 00 05 * * * /soft/export-scripts/roamresearch.py > /exports/roamresearch/data.json
@@ -81,7 +91,7 @@ This will export your data every day at 5:00 and save it to a JSON file. The fil
 
 
   This keeps every export along with a timestamp, ensures atomic writing to minimize concurrency issues and retries automatically.
-  I elaborate more on it [[https://beepb00p.xyz/exports.html#arctee][here]], but it's not super crucial for Roam, more of a nice-to-have thing.
+  I elaborate more on it [[file:exports.org::#arctee][here]], but it's not super crucial for Roam, more of a nice-to-have thing.
 
 Once you automate JSON exports, you also get Roam *data backups for free* (you back up your disk, right?).
 
@@ -98,9 +108,13 @@ Take a look at the [[https://github.com/MatthieuBizien/roam-to-git-demo/blob/27e
 
 This is annoying, boring and error-prone to do all over again.
 We need some central way to encapsulate and adapt raw JSON data for easier programmatic use.
-Say hello to the [[https://beepb00p.xyz/exports.html#dal][data access layer]]!
+Say hello to the [[file:exports.org::#dal][data access layer]]!
 
 * Adapt the data
+:PROPERTIES:
+:CUSTOM_ID: dal
+:END:
+
 The data access layer is responsible for deserializing and converting raw (i.e. JSON/sqlite) format into abstract objects, easy to work in your code.
 
 Normally I'd try to use existing data bindings, but Roam is pretty new and I haven't found any, so I implemented my own.
@@ -124,6 +138,9 @@ To link HPI package with your private data, you add a small section to your priv
 After this, you get IDE help when working with Roam data. For example, =mypy= will remind me that =title= is optional, so I won't have =None= related issues.
 
 ** Interactive queries
+:PROPERTIES:
+:CUSTOM_ID: interactive
+:END:
 At this stage, you can play with the data *interactively* in your Python interpreter. For example:
 
 - "what's the most active note in my database?"
@@ -180,9 +197,13 @@ This is cool because you don't have to wait till developers add new features or 
 You can use a powerful programming language you already know.
 
 * Use Orger for org-mode mirror
+:PROPERTIES:
+:CUSTOM_ID: orger
+:END:
+
 Now that accessing the data is a matter of ~import my.roamresearch~, we can enjoy using it!
 
-One very useful tool for interacting with my data is [[https://beepb00p.xyz/orger.html][Orger]].
+One very useful tool for interacting with my data is [[file:orger.org][Orger]].
 Orger is a library that helps you generate an org-mode representation of your data.
 
 I won't go into the Orger module implementation details -- you can check out the code here: [[https://github.com/karlicoss/orger/blob/master/modules/roamresearch.py][~roamresearch.py~]].
@@ -234,11 +255,11 @@ You benefit from *the existing infrastructure and tooling* around org-mode:
 
     It's probably easier if you check out the [[https://github.com/emacsorphanage/helm-swoop#readme][demo gif]] than to put it in words.
 
-  - =helm-ripgrep=: I'm using it for a global incremental search (a [[https://beepb00p.xyz/pkm-search.html#snippet_other][single keybinding]] away) over [[https://beepb00p.xyz/pkm-search.html#other][*all*]] of my personal data.
+  - =helm-ripgrep=: I'm using it for a global incremental search (a [[file:pkm-search.org::#snippet_other][single keybinding]] away) over [[file:pkm-search.org::#other][*all*]] of my personal data.
 
     And if you're still not using [[https://github.com/BurntSushi/ripgrep][ripgrep]], you should seriously give it a try.
 
-  *Typically*, web apps provide a pretty [[https://beepb00p.xyz/sad-infra.html#why_search][pathetic]] search experience.
+  *Typically*, web apps provide a pretty [[file:sad-infra.org::#why_search][pathetic]] search experience.
   Sometimes it's just not unavailable.
   When it is, it's slow, the results are paginated, ranked by some magic algorithm and the scope is often restricted
   for performance reasons.
@@ -264,6 +285,10 @@ And some extra things I haven't mentioned in the video:
 
   Again, Roam specifically might implement it in the future, but the point is that you can be *ahead of the developers* and do it yourself.
 ** if org-mode is so cool why not just use it *instead* of Roam?
+:PROPERTIES:
+:CUSTOM_ID: why_roam
+:END:
+
 Better ask someone who actively uses Roam, because I'm a stubborn org-mode user!
 If you're like me, you probably tend to stay away from web apps.
 
@@ -294,6 +319,9 @@ But even I can come up with some objective (I hope) reasons to avoid Emacs:
 Org-mode mirror can *complement* your Roam database and serve as an *additional* interface and a means of learning org-mode,
 without having to fully succumb to it.
 * Promnesia: integrate Roam with your browser
+:PROPERTIES:
+:CUSTOM_ID: promnesia
+:END:
 [[https://github.com/karlicoss/promnesia][Promnesia]] is an extension for enhancing your browser history.
 It unifies the browsing history, which is siloed in various apps and services; and lets you explore the history in context, showing the information on where and how you've encountered the links.
 If you want to learn more about it, check out [[https://github.com/karlicoss/promnesia#demos][demos]], here I'll only concentrate on demonstrating Roam.
@@ -354,4 +382,8 @@ You can find find more links, screenshots, and demos in the [[https://github.com
 Thanks for watching, check it out, and let me know if you can think of other cool features!
 
 * --
+:PROPERTIES:
+:CUSTOM_ID: fin
+:END:
+
 Happy to hear your feedback or help you set up the tools I mention!

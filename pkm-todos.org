@@ -176,12 +176,13 @@ write how I am rescheduling tasks in the beginning of day
 ** TODO [2019-05-29 Wed 19:35] youtube as watchlist?
 ** TODO [2019-05-29 Wed 19:35] nocommit and TODOs in code
 *** STRT [2019-09-02 Mon 22:39] hmm maybe write about how I've set up search over everything first? it's kind of a dependency
-see [[https://beepb00p.xyz/pkm-search.html]["building personal search infrastructure"]]
+see [[file:pkm-search.org]["building personal search infrastructure"]]
 
 ** STRT [2019-05-29 Wed 19:38] scripts for adding TODOs from hypothesis, instapaper and kobo (orger)
-see [[https://beepb00p.xyz/orger.html][orger]]
+see [[file:orger.org][orger]]
 
 ** TODO [#B] I don't use time estimates.                         :blog:todos:
+
 Reasons: no need reminding me that there very little time remaining after you account for sleep, full time job, exercise and other maintenance
 I'm not good at time estimates, although that could be something to improve
 As long as you have the priorities, you just do the most important things and it doesn't really matter how long rest of them take

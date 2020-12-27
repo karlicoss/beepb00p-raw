@@ -24,7 +24,7 @@ HPI is a Python package (named ~my~), a collection of modules for:
 - browser history
 - instant messaging
 
-The package hides the [[https://beepb00p.xyz/sad-infra.html#exports_are_hard][gory details]] of locating data, parsing, error handling and caching.
+The package hides the [[file:sad-infra.org::#exports_are_hard][gory details]] of locating data, parsing, error handling and caching.
 You simply 'import' your data and get to work with familiar Python types and data structures.
 
 - Here's a short example to give you an idea: "which subreddits I find the most interesting?"
@@ -41,7 +41,7 @@ You simply 'import' your data and get to work with familiar Python types and dat
   | QuantifiedSelf | 46 |
 
 
-I consider my digital trace an important part of my identity. ([[https://beepb00p.xyz/tags.html#extendedmind][#extendedmind]])
+I consider my digital trace an important part of my identity. ([[file:tags.org::#extendedmind][#extendedmind]])
 The fact that the data is siloed, and accessing it is inconvenient and borderline frustrating feels very wrong.
 
 Once the data is available as Python objects, I can easily plug it into existing tools, libraries and frameworks.
@@ -71,6 +71,10 @@ This library is my attempt to achieve this vision.
 :END:
 
 * Why?
+:PROPERTIES:
+:CUSTOM_ID: motivation
+:END:
+
 The main reason that led me to develop this is the dissatisfaction of the current situation:
 
 - Our personal data is siloed and trapped across cloud services and various devices
@@ -85,7 +89,7 @@ The main reason that led me to develop this is the dissatisfaction of the curren
 
   As a programmer, I am in capacity to do something *right now*, even though it's not necessarily perfect and consistent.
 
-I've written a lot about it [[https://beepb00p.xyz/sad-infra.html#why][here]], so allow me to simply quote:
+I've written a lot about it [[file:sad-infra.org::#why][here]], so allow me to simply quote:
 
  
 :results:
@@ -161,7 +165,11 @@ But the major reason I want to solve these problems is to be better at learning 
 so I could be better at solving the real problems.
 
 * How does a Python package help?
-When I started solving some of these problems for myself, I've noticed a common pattern: the [[https://beepb00p.xyz/sad-infra.html#exports_are_hard][hardest bit]] is actually getting your data in the first place.
+:PROPERTIES:
+:CUSTOM_ID: package
+:END:
+
+When I started solving some of these problems for myself, I've noticed a common pattern: the [[file:sad-infra.org::#exports_are_hard][hardest bit]] is actually getting your data in the first place.
 It's inherently error-prone and frustrating.
 
 But once you have the data in a convenient representation, working with it is pleasant -- you get to *explore and build instead of fighting with yet another stupid REST API*.
@@ -170,7 +178,10 @@ This package knows how to find data on your filesystem, deserialize it and norma
 You have the full power of the programming language to transform the data and do whatever comes to your mind.
 
 ** Why don't you just put everything in a massive database?
-Glad you've asked! I wrote a whole [[https://beepb00p.xyz/unnecessary-db.html][post]] about it.
+:PROPERTIES:
+:CUSTOM_ID: database
+:END:
+Glad you've asked! I wrote a whole [[file:unnecessary-db.org][post]] about it.
 
 In short: while databases are efficient and easy to read from, often they aren't flexible enough to fit your data.
 You're probably going to end up writing code anyway.
@@ -180,6 +191,10 @@ That's where a Python package comes in.
 
 
 * What's inside?
+:PROPERTIES:
+:CUSTOM_ID: modules
+:END:
+
 Here's the (incomplete) list of the modules:
 
  
@@ -244,17 +259,26 @@ Some modules are private, and need a bit of cleanup before merging:
 #+html: <div id="usecases"></div>
 
 * How do you use it?
+:PROPERTIES:
+:CUSTOM_ID: usecases
+:END:
 Mainly I use it as a data provider for my scripts, tools, and dashboards.
 
-Also, check out [[https://beepb00p.xyz/myinfra.html#mypkg][my infrastructure map]].
+Also, check out [[file:myinfra.org::#mypkg][my infrastructure map]].
 It's a draft at the moment, but it might be helpful for understanding what's my vision on HPI.
 ** Instant search
+:PROPERTIES:
+:CUSTOM_ID: search
+:END:
 Typical search interfaces make me unhappy as they are *siloed, slow, awkward to use and don't work offline*.
-So I built my own ways around it! I write about it in detail [[https://beepb00p.xyz/../../adhoc-project/input/pkm-search.html#personal_information][here]].
+So I built my own ways around it! I write about it in detail [[file:../../adhoc-project/input/pkm-search.org::#personal_information][here]].
 
 In essence, I'm mirroring most of my online data like chat logs, comments, etc., as plaintext.
 I can overview it in any text editor, and incrementally search over *all of it* in a single keypress.
 ** orger
+:PROPERTIES:
+:CUSTOM_ID: orger
+:END:
 [[https://github.com/karlicoss/orger][orger]] is a tool that helps you generate an org-mode representation of your data.
 
 It lets you benefit from the existing tooling and infrastructure around org-mode, the most famous being Emacs.
@@ -267,17 +291,28 @@ I'm using it for:
 
 Orger comes with some existing [[https://github.com/karlicoss/orger/tree/master/modules][modules]], but it should be easy to adapt your own data source if you need something else.
 
-I write about it in detail [[https://beepb00p.xyz/../../adhoc-project/input/orger.html][here]]and [[https://beepb00p.xyz/../../adhoc-project/input/orger-todos.html][here]].
+I write about it in detail [[file:../../adhoc-project/input/orger.org][here]]and [[file:../../adhoc-project/input/orger-todos.org][here]].
 ** promnesia
+:PROPERTIES:
+:CUSTOM_ID: promnesia
+:END:
 [[https://github.com/karlicoss/promnesia#demo][promnesia]] is a browser extension I'm working on to escape silos by *unifying annotations and browsing history* from different data sources.
 
 I've been using it for more than a year now and working on final touches to properly release it for other people.
 ** dashboard
-As a big fan of [[https://beepb00p.xyz/tags.html#quantified-self][#quantified-self]], I'm working on personal health, sleep and exercise dashboard, built from various data sources.
+:PROPERTIES:
+:CUSTOM_ID: dashboard
+:END:
+
+As a big fan of [[file:tags.org::#quantified-self][#quantified-self]], I'm working on personal health, sleep and exercise dashboard, built from various data sources.
 
 I'm working on making it public, you can see some screenshots [[https://www.reddit.com/r/QuantifiedSelf/comments/cokt4f/what_do_you_all_do_with_your_data/ewmucgk][here]].
 ** timeline
-Timeline is a [[https://beepb00p.xyz/tags.html#lifelogging][#lifelogging]] project I'm working on.
+:PROPERTIES:
+:CUSTOM_ID: timeline
+:END:
+
+Timeline is a [[file:tags.org::#lifelogging][#lifelogging]] project I'm working on.
 
 I want to see all my digital history, search in it, filter, easily jump at a specific point in time and see the context when it happened.
 That way it works as a sort of external memory.
@@ -286,9 +321,15 @@ Ideally, it would look similar to Andrew Louis's [[https://hyfen.net/memex][Meme
 he open sources it. I highly recommend watching his talk for inspiration.
 
 * Ad-hoc and interactive
-
+:PROPERTIES:
+:CUSTOM_ID: interactive
+:END:
 
 ** What were my music listening stats for 2018?
+:PROPERTIES:
+:CUSTOM_ID: lastfm
+:END:
+
 Single import away from getting tracks you listened to:
 
 #+begin_src python
@@ -343,11 +384,15 @@ We can use [[https://github.com/martijnvermaat/calmap][calmap]] library to plot 
 #+end_src
 
  
-[[https://beepb00p.xyz/hpi_files/lastfm_2018.png]]
+[[file:hpi_files/lastfm_2018.png]]
 
 This isn't necessarily very insightful data, but fun to look at now and then!
 
 ** What are the most interesting Slate Star Codex posts I've read?
+:PROPERTIES:
+:CUSTOM_ID: hypothesis_stats
+:END:
+
 My friend asked me if I could recommend them posts I found interesting on [[https://slatestarcodex.com][Slate Star Codex]].
 With few lines of Python I can quickly recommend them posts I engaged most with, i.e. the ones I annotated most on [[https://hypothes.is][Hypothesis]].
 
@@ -371,9 +416,16 @@ With few lines of Python I can quickly recommend them posts I engaged most with,
 | I Can Tolerate Anything Except The Outgroup https://slatestarcodex.com/2014/09/30/i-can-tolerate-anything-except-the-outgroup/                                                      |  9 |
 
 ** Accessing exercise data
- E.g. see use of ~my.workouts~ [[https://beepb00p.xyz/./heartbeats_vs_kcals.html][here]].
+:PROPERTIES:
+:CUSTOM_ID: exercise
+:END:
+ E.g. see use of ~my.workouts~ [[file:./heartbeats_vs_kcals.html][here]].
 
 ** Book reading progress
+:PROPERTIES:
+:CUSTOM_ID: kobo_progress
+:END:
+
 I publish my reading stats on [[https://www.goodreads.com/user/show/22191391-dima-gerasimov][Goodreads]] so other people can see what I'm reading/have read, but Kobo [[https://beepb00p.xyz/ideas.html#kobo2goodreads][lacks integration]] with Goodreads.
 I'm using [[https://github.com/karlicoss/kobuddy][kobuddy]] to access my my Kobo data, and I've got a regular task that reminds me to sync my progress once a month.
 
@@ -412,6 +464,9 @@ With a single Enter keypress on the inlined =eshell:= command I can print the pr
 #+end_example
 
 ** Messenger stats
+:PROPERTIES:
+:CUSTOM_ID: messenger_stats
+:END:
 How much do I chat on Facebook Messenger?
 
 #+begin_src python
@@ -440,24 +495,30 @@ How much do I chat on Facebook Messenger?
 #+end_src
 
  
-[[https://beepb00p.xyz/hpi_files/messenger_2016_to_2019.png]]
+[[file:hpi_files/messenger_2016_to_2019.png]]
 
 
 ** Querying Roam Reasearch database
-I've got some code examples [[https://beepb00p.xyz/myinfra-roam.html#interactive][here]].
+:PROPERTIES:
+:CUSTOM_ID: roamresearch
+:END:
+I've got some code examples [[file:myinfra-roam.org::#interactive][here]].
 
 * How does it get input data?
+:PROPERTIES:
+:CUSTOM_ID: input_data
+:END:
 If you're curious about any specific data sources I'm using, I've written it up [[https://beepb00p.xyz/my-data.html][in detail]].
 
 In short:
 
-- The data is [[https://beepb00p.xyz/myinfra.html#exports][periodically synchronized]] from the services (cloud or not) locally, on the filesystem
+- The data is [[file:myinfra.org::#exports][periodically synchronized]] from the services (cloud or not) locally, on the filesystem
 
-  As a result, you get [[https://beepb00p.xyz/myinfra.html#fs][JSONs/sqlite]] (or other formats, depending on the service) on your disk.
+  As a result, you get [[file:myinfra.org::#fs][JSONs/sqlite]] (or other formats, depending on the service) on your disk.
 
   Once you have it, it's trivial to back it up and synchronize to other computers/phones, if necessary.
 
-  To schedule periodic sync, I'm using [[https://beepb00p.xyz/scheduler.html#cron][cron]].
+  To schedule periodic sync, I'm using [[file:scheduler.org::#cron][cron]].
 
 - =my.= package only accesses the data on the filesystem
 
@@ -469,8 +530,15 @@ I consider it a necessary sacrifice to make everything fast and resilient.
 In theory, it's possible to make the system almost realtime by having a service that sucks in data continuously (rather than periodically), but it's harder as well.
 
 * Q & A
+:PROPERTIES:
+:CUSTOM_ID: q_and_a
+:END:
 
 ** Why Python?
+:PROPERTIES:
+:CUSTOM_ID: why_python
+:END:
+
 I don't consider Python unique as a language suitable for such a project.
 It just happens to be the one I'm most comfortable with.
 I do have some reasons that I think make it /specifically/ good, but explaining them is out of this post's scope.
@@ -483,6 +551,9 @@ I've heard LISPs are great for data? ;)
 Overall, I wish [[https://en.wikipedia.org/wiki/Foreign_function_interface][FFIs]] were a bit more mature, so we didn't have to think about specific programming languages at all.
 
 ** Can anyone use it?
+:PROPERTIES:
+:CUSTOM_ID: can_anyone_use_it
+:END:
 Yes!
 
 - you can plug in *your own data*
@@ -492,6 +563,9 @@ Yes!
   Starting from simply adding new modules to any dynamic hackery you can possibly imagine within Python.
 
 ** How easy is it to use?
+:PROPERTIES:
+:CUSTOM_ID: how_easy_to_use
+:END:
 The whole setup requires some basic programmer literacy:
 
 - installing/running and potentially modifying Python code
@@ -501,9 +575,12 @@ The whole setup requires some basic programmer literacy:
 If you have any ideas on making the setup simpler, please let me know!
 
 ** What about privacy?
+:PROPERTIES:
+:CUSTOM_ID: privacy
+:END:
 The modules contain *no data, only code* to operate on the data.
 
-Everything is [[https://beepb00p.xyz/tags.html#offline][*local first*]], the input data is on your filesystem.
+Everything is [[file:tags.org::#offline][*local first*]], the input data is on your filesystem.
 If you're truly paranoid, you can even wrap it in a Docker container.
 
 There is still a question of whether you trust yourself at even keeping all the data on your disk, but it is out of the scope of this post.
@@ -511,6 +588,10 @@ There is still a question of whether you trust yourself at even keeping all the 
 If you'd rather keep some code private too, it's also trivial to achieve with a private subpackage.
 
 ** But /should/ I use it?
+:PROPERTIES:
+:CUSTOM_ID: should_i_use_it
+:END:
+
 #+begin_quote
 Sure, maybe you can achieve a perfect system where you can instantly find and recall anything that you've done. Do you really want it?
 Wouldn't that, like, make you less human?
@@ -519,7 +600,7 @@ Wouldn't that, like, make you less human?
 I'm not a gatekeeper of what it means to be human, but I don't think that the shortcomings of the human brain are what makes us such.
 
 So I can't answer that for you. I certainly want it though.
-I'm [[https://beepb00p.xyz/tags.html#pkm][quite open]] about my goals -- I'd happily get merged/augmented with a computer to enhance my thinking and analytical abilities.
+I'm [[file:tags.org::#pkm][quite open]] about my goals -- I'd happily get merged/augmented with a computer to enhance my thinking and analytical abilities.
 
 While at the moment [[https://en.wikipedia.org/wiki/Hard_problem_of_consciousness][we don't even remotely understand]] what would such merging or "mind uploading" entail exactly,
 I can clearly delegate some tasks, like long term memory, information lookup, and data processing to a computer. They can already handle it really well.
@@ -532,6 +613,10 @@ Sure, maybe it sucks. At the moment though, my recall is far from perfect, and t
 I want to have a choice at least, and digital tools give me this choice.
 
 ** Would it suit /me/?
+:PROPERTIES:
+:CUSTOM_ID: would_it_suit_me
+:END:
+
 Probably, at least to some extent.
 
 First, our lives are different, so our APIs might be different too.
@@ -551,6 +636,10 @@ but I still feel that wouldn't be enough.
 I'm not sure whether it's a solvable problem at this point, but happy to hear any suggestions!
 
 ** What it isn't?
+:PROPERTIES:
+:CUSTOM_ID: what_it_isnt
+:END:
+
 - It's not vaporwave
 
   The project is a little crude, but it's real and working. I've been using it for a long time now, and find it fairly sustainable to keep using for the foreseeable future.
@@ -565,6 +654,9 @@ I'm not sure whether it's a solvable problem at this point, but happy to hear an
 
 
 * Related links
+:PROPERTIES:
+:CUSTOM_ID: links
+:END:
 Similar projects:
 
 - [[https://hyfen.net/memex][Memex]] by Andrew Louis
@@ -579,10 +671,14 @@ Similar projects:
 Other links:
 
 - NetOpWibby: [[https://news.ycombinator.com/item?id=21684949][A Personal API (HN)]]
-- [[https://beepb00p.xyz/sad-infra.html][The sad state of personal data and infrastructure]]: here I am going into motivation and difficulties arising in the implementation
-- [[https://beepb00p.xyz/myinfra-roam.html][Extending my personal infrastructure]]: a followup, where I'm demonstrating how to integrate a new data source (Roam Research)
+- [[file:sad-infra.org][The sad state of personal data and infrastructure]]: here I am going into motivation and difficulties arising in the implementation
+- [[file:myinfra-roam.org][Extending my personal infrastructure]]: a followup, where I'm demonstrating how to integrate a new data source (Roam Research)
 
 * --
+:PROPERTIES:
+:CUSTOM_ID: fin
+:END:
+
 Open to any feedback and thoughts!
 
 Also, don't hesitate to raise an issue, or reach me personally if you want to try using it, and find the instructions confusing. Your questions would help me to make it simpler!

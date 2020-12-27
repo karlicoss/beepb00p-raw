@@ -88,7 +88,7 @@ Why would you want this?
 #+end_NOTES
 
 ** 
-[[https://beepb00p.xyz/pic/categories.png]]
+[[file:pic/categories.png]]
 
 #+begin_NOTES
 Just to demonstrate what I'm talking about, here's the Deliveroo web interface (mobile looks similar).
@@ -103,7 +103,7 @@ This is the best you're gonna get from Deliveroo.
 
 ** 
 
-[[https://beepb00p.xyz/pic/tabs.png]]
+[[file:pic/tabs.png]]
 
 #+begin_NOTES
 Say, you want some grilled tuna and green vegetables. 
@@ -145,7 +145,7 @@ Not so good at stuff like text search -- that's one of things computers are *exc
 ** Scraping menus
 Python ([[https://github.com/scrapy/scrapy][scrapy]]). Almost no need for HTML parsing!
 
-[[https://beepb00p.xyz/pic/json.png]]
+[[file:pic/json.png]]
 
 #+begin_NOTES
 To try it for yourself, go to some restaurant, e.g.
@@ -201,6 +201,10 @@ HTML and some Javascript/React
 
 
 * @@html:Scrapy<font color='#b7410e'>r</font><font color='#00ccbc'>oo</font>@@
+:PROPERTIES:
+:CUSTOM_ID: scrapyroo
+:END:
+
 (Live demo). You can try it here: [[https://scrapyroo.karlicoss.xyz][scrapyroo.karlicoss.xyz]]
 
 #+begin_NOTES
@@ -314,6 +318,10 @@ I spent most time on scraping and frontend.
 #+end_NOTES
 
 * Tantivy: bad
+:PROPERTIES:
+:CUSTOM_ID: tantivy_bad
+:END:
+
 - no nested document support ([[https://github.com/tantivy-search/tantivy/issues/617][yet]])
 
   - would be nice to have queries like =starter:dumpling AND main:salad=
@@ -464,6 +472,10 @@ Pull requests in progress:
 - [[https://twitter.com/katya_titkova][Katya]]: beta testing and ghostwriting
 
 * Thanks!
+:PROPERTIES:
+:CUSTOM_ID: fin
+:END:
+
 #+begin_NOTES
 Questions?  
 #+end_NOTES
