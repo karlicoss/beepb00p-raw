@@ -1,0 +1,8 @@
+* [2020-04-12 Sun] [[file:kython.org][Write your own standard library]]                                                    :programming:
+* [2020-04-12 Sun] [[file:axol.org][Axol: Google Alerts that actually work]]                                             :axol:
+  personal automatic news feed
+* [2020-02-03 Mon] [[file:myinfra.org][Map of my infrastructure]]                                                           :infra:
+* [2019-05-27 Mon] [[file:pkm-todos.org][On todo lists]]                                                                      :pkm:orgmode:productivity:gtd:
+  How I am managing my life and keeping track of the things I want to do
+* [2018-11-19 Mon] [[file:least-action-lie.org][Least action principle is a lie]]                                                    :physics:
+  Aka 'does stationary action really matter?'

@@ -1,0 +1,26 @@
+#+filetags: :infra:
+#+upid: infra_diagram
+
+#+html: <style> body { margin-left: 0; } </style>
+
+This is a map of my personal [[https://beepb00p.xyz/tags.html#infra][infrastructure]], with links to the scripts and tools used; and my posts explaining different parts of it.
+
+This is still incomplete; work in progress! In reality it's many more nodes and edges; I'm just trying to preserve sanity and adding them gradually;
+otherwise it's going to be too overwhelming.
+
+If something doesn't have a link, it's likely because I haven't made it public yet. Anyway, feel free to ask so I can prioritize.
+
+This probably won't be mobile friendly (it's barely desktop friendly!). Content centering (e.g. navigation) isn't broken on this page -- it's just a temporary hack to fit in the diagram till I figure out wide pages properly. Also SVG support varies among web browsers, so there might be some minor artifacts.
+
+This is rendered via graphviz, and you can find the source [[https://github.com/karlicoss/myinfra][here]].
+
+*NOTE*: due to some svg issues, this is best viewed in Chromium based browsers!
+
+* TODO TODOs
+** STRT [#C] [2020-02-03 Mon 01:57] fix css so it's occupying full screen width
+- [2020-02-07 19:49] a bit adhoc, but works for now
+** STRT [#C] [2020-02-03 Mon 01:57] legend
+** STRT [#B] [2020-02-07 Fri 19:51] labels don't fit into the boxes??
+- [2020-02-14 21:25] apparently only on desktop Firefox =/
+** STRT [#B] [2020-02-14 Fri 21:30] Chrome [[https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/side#Browser_compatibility][doesn't]] support svg side attribute, so some labels appear upside down :(
+fixing with JS for now...

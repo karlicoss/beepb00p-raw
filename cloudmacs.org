@@ -1,0 +1,32 @@
+#+summary: How I really wanted Spacemacs everywhere and my wish came true thanks to Docker
+#+filetags: :emacs:pkm:selfhosted:
+#+upid: cloudmacs
+
+TLDR: I'm running my spacemacs as a web service on my VPS, [[https://github.com/karlicoss/cloudmacs][check it out too]].
+
+#+html: <img src="https://user-images.githubusercontent.com/291333/64866462-26e25c80-d644-11e9-9ad5-ad9d9808b0cb.png" width="auto"/>
+
+Since I've became hooked on emacs, I've been looking for ways to have same experience in my browser.
+Sometimes you have to use non-personal computers where it's not possible/undesirable to install desktop Emacs and Dropbox/Syncthing to access your personal data. 
+So I've been looking for some cloud solution since I've got a VPS.
+
+The closest tool to what I wanted was [[https://github.com/mickael-kerjean/filestash][Filestash]]: it supports vim/emacs bindings and some [[https://www.filestash.app/2018/05/31/release-note-v0.1/][org-mode goodies]].
+However, it wasn't anywhere as convenient as  Emacs.
+I'm also moving from Dropbox to Syncthing, so was planning to abandon Filestash anyway as it doesn't allow local files, only ftp or git.
+(*UPD*: [[https://beepb00p.xyz/./cloudmacs.html#isso-36][author]] mentions some planned support for Syncthing)
+
+Dropbox is not capable of previewing arbitrary text files let alone edit; and even if it could you obviously wouldn't get anything close to your usual emacs workflow.
+
+And you could imagine that while Emacs/Vim style editing is fairly application [[https://github.com/brookhong/Surfingkeys#vim-editor-and-emacs-editor][agnostic]], it's a thankless job to rewrite/port all the amazing emacs packages and features I'm used to like neotree, helm, refile, swoop, agenda, projectile, org-drill etc.
+
+So I figured the only thing that would keep me happy is to run emacs itself over the web! Thankfully, due to its TUI interface that works surprisingly well.
+
+It works **really** well with spacemacs/evil style ~SPC~ and comma bindings because they for the most part don't overlap with OS/browser hotkeys.
+
+Also it's the first time I properly used Docker apart from running other people's containers so here are few non-obvious things I learnt which you might find useful:
+
+- [[https://docs.docker.com/develop/develop-images/multistage-build][Multistage build]] is a painless way to extend someone else's containers or combine several containers in one
+- [[https://docs.docker.com/engine/reference/commandline/build/#set-build-time-variables---build-arg][build time variables]] is a nice way to make your container more amendable, e.g. you can avoid hardcoding versions if you use it
+- Perhaps the trickiest one: docker reuses the host kernel and as a consequence same user IDs, so if you built your container as root (which is normally the case if you pull from Docker Hub), your container will write back to mounted volumes as root too!
+
+  To get around that there is a somewhat hacky [[https://github.com/karlicoss/cloudmacs/blob/master/asEnvUser][asEnvUser]] script and custom [[https://github.com/karlicoss/cloudmacs/blob/master/compose][docker-compose wrapper]] that take care of preserving user ID.

@@ -1,0 +1,543 @@
+#+summary: How I am using 50+ sources of my personal data
+#+filetags: :dataliberation:pkm:quantifiedself:
+#+upid: my_data
+
+#+macro: shrug @@html:<code>¯\_(ツ)_/¯</code>@@
+
+This is the list of personal data sources I use or planning to use with rough guides on how to get your hands on that data if you want it as well.
+
+It's still incomplete and I'm going to update it regularly.
+
+My goal is *automating data collection to the maximum extent possible* and making it work in the background, so one can set up pipelines once and hopefully never think about it again.
+
+This is kind of a follow-up on my previous post on the [[https://beepb00p.xyz/sad-infra.html][sad state of personal data]], and part of my personal way of getting around this sad state.
+
+If you're terrified by the long list, you can jump straight into [[#consumers]["Data consumers"]] section to find out how I use it.
+
+#+toc: headlines 2
+
+* Why do you collect X? How do you use your data?
+All things considered, I think it's a fair question!
+Why bother with all this [[https://beepb00p.xyz/tags.html#infra][infrastructure]] and hoard the data if you never use it?
+
+In the next section, I will elaborate on each specific data source, but to start with I'll list the rationales that all of them share:
+
+** backup
+It may feel unnecessary, but shit happens. What if your device dies, account gets suspended for some reason or the company goes bust?
+
+** [[tag:lifelogging][lifelogging]]
+Most data in digital form got timestamps, so automatically, without manual effort, constitutes data for your timeline.
+
+I want to remember more, be able to review my past and bring back and reflect on memories. Practicing lifelogging helps with that.
+
+It feels very wrong that things can be forgotten and lost forever.
+It's understandable from the neuroscience point of view, i.e. the brain has limited capacity and it would be too distracting to remember everything all the time.
+That said, I want to have a *choice* whether to forget or remember events, and I'd like to be able to potentially access forgotten ones.
+
+** [[tag:quantifiedself][quantified self]]
+Most collected digital data is somewhat quantitative and can be used to analyze your body or mind.
+
+
+#+macro: search      [[#search][better search]]
+#+macro: promnesia   [[#promnesia][better browsing history]]
+
+* What do I collect/want to collect?
+As I mentioned, most of the collected data serve as a means of backup/lifelogging/quantified self, so I won't mention them again in the 'Why' sections.
+
+All my data collection pipelines are *automatic unless mentioned otherwise*.
+
+Some scripts are still private so if you want to know more, let me know so I can prioritize sharing them.
+
+** Amazon
+How: [[https://github.com/jbms/finance-dl][jbms/finance-dl]]
+
+Why:
+
+- was planning to correlate them with [[#monzo][monzo]]/[[#hsbc][HSBC]] transactions, but haven't got to it yet
+
+** Arbtt (desktop time tracker)
+How: [[https://arbtt.nomeata.de][arbtt-capture]]
+
+Why:
+
+- haven't used it yet, but it could be a rich source of lifelogging context
+
+** Bitbucket (repositories)
+How: [[https://github.com/samkuehn/bitbucket-backup][samkuehn/bitbucket-backup]]
+
+Why: 
+
+- proved especially useful considering Atlassian is going to [[https://bitbucket.org/blog/sunsetting-mercurial-support-in-bitbucket][*wipe*]] mercurial repositories
+
+  I've got lots of private mercurial repositories with university homework and other early projects, and it's sad to think of people who will lose theirs during this wipe.
+
+** [[https://bluemaestro.com/products/product-details/bluetooth-environmental-monitor-and-logger][Bluemaestro]] (environment sensor)
+How: sensor syncs with phone app via Bluetooth, =/data/data/com.bluemaestro.tempo_utility/databases/= is regularly copied to grab the data.
+
+Why:
+
+- temperature during sleep data for the [[#dashboard][dashboard]]
+- lifelogging: capturing weather conditions information
+
+  E.g. I can potentially see temperature/humidity readings along with my photos from hiking or skiing.
+** Blood
+How: via [[https://thriva.co][thriva]], data imported manually into an org-mode table (not doing too frequently so wasn't worth automated scraping)
+
+Also tracked glucose and ketones (with [[https://freestylediabetes.co.uk/freestyle-libre][freestyle libre]]) for a few days out of curiosity, also didn't bother automating it.
+
+Why:
+
+- contributes to the [[#dashboard][dashboard]], could be a good way of establishing your baselines
+
+** Browser history (Firefox/Chrome)
+How: [[https://github.com/karlicoss/promnesia/tree/master/scripts][custom scripts]], copying the underlying sqlite databases directly, running on my computers and phone.
+
+Why:
+
+- [[#promnesia][better browsing history]]
+
+** [[https://shop-eu.emfit.com/products/emfit-qs][Emfit QS]] (sleep tracker)
+Emfit QS is kind of a medical grade sleep tracker. It's more expensive than wristband ones (e.g. [[#fitbit][fitbit]], [[#jawbone][jawbone]]) but also more reliable and gives more data.
+
+How: [[https://github.com/karlicoss/backup-emfit][emfitexport]].
+
+Why:
+
+- sleep data for the [[#dashboard][dashboard]]
+
+** Endomondo
+How: Endomondo collects GPS data, and HR data (via [[https://uk.wahoofitness.com/devices/heart-rate-monitors/wahoo-tickr-x-heart-rate-strap][Wahoo Tickr X strap]]). Then, [[https://github.com/karlicoss/endoexport][karlicoss/endoexport]].
+
+Why:
+
+- exercise data for the [[#dashboard][dashboard]]
+
+** Facebook
+How: manual archive export.
+
+I barely use Facebook, so don't even bother doing it regularly.
+
+** Facebook Messenger
+How: [[https://github.com/karlicoss/fbmessengerexport][karlicoss/fbmessengerexport]] 
+
+Why:
+
+- [[#search][better search]]
+- [[#promnesia][better browsing history]]
+
+** Feedbin
+How: via API
+
+Why:
+
+- [[#promnesia][better browsing history]]
+
+** Feedly
+How: via API
+
+Why:
+
+- [[#promnesia][better browsing history]]
+** Fitbit
+How: manual CSV export, as I only used it for few weeks. Then the sync stopped working and I had to return it.
+However, it seems [[https://dev.fitbit.com/build/reference/web-api/intraday-requests][possible]] via API.
+
+Why:
+
+- activity data for the [[#dashboard][#dashboard]]
+** Foursquare/Swarm
+How: via API
+** Github (repositories)
+How: [[https://github.com/josegonzalez/python-github-backup][github-backup]]
+
+Why:
+
+- capable of exporting starred repositories as well, so if the authors delete them I will still have them
+
+** Github (events)
+How: manually requested archive (once), after that automatic [[https://github.com/karlicoss/ghexport][karlicoss/ghexport]]
+
+Why:
+
+- [[#promnesia][better browsing history]]
+- [[#search][better search]] in comments/open issues, etc.
+** Gmail
+How: [[https://github.com/joeyates/imap-backup][imap-backup]], [[#takeout][Google Takeout]]
+
+Why:
+- this is arguably *the most important* thing you should export considering how heavily everything relies on email
+- [[#search][better search]]
+- [[#promnesia][better browsing history]]
+
+** Goodreads
+How: [[https://github.com/karlicoss/goodrexport][karlicoss/goodrexport]]
+
+** Google takeout
+How: semi-automatic. 
+
+- only manual step: enable scheduled exports (you can schedule 6 per year at a time), and choose to keep it on Google Drive in export settings
+- mount your Google Drive (e.g. via [[https://github.com/astrada/google-drive-ocamlfuse][google-drive-ocamlfuse]])
+- keep a script that checks mounted Google Drive for fresh takeout and moves it somewhere safe
+
+Why:
+- Google collects lots of data, which you could put to some good use. However, old data is getting [[https://beepb00p.xyz/./takeout-data-gone.html][wiped]], so it's important to export Takeout regularly.
+- [[#promnesia][better browsing history]]
+- (potentially) search history for [[#promnesia][promnesia]]
+- [[#search][search]] in youtube watch history
+- location data for lifelogging and the [[#dashboard][dashboard]] (activity)
+** TODO Hackernews
+How: haven't got to it yet. It's going to require:
+
+- extracting upvotes/saved items via web scraping since Hackernews doesn't offer an API for that. Hopefully, there is an existing library for that.
+- I'm also using [[https://play.google.com/store/apps/details?id=io.github.hidroh.materialistic][Materialistic]] app that has its own 'saved' posts and doesn't synchronize with Hackernews. 
+
+  Exporting them is going to require copying the database directly from the app private storage.
+
+Why: same reasons as [[#reddit]].
+
+** HSBC bank
+How: manual exports of monthly PDFs with transactions. They don't really offer API, so unless you want to web scrape and deal with 2FA, it seems it's the best you can do.
+
+Why
+- personal finance; used it with [[https://github.com/karlicoss/hsbc-parser][karlicoss/hsbc-parser]] to feed into [[https://hledger.org][hledger]]
+
+** [[https://hypothes.is][Hypothesis]]
+How: [[https://github.com/karlicoss/hypexport][karlicoss/hypexport]]
+
+Why:
+
+- [[#search][better search]]
+- [[#promnesia][better browsing history]]
+- quick todos via [[#orger][orger]]
+
+** Instapaper
+How: [[https://github.com/karlicoss/instapexport][karlicoss/instapexport]]
+
+Why:
+
+- [[#search][better search]]
+- [[#promnesia][better browsing history]], in particular implementing overlay with highlights
+- quick todos via [[#orger][orger]]
+** Jawbone
+How: via API.
+Jawbone is dead now, so if you haven't exported it already, likely your data is lost forever.
+
+Why:
+
+- sleep data for the [[#dashboard][dashboard]]
+** Kindle
+How: manually exported =MyClippings.txt= from Kindle. Potentially can be automated similarly to [[#kobo][Kobo]].
+
+Why:
+
+- [[#search][better search]]
+** [[https://www.kobo.com][Kobo]] reader
+How: almost automatic via [[https://github.com/karlicoss/kobuddy][karlicoss/kobuddy]]. Manual step: having to connect your reader via USB now and then.
+
+Why:
+
+- [[#search][better search]]
+- [[https://beepb00p.xyz/orger-todos.html#krill][spaced repetition]] for unfamiliar words/new concepts via [[#orger][orger]]
+** Last.fm
+How: [[https://github.com/karlicoss/lastfm-backup][karlicoss/lastfm-backup]]
+
+
+** Monzo bank
+How: [[https://github.com/karlicoss/monzoexport][karlicoss/monzoexport]]
+
+Why:
+
+- automatic personal finance, fed into [[https://hledger.org][hledger]]
+** [[https://nomie.app][Nomie]]
+How: regular copies of =/data/data/io.nomie.pro/files/_pouch_events= and =/data/data/io.nomie.pro/files/_pouch_trackers=
+
+Why:
+
+- could be a great tool for detailed lifelogging if you're into it
+** Nutrition
+I tracked almost all nutrition data for stuff I ingested over the course of a year.
+
+How: I found most existing apps/projects clumsy and unsatisfactory, so I developed my own system.
+Not even a proper app, something simpler, basically a domain-specific language in Python to track it.
+
+Tracking process was simply editing a python file and adding entries like:
+
+#+begin_src python
+  # file: food_2017.py
+  july_09 = F(
+    [  # lunch
+         spinach * bag,
+         tuna_spring_water * can,       # can size for this tuna is 120g
+         beans_broad_wt    * can * 0.5, # half can. can size for broad beans is 200g
+         onion_red_tsc     * gr(115)  , # grams, explicit
+         cheese_salad_tsc  * 100,       # grams, implicit as it makes sense for cheese
+         lime, # 1 fruit, implicit
+    ],
+    [
+       # dinner...
+    ],
+    tea_black * 10,     # cups, implicit
+    wine_red * ml * 150, # ml, explicit
+  )
+
+  july_10 = ... # more logs
+#+end_src
+
+Comments added for clarity of course, so it'd be more compact normally.
+
+Then some code was used for processing, calculating, [[https://postimg.cc/bdSVc43Y][visualizing]], etc.
+
+Having a real programming language instead of an app let me make it very flexible and expressive, e.g.:
+
+- I could define composite dishes as Python objects, and then easily reuse them.
+
+  E.g. if I made four servings of soup on 10.08.2018, ate one immediately and froze other three I would define something like =soup_20180810 = [...]=, and then I can simply reuse =soup_20180810= when I eat it again.
+  (date was easy to find out as I label food when put it in the freezer anyway)
+- I could make many things implicit, making it pretty expressive without spending time on unnecessary typing
+- I rarely had to in nutrient composition manually, I just pasted the product link to supermarket website and had an automatic script to parse nutrient information
+- For micronutrients (that usually aren't listed on labels) I used the [[https://github.com/alyssaq/usda-sqlite][USDA sqlite database]]
+
+The hard thing was actually not entering, but rather not having nutrition information if you're eating out. That year I was mostly cooking my own food, so tracking was fairly easy.
+
+Also I was more interested in lower bounds, (e.g. "do I consume at least recommended amount of micronutrients"), so not having logged food now and then was fine for me.
+
+
+Why:
+- I mostly wanted to learn about food composition and how it relates to my diet, and I did
+
+  That logging motivated me to learn about different foods and try them out while keeping dishes balanced.
+  I cooked so many different things, made my diet way more varied and became less picky.
+
+  I stopped because cooking did take some time and I actually realized that as long as I actually vary
+  food and try to eat everything now and then, I hit all recommended amounts of micronutrients, so I stopped.
+  It's kind of an obvious thing that everyone recommends, but one thing is hearing it as a common wisdom
+  and completely different is coming to the same conclusion *from your data*.
+
+- nutritional information contributes to [[#dashboard][dashboard]]
+
+
+** Photos
+How: no extra effort required if you sync/organize your photos and videos now and then.
+
+Why:
+
+- obvious source of lifelogging, in addition comes with GPS data
+
+** PDF annotations
+As in, [[https://beepb00p.xyz/annotating.html#pdfs][native PDF annotations]]. 
+
+How: nothing needs to be done, PDFs are local to your computer. You do need [[https://github.com/karlicoss/my/blob/master/my/pdfs.py][some tools]] to crawl your filesystem and extract the annotations.
+
+Why:
+
+- experience of using your PDF annotations (e.g. searching) is [[https://beepb00p.xyz/annotating.html#comparison][*extremely poor*]]
+
+  I'm improving this by using [[#orger][orger]].
+
+** Pinboard
+How: [[https://github.com/karlicoss/pinbexport][karlicoss/pinbexport]]
+
+Why:
+
+- [[#search][better search]]
+- [[#promnesia][better browsing history]]
+
+** Plaintext notes
+Mostly this refers to org-mode files, which I use for notekeeping and logging.
+
+How: nothing needs to be done, they are local. 
+
+Why:
+
+- [[#search][search]] comes for free, it's already local
+- [[#promnesia][better browsing history]]
+
+** Pocket
+How: [[https://github.com/karlicoss/pockexport][karlicoss/pockexport]]
+
+Why:
+
+- [[#search][better search]]
+- [[#promnesia][better browsing history]], in particular implementing overlay with highlights
+
+** Reddit
+How: [[https://github.com/karlicoss/rexport][karlicoss/rexport]]
+
+Why:
+
+- [[#search][better search]]
+- [[#promnesia][better browsing history]]
+- [[https://beepb00p.xyz/orger-todos.html#reddit][org-mode interface]] for processing saved Reddit posts/comments, via [[#orger][orger]]
+** Remember the Milk
+How: ical export from the API.
+
+Why:
+
+- [[#search][better search]]
+
+  I stopped using RTM in favor of org-mode, but I can still easily find my old task and notes, which allowed for a smooth transition.
+
+** Rescuetime
+How: [[https://github.com/karlicoss/rescuexport][karlicoss/rescuexport]]
+
+Why:
+
+- richer contexts for lifelogging
+** Shell history
+How: many shells support keeping timestamps along your commands in history.
+
+E.g. [[http://jesrui.sdf-eu.org/remember-all-your-bash-history-forever.html]["Remember all your bash history forever"]].
+
+Why:
+- potentially can be useful for detailed lifelogging
+
+
+** Sleep
+Apart from [[#emfit][automatic collection]] of HR data, etc., I collect some extra stats like:
+
+- whether I woke up on my own or after alarm
+- whether I still feel sleepy shortly after waking up
+- whether I had dreams (and I log dreams if I did)
+- I log every time I feel sleepy throughout the day
+
+How: org-mode, via [[https://emacs.stackexchange.com/a/45640/19521][org-capture into table]].
+Alternatively, you could use a spreadsheet for that as well.
+
+Why:
+
+- I think it's important to find connections between subjective feelings and objective stats like amount of exercise, sleep HR, etc.,
+  so I'm trying to find correlations using my [[#dashboard][dashboard]]
+- dreams are quite fun part of lifelogging
+
+** Sms/calls
+How: [[https://play.google.com/store/apps/details?id=com.riteshsahu.SMSBackupRestore][SMS Backup & Restore]] app, automatic exports.
+
+** Spotify
+How: export script, using [[https://github.com/plamere/spotipy][plamere/spotipy]]
+
+Why:
+- potentially can be useful for better search in music listening history
+- can be used for custom recommendation algorithms
+
+** Stackexchange
+How: [[https://github.com/karlicoss/stexport][karlicoss/stexport]]
+
+Why:
+
+- [[#search][better search]]
+- [[#promnesia][better browsing history]]
+** [[https://play.google.com/store/apps/details?id=com.waterbear.taglog][Taplog]]
+(not using it anymore, in favor of org-mode)
+
+How: regular copying of =/data/data/com.waterbear.taglog/databases/Buttons Database=
+
+Why:
+
+- a quick way of single tap logging (e.g. weight/sleep/exercise etc), contributes to the [[#dashboard][dashboard]]
+** Telegram
+How: [[https://github.com/fabianonline/telegram_backup][fabianonline/telegram_backup]]
+
+Why:
+
+- [[#search][better search]]
+- [[#promnesia][better browsing history]]
+
+** Twitter
+How: twitter archive (manually, once), after that regular automatic exports via API
+
+Why:
+
+- [[#search][better search]]
+- [[#promnesia][better browsing history]]
+** VK.com
+How: [[https://github.com/Totktonada/vk_messages_backup][Totktonada/vk_messages_backup]].
+
+Sadly VK broke their API so the script stopped working. I'm barely using VK now anyway so not motivated enough to work around it.
+
+Why:
+
+- [[#search][better search]]
+- [[#promnesia][better browsing history]]
+
+** Weight
+How: manually, used [[#nomie][Nomie]] and [[#taplog][Taplog]], but now just using org-mode and extracting data with [[https://github.com/karlicoss/orgparse][orgparse]].
+Could be potentially automated via wireless scales, but not much of a priority for me.
+
+Why:
+
+- obvious data source for the [[#dashboard][dashboard]]
+
+** TODO Whatsapp
+Barely using it so haven't bothered yet.   
+
+How: Whatsapp doesn't offer API, so potentially going to require grabbing sqlite database from Android app (=/data/data/com.whatsapp/databases/msgstore.db=)
+
+Why:
+
+- [[#search][better search]]
+- [[#promnesia][better browsing history]]
+
+** [[https://www.23andme.com][23andme]]
+How: manual [[https://customercare.23andme.com/hc/en-us/articles/212196868-Accessing-Your-Raw-Genetic-Data][raw data export]] from 23andme website. I hope your genome doesn't change so often to bother with automatic exports!
+
+Why:
+
+- was planning to setup some sort of automatic search of new genome insights against open source analysis tools
+
+  Haven't really had time to think about it yet, and it feels like a hard project out of my realm of competence.
+
+* Data consumers
+
+** Instant search
+Typical search interfaces make me unhappy as they are *siloed, slow, awkward to use and don't work offline*.
+So I built my own ways around it! I write about it in detail [[https://beepb00p.xyz/pkm-search.html#personal_information][here]].
+
+In essence, I'm mirroring most of my online data like chat logs, comments, etc., as plaintext.
+I can overview it in any text editor, and incrementally search over *all of it* in a single keypress.
+
+** orger
+[[https://github.com/karlicoss/orger][orger]] is a tool that helps you generate an org-mode representation of your data.
+
+It lets you benefit from the existing tooling and infrastructure around org-mode, the most famous being Emacs.
+
+I'm using it for:
+
+- searching, overviewing and navigating the data
+- creating tasks straight from the apps (e.g. Reddit/Telegram)
+- spaced repetition via [[https://orgmode.org/worg/org-contrib/org-drill.html][org-drill]]
+
+Orger comes with some existing [[https://github.com/karlicoss/orger/tree/master/modules][modules]], but it should be easy to adapt your own data source if you need something else.
+
+I write about it in detail [[https://beepb00p.xyz/orger.html][here]] and [[https://beepb00p.xyz/orger-todos.html][here]].
+** promnesia
+[[https://github.com/karlicoss/promnesia#demo][promnesia]] is a browser extension I'm working on to escape silos by *unifying annotations and browsing history* from different data sources.
+
+I've been using it for more than a year now and working on final touches to properly release it for other people.
+
+** dashboard
+As a big fan of [[https://beepb00p.xyz/tags.html#quantified-self][#quantified-self]], I'm working on personal health, sleep and exercise dashboard, built from various data sources.
+
+I'm working on making it public, you can see some screenshots [[https://www.reddit.com/r/QuantifiedSelf/comments/cokt4f/what_do_you_all_do_with_your_data/ewmucgk][here]].
+
+** timeline
+Timeline is a [[https://beepb00p.xyz/tags.html#lifelogging][#lifelogging]] project I'm working on.
+
+I want to see all my digital history, search in it, filter, easily jump at a specific point in time and see the context when it happened.
+That way it works as a sort of external memory.
+
+Ideally, it would look similar to Andrew Louis's [[https://hyfen.net/memex][Memex]], or might even reuse his interface if
+he open sources it. I highly recommend watching his talk for inspiration.
+
+
+** [[gh:HPI][~HPI~]] python package
+This python package is a my personal (python) API to access all collected data.
+
+I'm elaborating on it [[https://beepb00p.xyz/hpi.html][here]].
+
+* --
+Happy to answer any questions on my approach and help you with liberating your data.  
+
+In the [[https://beepb00p.xyz/exports.html][next post]] I'm elaborating on design decisions behind my data export and access infrastructure.
+
+*Updates*:
+- [2020-01-14]: added 'Nutrition', 'Shell history' and 'Sleep' sections

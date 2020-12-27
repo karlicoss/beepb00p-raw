@@ -1,0 +1,591 @@
+#+summary: A journey in fixing browser history
+#+created: [2019-10-26 Sat]
+#+upid: promnesia
+#+filetags: :promnesia:pkm:
+
+#+macro: TODO      @@html:<span style='font-weight: bold; color:red; background: yellow'>@@TODO: $0@@html:</span>@@
+
+ 
+
+
+Promnesia is a browser extension (Chrome/Firefox/Firefox mobile) that serves as a web surfing copilot
+by enhancing your browsing history, improving your web exploration experience, and integrating with your knowledge base.
+
+[[https://github.com/karlicoss/promnesia#readme][The repository]] contains more information about the project and the setup guide, this post is more about the motivation and the story of what led me to work on it.
+
+Also, you can quickly skim through the [[https://github.com/karlicoss/promnesia#demos][demos]] first before reading, if you prefer!
+
+#+toc: headlines 2
+
+* I want my singularity!
+I was raised on science fiction and grew up dreaming about technology drastically changing our lives.
+Artificial intelligence, augmenting the brain with a math co-processor, head-up displays, neural interfaces, having perfect reaction and memory -- many of you are on the same page and know the drill.
+
+Years passed, I became a software engineer, and realized just how far we are from all these fancy technologies I wanted.
+So my aspirations have become more modest, and I've chosen a more realistic and plausible target:
+using my digital trace (such as browser history, webpage annotations and my [[https://beepb00p.xyz/tags.html#exobrain][personal wiki]]) to make up for my limited memory.
+
+I'm exploring lots of information on the Internet, and it feels wasteful to use my [[https://beepb00p.xyz/tags.html#meatsack][meat resources]] to keep track of it.
+Meanwhile, web browsers keep a record automatically, without any manual and conscious effort.
+Surely we can benefit from the immense computing power and memory capabilities of computers?
+
+So I figured that I wanted:
+
+* Ok, maybe a web assistant at least?
+A web surfing companion. A copilot.
+A [[https://en.wikipedia.org/wiki/Memex][Memex]].
+A [[http://alumni.media.mit.edu/~rhodes/Papers/remembrance.html][Remembrance Agent]]?
+
+Call it whatever you like, I /wish/ it were a concept with a widely accepted name. Something that will sit in my browser and:
+
+- aid me with *information processing*
+
+  Keep track of what I've read, when, on which device, and for how long.
+
+- show me my *annotations and highlights*, within the original page
+
+  I don't want to keep wondering whether I have my notes and thoughts stashed in some app, I want the computer to let me know instead.
+
+- unify my *scattered and siloed bookmarks*
+
+  Firefox bookmarks; Reddit/Hackernews saves; "Watch later" on Youtube, saved links in my instant messenger.
+
+  These are the same damn thing, yet there is no way to oversee and process them through a single interface.
+
+  [[https://jborichevskiy.com/posts/digital-tools/#queue-management-for-inbound-digital-content]["Queue management for inbound digital content"]]:
+  a post expanding further on this idea.
+
+- connect with my online presence: chats and social networks
+
+  If I tweeted about a page, surely this should be somehow recorded in the browsing history?
+
+  In fact, the page that I bothered to tweet about is *much* more important than a page I merely visited in the browser.
+
+- help me explore new information and *prioritize* it
+
+  There is so much awesome stuff on the Internet! The biggest problem I have is picking the next cool link to dig into.
+
+  Imagine if in one click, I could see which of my friends, or the people I follow have read a certain link.
+  What did they think? Have they posted about it, annotated, or something else? Do they follow the author, perhaps I should too?
+
+- bridge the gap between the browser and my [[https://beepb00p.xyz/tags.html#exobrain][personal wiki]]
+
+  Whatever product I choose for managing my notes: Google Keep, Evernote, Roam Research, or even org-mode files on my disk,
+  they always end up *isolated and disconnected* from my web browsing.
+
+I searched for a system like this [[https://twitter.com/karlicoss/status/767412935316611072][for]] several [[https://twitter.com/karlicoss/status/896313846159298560][years]].
+
+After enough failed attempts at finding an [[#prior_art][existing solution]], I figured it was going to be yet another thing I'd have to implement myself.
+
+The journey of building it took longer than I expected, led me through a rabbit hole of [[https://beepb00p.xyz/tags.html#dataliberation][data liberation]], lots of [[https://en.wiktionary.org/wiki/yak_shaving][yak shaving]],
+and made me realize: *browser history is very, very broken*.
+
+Note: the next two sections are (somewhat technical) rants. If you prefer a more positive/less boring agenda, feel free to skip them straight to [[#prior_art]["Existing solutions"]]
+, and you can return back later if you feel like it.
+
+* Browser history is broken
+To a large extent, URLs express *relationships and hierarchy* between the bits of information. For example:  ~blog <-> post <-> comment~, ~person <-> tweet~, ~playlist <-> video~.
+
+With this information you should be easily able to find everything relevant to the current page and trace your jumps through past websites.
+Merely by looking at URLs, without "AI" or some dubious machine learning algorithm!
+Seems like a low hanging fruit to harvest, right?
+
+Web browser history is a rich source of potentially useful information.
+Just think about it: it's zero effort [[https://beepb00p.xyz/tags.html#lifelogging][lifelogging]].
+It contains exact timestamps and links which /basically/ address information.
+
+Now think about the experience you actually have. What was the last time you used the browser history in any nontrivial way, for something other than reopening an accidentally closed tab?
+
+Besides:
+
+** it's not just about web browsers
+When you're using a native phone app (say, for Reddit or Twitter), your history either isn't logged anywhere or if it is, it's only stored locally on your phone.
+(this is why I emphasize *browsing* history, not *browser* history)
+
+On Android, it's likely to be in an Sqlite database in ~/data/data/app.name~.
+This directory is not accessible to normal users *unless your phone is rooted*.
+Just think about how ridiculous this is. It's *your own data*, yet your OS babysits you, preventing access to it.
+(rooting Android phones ranges from "*somewhat* painful" to "*very* painful")
+And yes, I know sandboxing and security are important, but locking my data inside the app is hardly an acceptable tradeoff.
+
+As a specific example, the [[https://github.com/ccrama/Slide][Reddit Slide]] app keeps your view history in ~/data/data/me.ccrama.redditslide/SEEN~.
+Okay, say you root your phone and access the database. Turns out the the app isn't persisting the data forever, it's merely keeping a few weeks' cache.
+And I can hardly blame the developer for this: because of the data model, no one expects regular users to access this database.
+
+So if you want your complete history, you have to backup this database regularly, keep the snapshots and [[https://beepb00p.xyz/exports.html#synthetic][somehow]]
+reconstruct it.
+
+You may dismiss this as nitpicking and obsession over every last bit of my data.
+But when *all* of your phone apps are doing this you're missing out on quite a lot of useful information.
+
+** it's scattered and siloed
+Building on the previous point:
+
+- for the most part, you can't access history in your phone apps
+- lots of data which /ought/ to be counted as web history is scattered across silos
+
+  - in the cloud: behind APIs (best case), GDPR and manual exports (worst case)
+    ([[https://beepb00p.xyz/sad-infra.html][#sadinfra]])
+    It is never easy to get hands on, /even/ if you're an experienced software engineer.
+
+  - on the filesystem, for example in markdown/org-mode files
+
+    A slightly better scenario, but as far as the web browser is concerned, it doesn't make any difference.
+
+Even /regular/ browser history is not easy to get:
+
+- Firefox [[https://support.mozilla.org/en-US/questions/1080942][used to]] silently 'expire' your browser history
+- Chrome deletes history older than [[https://superuser.com/a/364475/300795][90 days]]
+
+  The only way to access older history I'm aware of is [[https://myactivity.google.com][Google Activity]] and Takeout.
+
+- Google Takeout [[https://beepb00p.xyz/./takeout-data-gone.html][quietly recycles your history]]
+
+- Migration is limited to the most popular browsers
+
+  The retention limits the migration as well.
+  E.g. if you migrate from Chrome to Firefox, history older than 90 days is locked and siloed in your Google Account.
+
+- You're going to have a hard time if you're not using Google/Mozilla sync
+
+  Your history will be scattered across devices and lost on OS reinstalls.
+
+  There are ways of self-hosting Firefox sync, and ([[https://superuser.com/questions/614744/how-to-set-up-a-own-chrome-sync-server][allegedly]]) even Chrome sync,
+  but as you can imagine, is quite tedious.
+
+** it's got varying significance
+Not all links in your history are equally important:
+
+- some are clicked on by accident
+- some you've just skimmed
+- some are on your reading list
+- some you've been reading for hours and are full of your highlights and annotations
+- some you reference in your knowledge base/personal wiki
+- some of them you've shared with others on social media
+
+The current browser history experience makes no distinction between these scenarios.
+* URLs are broken
+This topic probably deserves a separate post, but I'll keep it section-sized for now.
+
+URLs might seem great because they mostly address content and are semi-descriptive: people /try/ to keep URLs somewhat reasonable, tidy and working.
+But in the real world:
+
+- links *rot*
+
+  Many URLs are [[https://www.gwern.net/Archiving-URLs#link-rot][*literally* broken]].
+  We're lucky to have [[https://web.archive.org][archive.org]], so you can at least access dead pages.
+
+  But there is no way to migrate your browser history, e.g. point old URLs to their respective archive.org entries or a new domain.
+  Similarly if you had the page annotated, your annotations become orphans without an easy way to relink them.
+
+- links are *obfuscated* by shortening and redirects
+
+  What happens to all the ~t.co~ links when Twitter as a service dies?
+  (see [[https://indieweb.org/silo#Linkwrapping][linkwrapping]])
+
+- links are *obscured*
+
+  There is no easy way to know what's behind ~https://www.instapaper.com/read/1265139707~ without querying the Instapaper API.
+
+  Relations between data are often obscured as well. For example:
+
+  - ~https://news.ycombinator.com/item?id=22918980~ is a submission link
+  - ~https://news.ycombinator.com/item?id=22919718~ is a comment to that submission
+
+  These links are clearly related, but there is no way to tell it just from =id=.
+
+  Compare this to Reddit links:
+
+  - ~https://reddit.com/r/orgmode/comments/g6ejwe/is_there_an_orgmode_workbook_tutorial_that_is~ is a post link
+  - ~https://reddit.com/r/orgmode/comments/g6ejwe/is_there_an_orgmode_workbook_tutorial_that_is/fo9qnen~ is a comment to that post
+
+  The ids are obscure, but at least we can clearly see the ~post <-> comment~ relation merely by looking at the URLs.
+  Alas, browsers are just ignoring this useful information.
+
+- links are *unstandardized*
+
+  For example, [[https://en.wikipedia.org/wiki/Query_string][queries]]
+
+  - typically don't point to anything persistent and are used for querying (duh)
+  - but other times they are used to address information: ~http://wiki.c2.com/?LispLanguage~ or ~https://www.scottaaronson.com/blog/?p=2694~
+  - and in many cases are utter garbage used for [[https://en.wikipedia.org/wiki/Query_string#Tracking][tracking]]
+
+  The worst part is that these use cases overlap. For example, take a look at ~youtube.com/watch?v=wHrCkyoe72U&feature=share&time_continue=6~:
+
+  - ~v=wHrCkyoe72U~ is the most important part of this link
+  - ~feature=share~ is just garbage
+  - ~time_continue=6~ could be treated as useful information
+
+  A similar story applies to [[https://en.wikipedia.org/wiki/Fragment_identifier][fragments]]:
+
+  - on Google groups, they are meaningful and address specific discussions and messages: ~https://groups.google.com/a/list.hypothes.is/forum/#!topic/dev/kcmS7H8ssis~
+  - on most websites, they refer to the content within a page: ~https://github.com/lipoja/URLExtract/issues/13#issuecomment-467635302~
+
+- links are *unnormalized*
+
+  - just think of all the =www.=, =amp.=, =mobile.=, =m.= garbage
+
+  - ~youtu.be/1TKSfAkWWN0~, ~youtube.com/embed/1TKSfAkWWN0~ and ~https://www.youtube.com/watch?v=1TKSfAkWWN0&list=WL&index=11~ refer to the exact same content, yet your browser has no idea.
+
+  - ~<link rel="canonical" ...>~ [[https://en.wikipedia.org/wiki/Canonical_link_element][element]]
+
+    - often it's not not present
+    - when present, often used improperly,
+    - you need to fetch the page first to get the canonical link
+    - only works one way; you can't easily retrieve all links that have *the same canonical page* as the current
+
+I want URLs to *address information* and *represent relations*. The current URL experience is far from ideal for this.
+
+* Prior art
+
+
+Sadly, I've seen very few similar projects.
+
+** Prototypes and mockups
+- [[http://alumni.media.mit.edu/~rhodes/Papers/mnotes-iui00.html]["Margin Notes: Building a Contextually Aware Associative Memory"]]
+
+  A paper from 2000 (!):
+
+  #+begin_quote
+  Margin Notes is a system that automatically annotates every webpage you visit with links to other potentially useful documents.
+  #+end_quote
+
+  [[http://alumni.media.mit.edu/~rhodes/RA/Mnotes][This page]] has more information and
+  this seems like more of a recommendation system, and I haven't found any source code to check it out.
+
+- [[https://docs.google.com/document/d/1QlrVpAl59gmJD7Kl--q3uyfZo936iZIb45fim6EV53k][Historia]] by [[https://mek.fyi/#experiments][Mek]]
+  #+begin_quote
+  Goal: use a chrome extension to supplement your browsing experience by introducing a superior browsing history data structure:
+  - preserve provenance. maintain a detailed account of browsing history
+  - track interactions with dynamic content
+  #+end_quote
+
+  Sadly it's only a concept.
+
+** Google Activity/Takeout
+Though I covered it already, it's worth another mention as many people use it. I find it problematic because:
+
+- it's a Google-specific silo, and the functionality provided by Google is only useful for deliberate searches
+- it doesn't have an API, and can't be integrated in the browser
+
+** 'Unlimited history' extensions
+There is a family of Chrome extensions similar to [[https://chrome.google.com/webstore/detail/history-trends-unlimited/pnmchffiealhkdloeffcdnbgdnedheme][History Trends Unlimited]]
+which try to make up for Chrome's 90-day retention by keeping the history in IndexDB.
+Unfortunately, retention is the only problem this solves, and then it it ends up as a yet another silo.
+
+But, thousands of users indicates there is at least demand for such functionality.
+
+** [[https://histre.com][Histre]]
+Histre is an open source browser extension that presents history as a tree to allow for easier exploration.
+I really like the idea, and it's a shame this is not the default representaion in our browsers.
+
+The downside of Histre is that it doesn't integrate with your existing knowledge about the page from other services, so it's a silo in its own regard.
+
+** Vivaldi Browser
+Vivaldi has some [[https://help.vivaldi.com/article/history][fresh ideas]], in particular, statistics for browser history and calendar view.
+You can also enable infinite retention for the history in the settings.
+
+However you only have access to your history within Vivaldi, and all your other data is left out.
+** Memacs
+[[https://github.com/novoid/Memacs#readme][Memacs]] by Karl Voit is a memex software which unifies your data as org-mode, allowing you to query it from within Emacs.
+
+It's excellent as a personal timeline/information search system. However, that means you have to query information *actively* in your Emacs, as opposed to a *passive* assistant doing it for you.
+
+Having your full detailed history as plaintext is kind of noisy without extra interfaces, and inefficient for long browsing histories with hundreds of thousands of entries.
+
+** [[https://hyfen.net/memex][Memex]] by Andrew Louis
+This is a working (but not open-source, at least yet) prototype of a Memex, unifying personal data and exposing an API for it.
+
+I only ran into it a few months ago! Because it's not public, I'm not sure to what extent it can address the browser history problems specifically.
+Jumping a bit ahead of myself, I expect it to integrate well with [[#promnesia][Promnesia]], so we could potentially benefit from each other's work.
+
+** Worldbrain Memex
+[[https://github.com/WorldBrain/Memex#memex-features][Worldbrain Memex]] is a browser extension to annotate, search and organize what you've seen online,
+and soon a [[https://community.worldbrain.io/t/new-testing-memex-mobile-app-sync/233][mobile app]].
+
+It's an amazing product: open source, local first, supports tagging, highlights, annotations, and even full-text history search.
+By all means, try it!
+
+It would be pretty close to my vision of the personal web assistant if not for a problem: it is also a kind of a silo.
+You can import the data from other services into Memex, but then you have to conform to its model of the data.
+If for some reason you can't use Memex for annotating and recording your history (e.g. on some of your devices) -- you
+end up using multiple services, or having redundant (and potentially inconsistent) copies of your data scattered across your digital space.
+
+Having privacy focused and open source tools is a very important step towards a better future.
+However, I want a different *model* of interacting with my *existing* data, which doesn't require moving data in between the silos.
+(see [[#not_just_browser]["it's not just about the browser"]])
+
+And jumping ahead again, [[#promnesia][Promnesia]] can be integrated with Memex data.
+Overall, it seems that our vision is pretty similar, and I [[#future][expect]] that both projects can benefit from each other's work,
+up to the point that Promnesia extension is sharing the extension/backend with Worldbrain Memex.
+
+* Hello, Promnesia!
+Ok enough rants! [[https://github.com/karlicoss/promnesia][Promnesia]] is the tool I've developed to address some of the issues with the browsing history and URLs.
+(: [[https://beepb00p.xyz/myinfra.html#promnesia][promnesia]])
+
+I've already [[#what_i_want][mentioned]] what I wanted, but I'll recap:
+
+** Goals
+- [[#history_broken][make history useful]]: unify scattered and siloed history under a single interface
+
+  There should be absolutely no difference between a link you opened yesterday in your Instapaper phone app,
+  and a link you visited in Firefox ten years ago.
+
+- [[#urls_broken][make URLs useful]]: make use of their hierarchy and relations between them
+
+- assist me in exploring new information
+
+- make it possible to easily trace my history
+
+  Let me answer when, how, and why did I visit/bookmark the page?
+
+- integrate metadata: annotations, highlights, notes, chat messages, tweets, etc.
+
+  Release it from walled gardens and display it right within the page when applicable (e.g. highlights)
+
+- make it flexible
+
+  As long as it's /something/ you can extract URLs from, you should be able to feed it in Promnesia.
+
+A cool thing is that some of these goals weren't clear from the beginning -- I discovered them during development,
+and I think there are many more I haven't discovered yet!
+
+** Meta-goals
+There are also some *meta-goals* and principles I'm adhering to:
+
+- make it *open source*
+
+  This goes without saying: everything I'm doing for this project is shared and open source.
+  Frankly, I'm not even sure such a project can be sustainable any other way.
+
+- *local first*
+
+  Your past is sensitive data and you should have control over where you keep it and how you're accessing it.
+  In the simplest setup, promnesia communicates with your browser through a *local* port.
+
+  In addition, you have all your data available [[https://beepb00p.xyz/tags.html#offline][#offline]].
+  Modern browsers provide a pretty pathetic offline experience, but if you use a tool similar to [[https://github.com/pirate/ArchiveBox][ArchiveBox]], this can be useful to you.
+
+- make it *modular*
+
+  Make sure components can be reused.
+
+  For the past several months, I've mostly been removing/moving away the code from Promnesia
+  to make sure that the [[https://github.com/karlicoss/HPI][data processing and normalization code]] in it can be used for other purposes by other people.
+
+  I'm going to take this even further and explore the potential for interoperability and integration with other open source tools, I'll write about it a bit [[#future][later]].
+
+- *don't build another silo*, use existing information
+
+  This kind of complements the previous point.
+
+  There are many decent services and tools already. They all have their own [[https://beepb00p.xyz/annotating.html#comparison][pros and cons]].
+  Different people prefer different tools. Sometimes because they're locked in and don't have much choice,
+  but other times because they genuinely have subtle preferences and opinions.
+
+  The cost of switching is too high, both in terms of the time and the cognitive effort.
+  There's always the risk of encountering /one small thing/ that would make the tool a no-go.
+
+  We should invest in finding better ways of *combining* existing tools, not rewriting all over again.
+
+** How does it work?
+Promnesia consists of three parts:
+
+- browser extension
+
+  - neatly displays the history and other information in a sidebar
+  - handles highlights
+  - provides search interface
+
+  However, browser addons can't read access your filesystem, so to load the data we need a helper component:
+
+- server/backend: =promnesia serve= command
+
+  It's called 'server', but really it's just a regular program with the only purpose to serve the data to the browser.
+  It runs locally and you don't have to expose it to the outside.
+
+- indexer: =promensia index= command
+
+  Indexer goes through the sources (specified in the config), processes raw data and extracts URLs along with other useful information.
+
+  Another important thing it's doing is *normalising* URLs to establish equivalence and stip off garbage.
+  I write about the motivation for it in [[https://beepb00p.xyz/promnesia.html#urls_broken]["URLs are broken"]].
+
+You might also want to skim through the [[https://github.com/karlicoss/promnesia#glossary][glossary]] if you want to understand deeper what information Promnesia is extracting.
+
+*** Data sources
+Promnesia ships with some builtin sources. It supports:
+
+- data exports from online services: Reddit/Twitter/Hackernews/Telegram/Messenger/Hypothesis/Pocket/Instapaper, etc.
+
+  It heavily benefits from [[https://github.com/karlicoss/HPI][HPI]] package to access the data.
+
+- Google Takeout/Activity backups
+- Markdown/org-mode/HTML or any other plaintext on your disk
+- in general, anything that can be parsed in some way
+- you can also add [[https://github.com/karlicoss/promnesia/blob/master/doc/SOURCES.org#extending][your own custom sources]], Promnesia is extensible
+
+See [[https://github.com/karlicoss/promnesia/blob/master/doc/SOURCES.org][SOURCES]] for more information.
+
+
+*** Data flow
+Here's a diagram, which would hopefully help to understand how data flows through Promnesia.
+
+See HPI [[https://github.com/karlicoss/HPI/blob/master/doc/SETUP.org#data-flow][section on data flow]] for more information on HPI modules and data flow.
+
+Also check out my [[https://beepb00p.xyz/myinfra.html#promnesia][infrastructure map]], which is more detailed!
+
+: ┌─────────────────────────────────┐ ┌────────────────────────────┐ ┌─────────────────┐
+: │ 💾       HPI sources            │ │  💾    plaintext files      │ │  other sources  │
+: │ (twitter, reddit, pocket, etc.) │ │ (org-mode, markdown, etc.) │ │ (user-defined)  │
+: └─────────────────────────────────┘ └────────────────────────────┘ └─────────────────┘
+:                                 ⇘⇘              ⇓⇓               ⇙⇙
+:                                  ⇘⇘             ⇓⇓              ⇙⇙
+:                                  ┌──────────────────────────────┐
+:                                  │ 🔄    promnesia indexer      │
+:                                  |        (runs regularly)      │
+:                                  └──────────────────────────────┘
+:                                                 ⇓⇓
+:                                  ┌──────────────────────────────┐
+:                                  │ 💾    visits database        │
+:                                  │       (promnesia.sqlite)     │
+:                                  └──────────────────────────────┘
+:                                                 ⇓⇓
+:                                  ┌──────────────────────────────┐
+:                                  │ 🔗    promnesia server       │
+:                                  |       (always running)       |
+:                                  └──────────────────────────────┘
+:                                                 ⇣⇣
+:                                  ┌─────────────────────────────────┐
+:          ┌───────────────────────┤  🌐      web browser            ├────────────────────┐
+:          │  💾 browser bookmarks ⇒      (promnesia extension)      ⇐  💾 browser history |
+:          └───────────────────────┴─────────────────────────────────┴────────────────────┘
+
+* How can you use Promnesia?
+Here I'll describe some specific scenarios for which I find Promnesia extremely useful.
+[[https://github.com/karlicoss/promnesia#readme][README]] also has screenshots and short screencasts which elaborate on the features.
+
+- Finding new information
+
+  Example: I run into an [[https://nautil.us/issue/66/clockwork/haunted-by-his-brother-he-revolutionized-physics-rp][article]] on Twitter. I enjoyed it, and the website looks kind of familiar.
+
+  When I jump on [[https://nautil.us]], the Promnesia sidebar shows me that I've visited and even annotated other articles on this site before!
+
+  I am repeatedly stumbling upon this site, and it's got high quality content, so I subscribe to it through my RSS reader.
+
+- Exploring people and communities
+
+  - How often have I engaged with a certain blog in the past?
+
+    Which posts have I already seen or read? Did I like them?
+    Should I dive deeper?
+
+  - Same questions, but for twitter accounts, subreddits, youtube channels or anything similar
+
+- Processing large amounts of information
+
+  For example:
+
+  - [[https://pinboard.in/popular][Pinboard popular]]
+  - [[https://wiki.lesswrong.com/wiki/How_To_Actually_Change_Your_Mind][link compilations]]
+  - [[https://posobin.com/hn_classics][Hackernews 'classics']]
+
+- Display annotations and highlights from *any* service (e.g. Instapaper/Pocket), within the webpage
+
+- Personal digital archaeology and external memory
+
+  - Why did I bookmark this youtube video? Who sent it to me?
+  - How did I get on this forgotten tab?
+  - I'm sometimes annoyed by ~@<account>~ tweets. Should I unfollow them?
+
+    I.e. why did I follow them in the first place? Are they worth following overall? Do I like their tweets often or bookmark their links?
+
+- Integrating with your knowledge base
+
+  Promnesia can handle your private wiki whether it's plaintext, or a web service, which would help you instantly find and jump to the relevant information.
+
+- Integrating with others' knowledge bases
+
+  I find it intriguing to think about this as tapping into each other's brains!
+
+  See: [[https://beepb00p.xyz/myinfra-roam.html#promnesia][demo]] integrating Promnesia with a Roam Research database.
+
+- Unified browser history
+
+  I'm listing it last because the benefits of this only become apparent when you start using your data, not while it just sits on your disk.
+
+  As you collect more and more detailed history, the whole system becomes more and more useful.
+
+* Future of Promnesia
+Promnesia was a lot of work, especially in terms of sharing it with other people and documenting.
+If fact, *most writing on my blog have been slowly building up to this post*.
+On my [[https://beepb00p.xyz/myinfra.html#promnesia][infrastructure map]], Promnesia is a leaf node!
+
+As much as I am proud of my work, and how rewarding it is when other people find it useful... I'm already thinking how to break Promnesia apart and perhaps even sunset it.
+I would be happy if:
+
+- I can raise the demand and awareness for data liberation and interoperability
+- I can inspire other people to implement something similar (and better!)
+
+As I [[#promnesia_metagoals][previously]] mentioned, one of the meta-goals is modularity, so parts of Promnesia can be plugged in other tools.
+There is still some unused potential for integrating with other open source projects, so I want to take this even further and to the extreme:
+
+- URL indexers/data sources
+
+  Promnesia modules are very slim when it comes to the URL extraction, many of them are just 30 lines of code.
+  Most of the boring and tedious stuff (like data normalization) is encapsulated in [[https://github.com/karlicoss/HPI#readme][HPI]] package, which can be used with other tools.
+
+  It would be interesting to see if these data sources can be integrated with Worldbrain Memex.
+  [[#worldbrain_memex][Before]] I mentioned that at the moment Memex is a silo, but they also realize it!
+  Very recently, WorldBrain announced [[https://github.com/WorldBrain/storex-hub][Storex Hub]], which seems like a potential means of integration.
+
+  It's likely that Promnesia backend can be rebased on top of it.
+
+- URL normalization algorithm
+
+  At the moment, Promnesia uses a [[https://github.com/karlicoss/promnesia/blob/master/src/promnesia/cannon.py][hacky set of rules]], which does the right thing for the most websites I'm using.
+  However, it's not sustainable for one person to maintain, and it feels worthy of extraction to a separate project/public database.
+  I imagine it to be something similar to =tzdata=, just think how much frustration we all save by using the same library for timezone information.
+
+  This would be something many projects could benefit from: Polar Bookshelf, [[https://web.hypothes.is][Hypothesis]], Worldbrain Memex, and I'm sure there are many more I don't even know of!
+
+- Highlighting and anchoring annotations
+
+  One the one hand, even a very primitive algorithm for matching annotations against the page works pretty well in 90% of cases.
+  On the other hand, the remaining 10% is the bit which is pretty hard to get right, and not an easy task.
+
+  It would be cool to reuse [[https://web.hypothes.is/blog/fuzzy-anchoring/#a-new-approach][fuzzy anchoring]] by Hypothesis, compare it with whatever Worldbrain is using,
+  and figure out how much of it is worth sharing. I'd rather help these projects maintain their code, than reinvent my own wheel.
+
+- Other features
+
+  Again, it feels that most of Promnesia's existing (and future!) features make sense to within Worldbrain Memex, or as plugins.
+
+As you can see there is some significant overlap with Worldbrain Memex, and they already have a mature and impressive product. So I can see Promnesia as a plugin on top of it, or even as a part of it!
+This collaboration is something I'll look at in the near future.
+
+In the meantime, Promnesia is completely usable on its own, and as long as I use it, I'll be supporting it!
+
+* ---
+I've always expected my gadgets to extend my ability to think and process information.
+Promnesia is a step I've taken to bring that future closer.
+
+Want to join me? Check out the [[https://github.com/karlicoss/promnesia][repository]], which contains more screenshots, demos, and the setup manual.
+
+If you think of cool features, useful data sources, or any related thoughts feel free to use [[https://github.com/karlicoss/promnesia/issues][github issues]]
+or reach me by some other means.
+
+Even better if you want to help and contribute!
+I'm happy to help you with any Python quirks or web extension specifics.
+
+Related links:
+
+- IndieWeb wiki on [[https://indieweb.org/silo][silos]]
+- Cloudflare blog: [[https://blog.cloudflare.com/the-history-of-the-url][The History of the URL]]
+- [[https://utcc.utoronto.ca/~cks/space/blog/web/URLSAreTerriblePermanentIDs]["URLs are terrible permanent identifiers for things"]]
+- [[https://news.ycombinator.com/item?id=23227186][HN: WorldBrain's Memex: Bookmarking for the power users of the web]]
+- [[https://beepb00p.xyz/hpi.html][Human Programming Interface]]
+- [[https://beepb00p.xyz/sad-infra.html][The sad state of personal data and infrastructure]]
+
+*Credits:* thanks to [[https://jborichevskiy.com/about][Jonathan]], [[http://awesomesauce.name][Andrew]] and [[https://petr-tik.github.io][Petr]] for the valuable feedback on the post.
+Thanks to [[https://twitter.com/_bepolymathe_][Emmanuel]] for trying out the project and suggestions on making it easier to set up!

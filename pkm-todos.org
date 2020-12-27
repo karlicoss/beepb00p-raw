@@ -1,0 +1,228 @@
+#+summary: How I am managing my life and keeping track of the things I want to do
+#+filetags: :pkm:orgmode:productivity:gtd:
+#+upid: pkm_todos
+#+draft: public
+
+*Draft stage*: mostly ready in terms of what I want to say, structure and writing needs to be improved, needs to reflect stuff I published after writing the draft.
+
+Disclaimer: this post is going to be more of a story rather than a bunch of recipes for you since I find it hard to justify speicific task management features without the context.
+If you want some specific tips, jumpt straight to the org mode section.
+
+My quest for task keeping started few years ago, during the uni, when I found myself forgetting things increasingly more often.
+Perhaps that was just basically having a proper grown-up life: moving for a different city to study, having to care about physical well being,
+looking for internships, so the various responsibilities accumulated and started tipping over my brain.
+
+That wasn't just with day to day life through, I thought I was bad at memorizing structured information as well like math definitions or language grammar. It didn't have much impact on my studing though: thankfully, most of our classes did not require cramming and as long as one understood the subject they were fine.
+
+Forgetting felt really irritating, so I started seeking ways of compensating for that. In hindsight, I'm not really sure whether
+I actually was that worse than other people at remembering and memorizing.
+I just sort of assumed everyone else was good. But anyway, here I am.
+
+One approach some people choose is just letting it flow and accepting that things that you didn't manage to memorize were actually not that important.
+I find that quite terrifying on many levels so instantly rejected that.
+
+Pretty much the only and the obvious choice was moving to digital way of managing tasks. (if you are very keen on using paper notebook you might still find some of my tips useful!)
+
+#+toc: headlines 2
+
+* Tools
+I think I've tried pretty much everything that existed, so I won't list them all. The ones I actually heavily used were:
+
+- gmail (???-now)
+- google calendar (2010-now)
+- wunderlist (2013-2016)
+- remember the milk (2016-2018)
+- emacs + org mode (2017-now)
+
+I'll talk in more details about them now.
+
+
+** Gmail
+Email is basically a todo-list if you keep it organised enough.
+
+I'm using [[https://support.google.com/mail/answer/3094499][categories]] in Gmail, which is the only thing apart from spam filtering I've delegated to Google's algorithms, and it works surprisingly well.
+
+I'm keeping inbox empty:
+
+- if an email is some sort of useful information (e.g. discount/promo/TODO), I
+- 
+
+- For emails with specific deadline (e.g. tax self assessment), I'll also set it in Org agenda
+  If an email has to be acted upon at some point, I just share it directly in my todo list (via [[https://github.com/karlicoss/grasp][grasp]] on my desktop).
+
+For emails with specific deadline or that need to be actioned upon sooner than later, I just manually create a task in my actual todo-list, schedule it and archive the email.
+
+Most messages are used as a means of notifying and don't require replying. If it does, but I can't do it immediately or waiting for something I'll just star it so it ends up in my 'Primary' which
+makes it noticeable.
+
+Every once in a while when I don't have better things to do I go though 'Updates', 'Promotions' and 'Forums' and act upon items there, cleaning them up a bit.
+
+** Google Calendar
+
+I suppose most people use it anyway, so perhaps not worth a long explanation. 
+
+Killer feature (and also the only reason I'm using it) of /Google/ calendar is Gmail integration: extracting calendar events from things like reservations, booking and appointment confirmations.
+Even though there is a 'standard' way of suggesting a calendar entry for a recipient by attaching an '.ics' file, it's not widely used.
+Apart from that feature, for personal use any calendar software works as long as it's capable of syncing.
+
+I'm only using calendar for tasks that have **specific date/time and timespan**: work holidays, regular meetings, appointments, social occasions with friends etc.
+Everything else goes into my todolist which I'll write about later.
+
+Here's how I organise the calendar:
+
+- Main
+
+  This is the default calendar and I just dump everything in it.
+
+- Work
+
+  I can't import my work calendar into my personal calendar due to security policy. So instead, I just reserve slots for regular meetings without any metadata.
+  Normally I remember what this slot corresponds for, so this is just so I don't schedule something over work event.
+
+- Imported:
+
+  One feature people often overlook in modern calendar software is that you can import other calendar feeds. Some examples of mine:
+
+  - public holidays (default in Google Calendar)
+  - [[https://help.meetup.com/hc/en-us/articles/360002879851-Exporting-your-Meetup-calendar-to-RSS][meetup.com]] events
+  - [[https://www.facebook.com/help/152652248136178/][Facebook events]]: displays events you are attending as long as the ones you marked as 'Maybe'
+  - [[https://www.hackerrank.com/calendar][Hackerrank]] events (programming competitiotns like Google Code Jam/Topcoder).
+
+  The latter one is actually very spammy since it's not personalised and just lists all programming contents. If I keep it on, it just dominates my calendar. To get around this,
+  I normally keep it disabled, but check it once a week and duplicate the events I want to participate in to the Main calendar.
+
+I'm also importing google calendar in my org-mode agenda via [[https://github.com/myuhe/org-gcal.el][org-gcal]] module (in read-only mode).
+
+** Wunderlist
+
+Can't really say much, about it. It was a nice simple todo task manager, but as I got a taste for task management, I started hitting its limitations.
+
+** Remember The Milk (RTM)
+
+I was quickly hooked once I discovered it, and ended up as kind of a power user, I even won a year of subscription for [[https://www.rememberthemilk.com/forums/tips/22027/][some tips]] I shared! 
+
+For full list of features see [[https://www.rememberthemilk.com/upgrade]['Compare plans' section]].
+
+** Org mode
+
+I've had several attempts at trying to use [[http://spacemacs.org][spacemacs]] and Org mode in particular until something clicked and I got hooked.
+Most of my org mode habits actually got seamlessly transplanted from RTM workflow, so I'm gonna talk about them further.
+
+
+* Which features do I need from todo organizer?
+
+After thinking for a bit of the best way to write both about RTM (which I am really greatful for) and org mode without repeating,
+I realized easiest way to avoid repetition would be some sort of Rosetta stone mapping between RTM and org concepts
+I've also marked feasure
+
+TODO third column -- what it does?
+
+
+
+
+
+#+caption: This is the caption for the next table (or link)
+| RTM                                                                                    | org mode                                                                                                                                                                                                                                           |
+|----------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| tags                                                                                   | tags                                                                                                                                                                                                                                               |
+| priorities (only three)                                                                | priorities (any number)                                                                                                                                                                                                                            |
+| hotkeys (gmail-style)                                                                  | emacs/[[https://github.com/emacs-evil/evil][evil mode]] hotkeys                                                                                                                                                                                    |
+| [[https://www.rememberthemilk.com/help/answer/basics-smartlists-whatare][smart lists]] | [[https://orgmode.org/manual/Custom-agenda-views.html][custom agenda]]                                                                                                                                                                             |
+| search                                                                                 | custom agenda query or [[https://orgmode.org/manual/Tag-searches.html][tag search]] or any other means of plaintext search you can possibly think of (TODO link to swoop)                                                                          |
+| [[https://www.rememberthemilk.com/help/answer/basics-smartadd-howdoiuse][smart add]]   | a bit different, but available via [[https://orgmode.org/manual/Capture-templates.html][capture templates]] and [[https://orgmode.org/org.html#The-date_002ftime-prompt][datetime prompt]]                                                         |
+| recurring tasks                                                                        | [[https://orgmode.org/manual/Repeated-tasks.html][repeated tasks]] (three kinds of them, actually!). However, [[https://www.rememberthemilk.com/help/answer/basics-basics-repeatformat]['repeat every']] is only partially present. TODO float etc |
+| per-task reminders                                                                     | missing in standard org, although present in Orgzly app (TODO link)                                                                                                                                                                                |
+| API                                                                                    | N/A; can be manipulated via elisp/python/other bindings or as any other plaintext                                                                                                                                                                  |
+|----------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| completed tasks                                                                        | [[https://orgmode.org/guide/Archiving.html][archive]]                                                                                                                                                                                              |
+| subtasks                                                                               | sub-outlines (hoever [[https://www.rememberthemilk.com/help/answer/basics-subtasks-repeat][behavior]] for subtasks of recurring tasks is not present though)                                                                                       |
+| phone app                                                                              | [[https://github.com/orgzly/orgzly-android][orgzly]] is superior for Android, there are some apps for Iphones, but don't know how good they are                                                                                                    |
+| cloud sync                                                                             | N/A; any means of plain text sync you prefer                                                                                                                                                                                                       |
+| lists                                                                                  | separate files                                                                                                                                                                                                                                     |
+| collaboration                                                                          | missing, or at least not that I know of                                                                                                                                                                                                            |
+
+I think that stuff above the separator is what made RTM superior for me until I hit its limitations.
+If you're looking for an elaborate GTD-style task manager, but not willing to dive into Org mode, this should probably be your choice.
+
+Best thing about org mode is that if something is missing, you at least have possibility to [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Advising-Functions.html][hack it]] and even contribute back.
+  1 TODO recurring tasks thing,
+
+TODO tag examples
+- priorities
+  TODO how I use priorities
+- smart lists (specified by search query)
+  TODO list examples
+- subtasks
+- cloud sync and offline mode in android app
+- repeating tasks (e.g. 'every fifth day of month' or 'every other
+
+  TODO explain why rtm repeating tasks are good
+
+- API
+  script for packing list
+  rtm-paranoid
+  script to add tasks from telegram
+
+workflow I had with RTM, pretty similar
+write how I am rescheduling tasks in the beginning of day
+
+** TODO [#D] Primary reason I switched: I caught myself keeping notes in RTM, writing cli tools to create tasks (travel list)
+
+* my workflows
+** [#C] prioritizing tasks (todo list/reading list etc) and then sorting by prioritiez makes everything seem _way_ more manageable :blog:
+** TODO [2019-05-13 Mon 20:44] write about todolists for travel and org mode workflow?
+** TODO write how I'm using todos with :noexport: right inside this file as I'm coming up with ways to simplify and imporve blog rendering
+** DONE [2019-05-29 Wed 19:05] write about gmail and zero inbox?
+** TODO [2019-05-29 Wed 19:35] youtube as watchlist?
+** TODO [2019-05-29 Wed 19:35] nocommit and TODOs in code
+*** STRT [2019-09-02 Mon 22:39] hmm maybe write about how I've set up search over everything first? it's kind of a dependency
+see [[https://beepb00p.xyz/pkm-search.html]["building personal search infrastructure"]]
+
+** STRT [2019-05-29 Wed 19:38] scripts for adding TODOs from hypothesis, instapaper and kobo (orger)
+see [[https://beepb00p.xyz/orger.html][orger]]
+
+** TODO [#B] I don't use time estimates.                         :blog:todos:
+Reasons: no need reminding me that there very little time remaining after you account for sleep, full time job, exercise and other maintenance
+I'm not good at time estimates, although that could be something to improve
+As long as you have the priorities, you just do the most important things and it doesn't really matter how long rest of them take
+
+
+
+* TODO [#C] workflow with todos                              :blog:pkm:orger:
+Yesterday: ran into an article https://www.quantamagazine.org/how-feynman-diagrams-revolutionized-physics-20190514/ which seemed interesting judging by the title, so I immediately shared opened it in instapaper
+Reading through "Now, a group of physicists and mathematicians is studying a geometric object called an “amplituhedron” that has the potential to further simplify calculations of particle interactions." I realised it would be interesting to find out and learn what is amplituhedron. But I'm on the run and a bit tired, and most important hasn't finished reading the whole article yet! So I highlight this sentence and add 'todo' as annotation.
+Next morning, as I check my agenda, this is added as a task in my agenda (note that it got a 'scheduled' thing) by one of my 'orger' scripts
+
+#+begin_src html
+  ,* TODO group of physicists and mathematicians is studying a geometric object called an “amplituhedron” that has the potential to further simplify calculations of particle interactions. :ip2org:
+   todo
+   from [[https://www.instapaper.com/read/1193269751/10712031][ip]]   [[https://www.quantamagazine.org/how-feynman-diagrams-revolutionized-physics-20190514/][How Feynman Diagrams Revolutionized Physics | Quanta Magazine]]
+#+end_src
+
+As I go through agenda, I decide it's somewhat interesting to read about at some point, but not very critical. So I
+  unschedule (, u in agenda)
+  give it medium priority [#C] (press 3 in agenda) 
+  refile to study.org file (, r in agenda)
+your hotkeys may vary of course. 
+
+While reading the same article, I've highlighted "learn more about Feynman diagrams and how they’ve changed the way physicists work, watch our new In Theory video" and marked as 'todo' as well, so it's now in my agenda. I suspect that that video wouldn't be too heavy on math, so I can watch it tonight while eating my dinner. So I don't unschedule it, but
+   give it low priority [#D] by pressing 4 in agenda 
+   and tag it (pressing T in agenda) with 'watch'
+I still tag and prioritize in case I wouldn't manage to do it today for some reason. Then I'll probably just unschedule the item since planning to watch some short video days in advance is a bit too high friction. Next time I want something to watch I will just call org-tags-view with 'watch' and pick something depending on priority or what I fancy more at the moment.
+* Stuff that needs to be integrated in post body
+** TODO [#B] post about org mode sort by property - tags        :blog:reddit:
+
+** TODO [#C] touch 'TODO do something'                                 :blog:
+*** [2019-12-02 Mon 21:55] basically use anything you can as a reminder.
+** TODO [2019-09-02 Mon 22:38] capture
+
+** TODO some tags I'm using, e.g. inspiration, motivation, practices, people?
+
+
+* misc
+I think I can claim that my life is mostly driven by my todo list. 
+Not in the sense that my whole day is scheduled up to the minute and I have to obey it. Quite the opposite actually, I've stopped scheduling things unless they absolutely require a specific time slot.
+
+I can survive few days without looking in my todo list at all, e.g. on holiday (although I still do once a day since I'm a bit anxious of missing Somthing Really Important).
+But when it gets to day-to-day routine, I am never bored and always have something meaningful I could read/watch or do. 
+It doesn't feel overwhelming, I kind of accept I don't have time (at least currently) for many things I've marked as TODO. YMMV, of course :) 

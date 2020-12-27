@@ -1,0 +1,200 @@
+#+summary: Reading Reddit, building spaced repetition queue and quick todos from Telegram messages
+#+filetags: :orgmode:productivity:orger:
+#+upid: orger_todos
+
+In [[https://beepb00p.xyz/orger.html][the first part]] about Orger I wrote how I'm using it (in particular, the ~orger.StaticView~ component) to render my personal data as org-mode files
+for easy, instant access and search.
+
+Another generic application of Orger, is populating Org-mode files with outlines. 
+In particular that means tasks for your agenda/spaced repetition routine or whatever else you could imagine it to be useful for.
+
+Main goal was to minimize the overhead and distractions caused by creating todos by normal means (opening an app, copying some text, etc.).
+Basically I want it to be completely seamless, almost without thinking at all.
+
+You can use the target files as any of your normal org-mode files: modify contents, delete or reschedule tasks, etc.
+When Orger detects new items they would be carefully and atomically appended to the end of file.
+It keeps track of already processed items in a separate JSON file. All this nasty business is dealt with in ~orger.InteractiveView~ component.
+
+You can find all of interactive Orger modules I'm using [[https://github.com/karlicoss/orger/search?q=InteractiveView][on Github]]. 
+
+* [[https://github.com/karlicoss/orger/blob/master/modules/reddit2org.py][reddit2org]]: better processing of saved Reddit posts and comments
+This one I have been sustainably using for almost a year now, so I believe it could be useful to many people.
+
+I tend to be curious about lots of different topics so I'm subscribed to over 100 subreddits.
+
+For the most part I'm reading Reddit passively and I can't afford spending much time on Reddit every day, so my system for years has been: reading updates for the past week on Sundays.
+
+For few select subreddits that most interest me (e.g. [[https://www.reddit.com/r/QuantifiedSelf/][quantifiedself]] or [[https://www.reddit.com/r/orgmode][orgmode]])
+I read all updates, for the rest I just read weekly top.
+
+I tend to do it from my phone on the go/in transport or while I'm waiting somewhere, so the concentration is not exactly perfect and many things are too awkward to read or browse on phone anyway.
+
+So I tend to favorite interesting submissions (judging by the title) without reading them instead, and later once in a while when I'm at my desktop I have a deeper look at whatever I favorited.
+
+This however gets a little clumsy. 
+
+- saved *items can't be rearranged* in the Reddit interface and the only sort available is by 'saving time'
+
+  This would be ok if every time you processed your saved items you cleared all of them, but that's just not very realistic.
+
+  Some things take higher priority; some things just give you few thoughts now and you wanna action on it later.
+  So every time you process saved submissions, you end up going through same things all over again, and you have to remember where you stopped last time. 
+  That's quite distracting!
+
+- you *can't add private comments* to saved items
+
+  Using some annotation engine like [[https://hypothes.is][Hypothesis]] on 'Saved' page would be too flaky if Reddit changes design.
+  You could annotate saved items directly, but then you won't have an overview on 'Saved' page.
+
+- sometimes posts/comments get deleted so if you look at saved item months later, you'd not know what have you saved anymore
+
+  While there are ways to read removed reddit comments, it's a bit distracting to do too and with orger you'd always have an original version of the item.
+
+How Orger solves that for me? Here's my typical workflow with =reddit.org= file:
+
+- I'm running [[https://github.com/karlicoss/rexport][reddit data exporter]] and =reddit.py= every night automatically (via cron).
+- when I feel like reading some Reddit, I open =reddit.org= and jump to new items at the end of file (I can quickly tell them from old ones since they don't have a priority), and go through them
+- some things just get refiled immediately. E.g. if it's a recipe it would go to =food.org=, if it's something C++ related, it would go to =cpp.org=, etc.
+- what isn't refiled, I mark with a priority
+- when everything is prioritized, I select the whole file, call ~org-sort-entries~ and sort by priorities.
+- now that everything looks a bit more manageable, I can action on the highest priority items (~#A~ and ~#B~) properly.
+
+  Some I just read and archive.
+
+  Some give me thoughts or ideas which I can add under the corresponding org-mode heading.
+
+  Some things just require actually acting on them (e.g. new library release), so I can mark it as TODO and schedule so it shows up in my agenda.
+- also, once in a while I'll look through items with lower (~#C~ / ~#D~) priorities and bump them or archive if they become irrelevant.
+
+Needless to say when I'm searching through all of my Org-mode files, items saved on Reddit pop up as well.
+
+The only downside of my particular implementation is that items are not unmarked as 'Saved' on Reddit.
+One could probably implement this with API call on archiving/marking item as done or something, I just didn't find it too big of a deal for me.
+
+Here's how it looks for me (with content collapsed):
+
+#+begin_src org
+
+  ,* TODO [#B] [2019-05-18 Sat 19:00] [[https://reddit.com/r/spacemacs/comments/bnlgkv/refactoring_in_spacemacs_using_iedit_and_helmedit/][Refactoring in Spacemacs using iedit and helm-edit]] /r/spacemacs
+  ...
+  ,* TODO [#B] [2019-09-02 Mon 12:41] [[https://reddit.com/r/scifi/comments/cvy78o/searching_stories_with_super_intelligence_in/eyldzyb/][Searching stories with super intelligence in humans theme]] /r/scifi :read:
+  ...
+  ,* [#C] [2019-06-21 Fri 06:50] [[https://reddit.com/r/AskMen/comments/c2vw9p/how_do_relationship_fights_affect_men/ermvj9a/][How do relationship fights affect men?]] /r/AskMen 
+  ...
+  ,* [#D] [2019-01-15 Tue 08:30] [[https://reddit.com/r/bodyweightfitness/comments/afutqw/mindmuscle_connection_whats_the_evidence/][Mind-Muscle Connection: What's the evidence?]] /r/bodyweightfitness 
+  ...
+  ,* [2019-09-14 Sat 09:00] [[https://reddit.com/r/biology/comments/d1u5je/kinesin_a_motor_protein_walks_different_proteins/][Kinesin, a motor protein, "walks" different proteins from one place to another]] /r/biology
+  ...
+  ,* [2019-09-24 Tue 19:10] [[https://reddit.com/r/Biohackers/comments/d8ky2y/why_you_should_not_blindly_trust_nutrition/][Why you should not blindly trust nutrition experts but instead self experiment.]] /r/Biohackers
+  ...
+  ,* [2019-10-03 Thu 21:51] [[https://reddit.com/r/decentralization/comments/dcxtzm/is_there_an_opensource_decentralized_search_engine/][Is there an opensource decentralized search engine?]] /r/decentralization
+#+end_src
+
+* [[https://github.com/karlicoss/telegram2org][telegram2org]]: one tap to create tasks from Telegram messages
+#+name: telegram2org_doc
+ 
+:results:
+
+
+Imagine a friend asked you for something, or sent you a link or a video, but you don't have time to process that right at the moment.
+
+Normally I'd share their message to my TODO list app so I can process it later.
+However, official Android app for Telegram doesn't have sharing capabilities.
+
+This is a tool that allows you to overcome this restriction by forwarding messages you want to
+remember about to a special private channel. Then it grabs the messages from this private channel and creates TODO items from it!
+
+That way you keep your focus while not being mean ignoring your friends' messages.
+:END:
+
+I keep tags for the people I communicate most with (creepy I know :P ), so it also maps select people's names to tags,
+so I can quickly have an overview of things to discuss or reply to.
+
+It would be fairly straightforward to modify the code for other instant messengers, although there are some potential issues.
+For instance, Whatsapp  doesn't have an API. You can potentially web scrape it or reverse engineer the database on your phone to get messages,
+but I'm personally not motivated enough since I'm not using them much. Unless many people lack this, so let me know!
+
+* [[https://github.com/karlicoss/orger/blob/master/modules/hyp2org.py][hyp2org]]: create tasks from Hypothesis highlights
+ 
+:results:
+
+
+Sometimes when I'm annotating using [[https://hypothes.is][Hypothesis]], I want to think more
+about specific highlights, google more about them later or generally act on them somehow.
+
+Normally you'd have to copy the URL, highlighted text and create a task from it.
+
+This script does that automatically, only thing that you have to do is to mark it with a tag or type 'todo'
+in the annotation text.
+
+Items get scheduled and appear on my org-mode agenda,
+so I can un/reschedule them if they don't require immediate attention.
+:END:
+
+Modules for [[https://github.com/karlicoss/orger/blob/master/modules/kobo2org.py][Kobo]]
+and [[https://github.com/karlicoss/orger/blob/master/modules/ip2org.py][Instapaper]]
+work in the pretty much same way.
+
+* [[https://github.com/karlicoss/orger/blob/master/modules/krill.py][krill]]: learn new words from your Kobo books
+ 
+:results:
+
+
+Automatically import stuff from my Kobo backups into org-mode for further spaced repetition (via org-drill in my case).
+Mainly learning vocabulary with it.
+
+It uses [[https://github.com/karlicoss/kobuddy][kobuddy]] to extract data from Kobo exports.
+
+The name stands for K[oboD]rill.
+:END:
+
+I'm using [[https://orgmode.org/worg/org-contrib/org-drill.html][org-drill]] for Spaced repetition, but you could potentially use same principle to 
+import cards in Anki or any other spaced repetition engine you like.
+
+Here's how it looks for me:
+
+#+begin_src org
+  ,* TODO yesterday [ Gestern ]                                          :drill:
+    SCHEDULED: <2019-10-17 Thu>
+  :PROPERTIES:
+  :CREATED:  [2018-11-16 Fri 20:30]
+  :ID:       986e4686-75ec-40a9-9827-f9458bcb2811
+  :DRILL_LAST_INTERVAL: 200.7488
+  :DRILL_REPEATS_SINCE_FAIL: 6
+  :DRILL_TOTAL_REPEATS: 5
+  :DRILL_FAILURE_COUNT: 0
+  :DRILL_AVERAGE_QUALITY: 4.6
+  :DRILL_EASE: 2.8
+  :DRILL_LAST_QUALITY: 4
+  :DRILL_LAST_REVIEWED: [2019-03-30 Sat 21:27]
+  :END:
+  from Learn German with Stories: Café in Berlin - 10 short stories for beginners
+
+  ,* TODO disquieting                                                    :drill:
+    SCHEDULED: <2019-09-29 Sun>
+  :PROPERTIES:
+  :CREATED: [2019-08-27 Tue 20:12]
+  :ID:       28652353-c905-46b1-b4a5-bc2daf71125d
+  :DRILL_LAST_INTERVAL: 9.2418
+  :DRILL_REPEATS_SINCE_FAIL: 3
+  :DRILL_TOTAL_REPEATS: 2
+  :DRILL_FAILURE_COUNT: 0
+  :DRILL_AVERAGE_QUALITY: 3.5
+  :DRILL_EASE: 2.36
+  :DRILL_LAST_QUALITY: 4
+  :DRILL_LAST_REVIEWED: [2019-09-20 Fri 00:17]
+  :END:
+   from Worm
+
+  ,* TODO Plötzlich                                                      :drill:
+    SCHEDULED: <2019-10-05 Sat>
+  :PROPERTIES:
+  :CREATED: [2019-10-04 Fri 14:19]
+  :END:
+   from Learn German with Stories: Café in Berlin - 10 short stories for beginners
+#+end_src
+
+Last item was just appended after I connected my reader to computer, whereas two other have been there for a while.
+
+* ---
+Let me know what you think! I'm open to all feedback.

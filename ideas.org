@@ -1,0 +1,573 @@
+#+filetags: :ideas:think:
+#+upid: ideas
+
+These are mostly half baked, some are kinda weird, so even unclear if worthy of exercising.
+But if several people have similar idea, perhaps you are all onto something.
+
+Priorities roughly indicate how important is the topic to me.
+
+If you have thoughts on some of these, please don't hesitate to reach me!
+
+#+toc: headlines 2
+
+* TODO [#B] distributed cloud sync (Dropbox/Syncthing)                :cloud:
+:PROPERTIES:
+:CREATED:  [2018-06-05 Tue 17:19]
+:END:
+
+Basically, continuous (e.g. inotify-backed), open source and always available file sync.
+
+- Dropbox is continuous, but proprietary. It's not distributed, but central server tends to be very available.
+- Syncthing is continuous and open source, but only syncs among your own devices. If all of them are off, you wouldn't be able to access your files.
+
+  It's also not necessarily very friendly towards average user: it works best when you have a device that is always on like a VPS.
+
+Ideally, it would be something based on Bittorrent, and the chunks of data would be distributed among participants with sufficient redundancy.
+So most of the time you would rely on your own devices like in Syncthing, but in case of device loss or temporary outage you'd be able to assemble the data from redundant chunks in the peer network.
+Not sure how much redundant it has to be and if that approach works in practice.
+
+- [2019-05-03 08:29] apparently [[https://en.wikipedia.org/wiki/Resilio_Sync][Resilio Sync]] exists, but it's proprietary, nothing else I know of or resulting from quick googling
+- [2019-06-13 19:45] [[https://en.wikipedia.org/wiki/InterPlanetary_File_System][IPFS]] looks close, but apparently not user friendly yet
+* TODO [#C] instant messengers are too linear              :im:communication:
+:PROPERTIES:
+:CREATED:  [2018-08-26 Sun 19:13]
+:END:
+You chat with someone and discuss something. Because conventional IM software imposes timestamp ordering, it often ends up interleaved with some ongoing things (e.g. "by the way remember about that thing tomorrow"),
+and you distract or switch. The discussion gets forgotten and/or the context is lost.
+
+It's way worse in bigger Slack or Telegram channels (e.g. 15+ people). Sometimes you (well, at least I do) wait to post a message because you don't feel like interrupting some ongoing discussion and you don't want your message to be buried either. 
+So you have to keep it somewhere and make a reminder or something, which is cognitive overhead. Because of the overall volume of messages people tend to mute group conversations, and then miss actually useful stuff.
+
+Ideally, in a certain group chat/channel you should be able to:
+
+- fork conversation off an arbitrary message, so you'd have a tree.
+- view all the ongoing conversations/threads. Mute, mark as high priority, etc.
+- perhaps archive the ones that are not relevant anymore.
+
+Currently existing things I know of:
+
+- Google wave?
+- Telegram got replies which work in very few specific cases and not very sustainable for a proper conversation.
+- Slack got threads, which sort of solve this issue.
+
+  You can't turn old conversations into threads, but if you notice an opportunity early, or make a habit of spinning off early, you can work with it. It's not really used for personal conversations thought.
+
+- XMPP is dead I guess, so not sure how easy it would be to prototype that.
+
+Interesting enough, meatspace conversations also have this curse of linear order let alone other aspects that make them hard! But that's a whole different problem.
+
+Links:
+
+- [2020-04-30 00:18] [[https://zulipchat.com/help/about-streams-and-topics][Zulip]] looks promising
+- [2020-05-14 17:34] [[http://a9.io/glue-comic][Chatting with Glue: Cognitive Tools for Augmented Conversation]]: comic exploration into nonlinear messaging UI
+
+* TODO [#C] structured VCS                                              :vcs:
+:PROPERTIES:
+:CREATED:  [2018-04-02 Mon 16:48]
+:END:
+Version control is too line orianted, sometimes I wish there was something that understands the syntax of programming language and operates on top of that.
+So for instance, reordering methods in a class would be trivial operation and not show up in diff.
+There are some caveats though: e.g. in some dynamic languages the order of definition matters, so you still want it to be backed by plaintext, probably.
+Perhaps it can be implemented as a diff filter rather than full scale VCS.
+
+* TODO [#C] human anatomy simulation          :humanbody:simulation:exercise:
+:PROPERTIES:
+:CREATED:  [2019-08-24 Sat 21:07]
+:END:
+Kinda like a ragdoll with certain presets for muscle/skeletal configurations that allows you to mess with the model with realistic physics.
+If such a thing existed, it would help with:
+
+- assessing safety of weight training
+- safely of your seating/sleeping posture?
+- increasing exercise efficiency. There is so much advice on the internet often claiming contradictory or hard to believe claims.
+  If you could simulate the effect on the mode of your own body, it would make way more sense.
+
+There are some reasonably interactive visualizations out there:
+
+- [[https://www.youtube.com/watch?v=3M9NwvysauI][Ziva VFX]]
+- [[https://www.youtube.com/watch?v=rkujnq-JWRs][human body]]
+- [[https://www.youtube.com/watch?v=YncZtLaZ6kQ][horse]]
+
+Looks pretty cool, but in my understanding it only results in realistic tissue movement (jiggling/bending) and you still have to take care of skeletal and tendon movements yourself (let alone nervous system)?
+
+Is it very hard problem anatomically?
+
+Some links:
+- [[https://docs.zivadynamics.com/vfx/transfer.html][Ziva Anatomy Transfer (ZAT)]]
+- [[https://www.openanatomy.org][openanatomy]]
+- [[https://knowledge.autodesk.com/support/maya/learn-explore/caas/CloudHelp/cloudhelp/2019/ENU/Maya-CharacterAnimation/files/GUID-90B5E302-8DAA-4780-BCD6-FB9C60FF9E05-htm.html][Maya Muscle]]
+
+* TODO [#C] programming language in which correct programs are feasible physical states :plt:physics:
+:PROPERTIES:
+:CREATED:  [2019-04-30 Tue 11:44]
+:END:
+Where physics is described by some sort of Lagrangian, and the evaluation semantics would would be consistent with its dynamics. 
+Wonder if that's possible without involving explicit computations via dependent types.
+I guess would also correspond to some sort of special logic.
+Also making sure the set of correct programs is *exactly* the set of feasible states is presumably way harder.
+* TODO [#C] phone app for keeping sensitive data                    :privacy:
+:PROPERTIES:
+:CREATED:  [2018-01-17 Thu 20:42]
+:END:
+I sometimes find myself making a note or taking a picture or a voice recording which I wouldn't want to go public under any circumstances.
+
+Relying on locking your phone is not really enough as it's easy to hack, or fail to lock, or reveal content by accident. What is worse, locking doesn't save you if if you're using some sort of cloud sync.
+
+Of course, you can try and make sure you only keep it locally on phone, but you do need some means of syncing and arguably, waiting till you got a moment to transfer it via the cable bypassing network is even more insecure.
+Even if you're willing to do that, it turns out to be notoriously hard not to sync to the cloud by accident. Examples straight out of my head:
+
+- You want to take an extremely private photo. If you take it with default Google camera app, it will immediately try to sync it to Google Photos. If you're like me and not using Google Photos sync, it's still quite useful to sync your whole photos directory automatically.
+- You want to take an extremely private note. I'm not even sure that these days you can create an empty text file on an average phone (afaik, iphones didn't even have file system until recently), unless you've got a special app installed. All the default ones having note taking capabilities: Google Keep, Google Docs, email drafs, etc, all of them would get leak in the cloud immediately.
+
+It sounds like a fairly general problem. So there are some criteria I want from such an app:
+
+- allow taking pictures, notes, recordings etc from withing the container app, so intermediate data doesn't end up in insecure locations
+- handle content share intents in case for content that potentially can't be from within the app
+
+  Would be cool to prompt user to delete the original files afterwards, but not sure if it's possible in modern Android though.
+
+- use asymmetric encryption for keeping data in the secure container
+
+  Asymmetric is fairly important here, that allows to put data in container without actually asking for some sort of password every time, which would make using it way less frictionless.
+
+- backed by filesystem
+
+  That would allow actually synchronizing encrypted container through normal and less secure channels as long as you keep your private key safe.
+  Not sure what to do with metadata though, but perhaps encrypting filenames with same key (with padding etc.) is not too bad.
+
+So far I don't know any applications that match most of these criteria. Closest I know of are:
+
+- [[https://github.com/open-keychain/open-keychain][open-keychain]]: you can share files so it encrypts them via PGP. That's the only thing that it does though, afaiu, it's more meant for integrating with other apps.
+  It's open source though so would be good to use it as a library/intermediate.
+
+- I'm personally using an Encfs container via [[https://github.com/sovworks/edslite][EDS Lite]] and just use separate apps for secure photo taking and audio recording which don't have their content saved to cloud synced location.
+
+If you know of something better, please let me know!
+
+* TODO [#C] OS should have better macro/keybindings capabilities :hotkeys:setup:
+:PROPERTIES:
+:CREATED:  [2019-07-06 Sat 18:56]
+:END:
+I got this thinking a while ago when I was keen on switching to Firefox, but it wouldn't let the user choose extension hotkeys,
+it was only added recently. And still, certain keys you just can't rebind (e.g. use Ctrl-Shift combinations), because they are 
+hardcoded somewhere deep in the codebase.
+
+It's pretty annoying that it's left to developer to think about providing hotkeys to the necessary bits of interface
+when the user can do same actions with mouse. Pretty sure X has got some kind of hierarchical abstract representation, 
+would be nice to instead give users (or other developers, that don't necessarily have to be familiar with the app) ability to
+define arbitrary bindings or macros. 
+
+* TODO [#C] can we extend type theory derivatives to partial derivatives and manifolds? :plt:
+:PROPERTIES:
+:CREATED:  [2018-11-24 Sat 13:46]
+:END:
+It's somewhat [[https://en.wikipedia.org/wiki/Generalizations_of_the_derivative#Type_theory][well known]] one can extend notion of derivative to abstract data types.
+Can we squeeze more from that?
+
+** TODO [2018-12-15 Sat 01:44] what would be an analogue of 3-sphere for data types? what are the different topologies of data types?
+:PROPERTIES:
+:END:
+Haven't thought about that seriously yet, so not sure how much sense it makes to ask such questions.
+* TODO [#C] dependent type checker tool, similar to [[http://mypy-lang.org][mypy]] :plt:mypy:
+:PROPERTIES:
+:CREATED:  [2019-07-22 Mon 21:02]
+:END:
+Over the past few years there were few *very* successful examples of type checking implementations for languages without static types:
+
+- [[http://mypy-lang.org][mypy]] for Python
+- [[https://flow.org][Flow]] for Javascript
+- [[https://hacklang.org][Hack (compat mode)]] for PHP
+
+In some ways, these tools provide *superior* type systems (e.g. optionals/sum types) to many 'classical' statically typed languages like Java or C++.
+
+One reason for success as I see it is that typing is optional and can be used where/when the programmer feel necessary.
+You get benefits of dynamic languages for fast prototyping and benefits of type checking when it's time to harden your program.
+
+I wonder if [[https://en.wikipedia.org/wiki/Dependent_type][dependent types]] will take over the world through some similar tooling.
+
+Related:
+
+- [[https://en.wikipedia.org/wiki/Gradual_typing][Gradual typing]]
+- [[https://sobolevn.me/2019/01/simple-dependent-types-in-python][Simple dependent types in Python]]
+
+* TODO [#C] how to generate/where to get reasonable showcase data for memex/quantified self tools? :jdoe:quantifiedself:memex:
+:PROPERTIES:
+:CREATED:  [2020-01-21 Tue 19:45]
+:END:
+"Coming up with a showcase data" is such a common and tedious problem for tools like this, both demonstration and testing purposes.
+
+One could generate some random data, but then it's not very relatable.
+Even if one is comfortable with demoing with some parts of their lifelog, still have to be really careful.
+
+I wish there was some open source, curated and consistent dataset with a "made up" person's life events/messages/tweets/location/HR data.
+
+It feels that all people who work on such tools could benefit from it.
+
+Idea for the project name: "J. Doe".
+
+** TODO some sort of anonymizer tool?
+:PROPERTIES:
+:CREATED:  [2020-02-09 Sun 21:43]
+:END:
+So it takes your data, and then tries to automatically 'anonymize' it in a completely agnostic way.
+
+For example, all numbers/dates/strings are monotonically (i.e. preserving relative order) fuzzed and mapped onto different values.
+
+
+* STRT [#D] share highlights from Kobo to Goodreads        :kobo:pkm:reading:
+:PROPERTIES:
+:CREATED:  [2019-04-01 Mon 13:50]
+:END:
+
+Kobo doesn't have Goodreads integration like Kindle does. However sharing highlights is a great way to engage other people in the book you really like and want them to read. This can relatively easily be achieved via a script:
+
+1. run the script in kron or via udev rule configured to trigger on your Kobo device
+2. query the highlights from Kobo (they are in a nice sqlite database)
+
+   I already have a local python script for that (~my.books.kobo~), e.g. used [[https://github.com/karlicoss/krill/blob/master/krill][here]].
+
+3. choose which annotations you want to share. Some options are:
+
+   - based on a special marker word (e.g. if annotation includes 'kobo')
+   - interactively via prompting what you wanna share
+
+4. send to Goodreads via [[https://www.goodreads.com/api/index#quotes.create][~quotes.create~]] method
+
+   You are gonna need some method of comparing highlights you already sent and diff them.
+
+   Boring: just track annotation ids you already shared in some state file. 
+   Fun: use some elaborate comparison/hashing to match kobo annotations and goodreads ones.
+
+Actually, this could even be useful for Kindle if you have a DRM free copy from elsewhere. Or for other ebook devices.
+- [X] [2019-05-19 00:13] reverse engineered 'started reading' and 'finished reading' events, so at least it's possible to mark them manually on goodreads now
+See [[https://github.com/karlicoss/kobuddy#as-a-standalone-app][kobuddy]].
+
+* TODO [#D] continuous piano keyboard. When you press a 'key', the harmonics are highlighted as well as octaves :music:
+:PROPERTIES:
+:CREATED:  [2019-01-30 Wed 17:40]
+:END:
+- [2019-05-07 20:32] ableton push kinda does that
+- [2019-06-01 15:26] not sure if it would be really beneficial for proper musicians, perhaps as a learning tool only?
+
+* TODO [#D] coffee brew simulation                        :coffee:simulation:
+:PROPERTIES:
+:CREATED:  [2018-04-27 Fri 16:15]
+:END:
+
+In the simplest approximation take some simple conical/cylindrical filter, water flow/temperature dependency and coarseness.
+As an output we get expected amount of caffeine, oils, some estimate of bitterness and acidity etc.
+
+Some potentially relevant links:
+- [2018-10-30 21:30] https://phys.org/news/2016-11-mathematics-coffee-ideal-brew.html
+- [2018-10-30 21:30] https://www.researchgate.net/publication/299430179_Brewing_of_filter_coffee
+
+[2019-04-22 21:28] I ran into [[https://prima-coffee.com/learn/article/brewing-guides/comparing-kalita-wave-recipes/33005][this guide]] and surely coffee brewing doesn't have to be so elaborate!
+
+I mean, seriously:
+
+#+begin_quote
+Pulse pour by adding 65g of water in 15 seconds, followed by a waiting period of 15 seconds and repeat 5 more times (pouring timeline below) . Each pour should begin in the center, work its way outward, and then return back to the center.
+#+end_quote
+
+Come on. There is absolutely no way coffee taste depends on these intricate patterns of pouring water.
+A mathematical model would cast away this bro science at least to some extent.
+
+I also can't really understand how is one capable of estimating coffee on the scale from 0 to 10, but perhaps that's just my unsophisticated taste buds, and I accept other people can train themselves to do that.
+
+* TODO [#D] machine learning tool, showing muscles and bones on athlete in real time (e.g. as an overlay) :humanbody:ml:ar:
+:PROPERTIES:
+:CREATED:  [2019-07-13 Sat 12:57]
+:END:
+
+* TODO [#C] interactive simulator for impact of diet on the environment :environment:food:simulation:
+:PROPERTIES:
+:CREATED:  [2019-11-04 Mon 14:49]
+:END:
+One common issue I see *very* often when people advocate for vegetarian/plant based diets is comparing, impact of producing 1 kg of meat vs 1 kg of vegetables/plants, which is obviously wrong way to analyze it (good luck surviving on lettuce).
+At the very least it should be normalized per calorie, even better by protein amount (as other macronutrients are relatively easy to satisfy).
+
+However, different people have different dietary preferences in terms of macro composition (and good luck convincing people to change two beliefs at once).
+
+Next, different ways of producing food have different impact on environment.
+
+A good way of proving feasibility of meatless diets is to develop some sort of interactive simulator.
+It would take into account macronutrient and micronutrient requirements.
+It should allow to vary assumptions for environmental impact as well, as first, they may depend on means of production, but what's even more important, people might have different beliefs about impact too, and that should be respected.
+
+That would also allow to 'generate' environmentally friendly meal plans via optimization algorithm.
+
+That would make the whole discussion more quantitative and civilized.
+
+- [2019-12-07 19:31] Tmorrowapp has got [[https://github.com/tmrowco/tmrowapp-contrib/tree/master/co2eq][some CO2 models]] in javascript
+- [2019-12-07 19:41] [[http://worrydream.com/TenBrighterIdeas][Ten Brighter Ideas]] by Bret Victor: similar idea, for power consumption
+
+
+* TODO [#D] better 'set topic' interface for Github                  :github:
+:PROPERTIES:
+:CREATED:  [2019-10-12 Sat 16:25]
+:END:
+TLDR: it's annoying that you can't see how often each topic is used to use the most appropriate one.
+Ideally, I want something similar to Stackexchange interface.
+
+Created a feature request [[https://github.community/t5/How-to-use-Git-and-GitHub/Feature-request-normalising-Github-topics-and-showing-count/m-p/35136][here]]
+
+However, this should be fairly easy to implement on client side (i.e. greasemonkey script).
+Considering that topics don't need to be set often, it should be okay performance wise.
+
+* Half baked stuff                                                    :think:
+:PROPERTIES:
+:END:
+Completely speculative and unprocessed straight out of my brain.
+Will get promoted above when I think a bit more about it.
+** TODO [#A] tinder for code reviews/testing projects           :programming:
+:PROPERTIES:
+:CREATED:  [2020-05-02 Sat 23:26]
+:END:
+If you maintain a project on your own, it might be nice to have someone else to skim through your code and flag concerns.
+
+If someone else maintains a project on their own, you could mutually benefit and review each other's code.
+
+** TODO [#B] what would be a 2d analogue for yield?      :programming:python:
+:PROPERTIES:
+:CREATED:  [2019-11-15 Fri 00:54]
+:END:
+Reactive as Excel, powerful as Python.
+- [2019-11-16 10:19] could itertools.tee all iterators unless they are marked as unsafe (i.e. with side effects)?
+Although tee is safe even in that case, just have to assume ~__str__~ is reasonable
+
+** TODO [#B] sunk cost of life                                        :death:
+:PROPERTIES:
+:CREATED:  [2019-08-25 Sun 10:24]
+:END:
+It sucks to die early because of all the effort you invested in your future self.
+** TODO [#B] connections of Hamiltonian equations and programming? :symplectic:physics:programming:
+:PROPERTIES:
+:CREATED:  [2018-11-22 Thu 22:53]
+:END:
+
+** TODO [#C] can we deep learn Newton's equations?               :ml:physics:
+:PROPERTIES:
+:CREATED:  [2019-04-01 Mon 17:32]
+:END:
+Not sure how to formulate the problem and how much sense it would make.   
+
+- [[https://news.ycombinator.com/item?id=21363217][A neural net solves the three-body problem 100M times faster]], but it's unclear if this methods solves chaotic instances
+- [[https://arxiv.org/abs/1810.10525][Toward an AI Physicist for Unsupervised Learning]] and a video: [[https://www.youtube.com/watch?v=9atnfAHBfSI][Steps toward building an AI physicist]]
+
+** STRT [#C] sync Github issues with a text file?                    :github:
+:PROPERTIES:
+:CREATED:  [2019-08-07 Wed 21:50]
+:END:
+This would make it possible to search through issues without having to leave your IDE and work with them offline. As a collateral also automatic backups and preventing vendor lock-in.
+
+- [2019-12-07 15:51] [[https://github.com/k-bx/github-agent][github-agent]] -- bidirectional sync for github/gitlab issues
+- [2019-12-26 11:50] [[https://github.com/arbox/org-sync][org-sync]]
+
+  Works, but a bit abandoned, and somewhat manual. Also I feel that using Elisp for such tool is too restrictive.
+
+- [2020-05-23 11:02] [[https://github.com/MichaelMure/git-bug][git-bug]] -- looks really neat
+
+  Doesn't have plaintext integration at the moment, but I created an [[https://github.com/MichaelMure/git-bug/issues/392][issue]], might work at some point.
+
+
+** TODO [#C] reverse debugging: set variables to specific values and then reverse program logic to get consistent execution? :debug:
+:PROPERTIES:
+:CREATED:  [2019-11-12 Tue 15:30]
+:END:
+That could be useful to eliminate undesirable situations in the program.
+
+Difference from static analysis/model checking is that it could be more heuristic and dynamic, e.g. doing some sort of parameter space search.
+** TODO [#C] how to communicate experiences better?
+:PROPERTIES:
+:CREATED:  [2019-12-02 Mon 18:26]
+:END:
+It's really useful. E.g. imagine going to hike in the mountains and when you're back, trying to convince someone else they should try it without photos?
+If experience communication was even better (e.g. wind/temperature/thrill) it would be even more convincing.
+** TODO [#C] tower defense quantum field                           :qft:game:
+:PROPERTIES:
+:CREATED:  [2019-01-28 Mon 20:47]
+:END:
+** TODO [#C] harmonic equation looks kinda like universe expansion? :cosmology:
+:PROPERTIES:
+:CREATED:  [2018-12-25 Tue 14:51]
+:END:
+** TODO [#C] awesome-concepts
+:PROPERTIES:
+:CREATED:  [2019-02-10 Sun 20:32]
+:END:
+coolest/alternative visualizations for various mathematical/physical concepts
+videos, pictures, blog posts. basically anything unconventional
+intuition
+- [2019-04-08 22:55] [[https://github.com/d-cook/SomethingNew][d-cook/SomethingNew]]: Collaboration for reinventing software in human terms
+- [2019-06-15 21:53] [[https://github.com/hypotext/notation][hypotext/notation]]: Collection of quotes on notation design & how it affects thought
+** TODO [#C] how does uncertainty principle apply to quantum information? What's the amount of information we can simultaneously know? :quantum:
+:PROPERTIES:
+:CREATED:  [2019-02-19 Tue 13:38]
+:END:
+** TODO [#C] [[https://youtu.be/VBi4m6-d904?t=17][The Entertainer cover from Westworld]] got an *extremely* satisfying orchestra intro at around 0:26 :music:art:
+:PROPERTIES:
+:CREATED:  [2019-08-26 Mon 09:05]
+:END:
+What would be similar effect for other forms of art, e.g. visual?
+- [2019-12-07 20:24] For some reason thinking of Escher's [[https://i.imgur.com/GROZpnp.jpg][Metamorphose]], when abstract shapes transform into more realistic.
+
+** TODO [#C] [2019-07-30 Tue 18:29] [[https://www.youtube.com/watch?v=BSypUV6QUNw][Tiny Bombs in your Blood - The Complement System]] :vis:humanbody:
+:PROPERTIES:
+:END:
+Holy fuck! That's so complicated and beautiful at the same time! I wonder if some sort of simulation is possible?
+
+** TODO [#C] call/cc ; coroutine style thing but for defensive error handling/yielding? not sure how it'd look :lisp:errors:
+:PROPERTIES:
+:CREATED:  [2019-10-21 Mon 21:06]
+:END:
+- [2019-11-03 17:43] heh, actually algebraic effects could do it?
+
+** TODO [#C] hierarchy: byte -> character (e.g. unicode) -> ???? -> AST :programming:vcs:
+:PROPERTIES:
+:CREATED:  [2019-10-01 Tue 20:01]
+:END:
+At older times people would be more comfortable with seeing raw bytes in their code. Now we've all accepted unicode.
+Manipulating source blocks might be a bit too much.
+What's an intermediate unit? It's probably syntax dependent?
+
+** TODO [#D] natural language with optimal sounds set (in the sense of [[https://en.wikipedia.org/wiki/Huffman_coding][Huffman coding]]) :language:
+:PROPERTIES:
+:CREATED:  [2016-11-16 Wed 19:00]
+:END:
+** TODO [#D] negative types, complex types. Is there something related to terms the same way as terms related to types? :plt:
+:PROPERTIES:
+:END:
+- [2018-10-30 21:12] think about isomorphisms? What is the essence of complex numbers that makes them so special?
+  maybe start with integer and positive only complex numbers? eh, that wouldn't make too much sense though would it? it's like inner product. what's an inner product of types?
+
+** TODO [#D] fiction story about someone who lost all the references and got garbage collected
+:PROPERTIES:
+:CREATED:  [2019-03-09 Sat 08:01]
+:END:
+** TODO [#D] the set of computable numbers is represented by a computable number itself?
+:PROPERTIES:
+:CREATED:  [2019-05-12 Sun 14:20]
+:END:
+** CNCL [#D] predictive keyboard exploiting grammar                 :android:
+:PROPERTIES:
+:CREATED:  [2017-12-25 Mon 17:46]
+:END:
+- [2019-12-07 19:52] I suppose this is kind of solved itself by neural networks
+
+** TODO [#D] speed up of sense of time with age: some sort of [[https://en.wikipedia.org/wiki/Time_dilation][time dilation]] because of thinking 'velocity'? :physics:
+:PROPERTIES:
+:CREATED:  [2018-10-15 Mon 21:08]
+:END:
+
+** TODO [#D] voice transfer HAL voice                                    :ml:
+:PROPERTIES:
+:CREATED:  [2019-08-26 Mon 00:11]
+:END:
+
+
+* Shower thoughts                                                     :think:
+:PROPERTIES:
+:END:
+** STRT [#B] what occupations are the computer programming of 1980s? :future:
+:PROPERTIES:
+:CREATED:  [2019-01-26 Sat 01:21]
+:END:
+As in, what are some exciting fields where there is a lot of individual potential to be creative and contribute?
+
+** STRT [#C] how to spot a p-zombie                            :solipsism:ai:
+:PROPERTIES:
+:CREATED:  [2019-08-22 Thu 22:41]
+:END:
+I've been thinking about solipsism lately.
+
+Imagine a human baby. Up to a certain age they think their toys are alive and perhaps no less conscious than their parents.
+
+These days, stuff like voice assistants, automatic email replies, Google Duplex, GPT text generation may seem like magic or machine possessing mind,
+but if you study these technologies, you won't have that illusion.
+
+Now imagine you ask a stranger on the street for help to get around the city. You might interact for less than ten seconds, and for what it's worth they could easily be a bot.
+
+What if sentient people around you are actually p-zombies, you're just not smart enough yet to understand it?
+Baby grows up, learns more how the world around them works and understands toys are not alive.
+What if it's similar with other minds: you (I mean, I, duh) grow up, learn more, and then you understand and unravel them?
+** TODO [#C] wonder if with proper mypy stubs we can make datetime tz aware/unaware :mypy:
+:PROPERTIES:
+:CREATED:  [2019-08-02 Fri 21:33]
+:END:
+- [2020-05-22 21:39] with [[https://mypy.readthedocs.io/en/stable/more_types.html#newtypes][NewType]] should be possible.. just need std library integration
+** TODO [#C] why most popular music has such regular structure?       :music:
+:PROPERTIES:
+:CREATED:  [2019-02-03 Sun 15:00]
+:END:
+Most popular music (from traditional to classical to modern pop/electronic) seems to have regular beats, verse structure etc.
+What's about it that human brains like? Can someone write a very irregular but yet enjoyable piece?
+
+** TODO [#C] mind-melding and death                          :mind:death:bci:
+:PROPERTIES:
+:CREATED:  [2019-10-01 Tue 09:34]
+:END:
+Imagine that we achieved high level of mind-melding technology (e.g. through brain-computer interfaces).
+
+The experiment: mind-meld younger brain (e.g. 30 years) and older brain (e.g. 90 years).
+Presumably, if they spend enough time like that, the brains end up with common memories and perception of self that would be preserved after brains are separated.
+Then after a while, the older body dies. 
+In a sense though, both minds are still alive? Could it be used as a life extension technology?
+
+Of course, minds wouldn't be quite the same after such a massive intervention.
+
+On one hand for the older body it feels like a definite win if they are about to die anyway.
+On the other hand, it's morally dubious to let the part of younger mind to die in the older body.
+Isn't it kind of a massive sacrifice for the younger/healthier body?
+
+** TODO [#B] digital enzymes that act on the bits of information
+:PROPERTIES:
+:CREATED:  [2020-05-08 Fri 17:31]
+:END:
+
+** TODO [#C] what if I suddenly go blind one day?           :health:prepping:
+:PROPERTIES:
+:CREATED:  [2019-09-01 Sun 16:32]
+:END:
+Can I prepare for it in terms of computer interfaces or something? Should I even prepare or my life is going to change so drastically that it isn't even worth it?
+- [2020-05-22 21:40] [[https://news.ycombinator.com/item?id=22918980][Ask HN: I'm a software engineer going blind, how should I prepare?]]
+
+** TODO [#D] why are avocados fatty? They are literally the only fatty fruit I can think of. :food:
+:PROPERTIES:
+:CREATED:  [2019-01-11 Fri 15:26]
+:END:
+
+** TODO [#D] do different amino acids matter for human body? :nutrition:diet:
+:PROPERTIES:
+:CREATED:  [2019-08-27 Tue 14:32]
+:END:
+Different proteins contain different amounts of different amino acids.
+I know some of them are ketogenic and some glucogenic, but not sure if there is much difference nutrition wise.
+
+Wonder if that matters if you follow a vegetarian/vegan diets?
+
+- I guess [[https://en.wikipedia.org/wiki/Essential_amino_acid][this]] article could be a good start
+
+  But I guess the question is: apart from satisfying your RDIs for essential amino acids, is there a difference in what kind of amino accids to intake?
+
+
+** TODO [#D] eating organ meat is more respectful for the slaughtered animals? :food:
+:PROPERTIES:
+:CREATED:  [2018-06-25 Mon 21:48]
+:END:
+Apparently I wasn't the first to think about that:
+- https://www.reddit.com/r/keto/comments/4tse0l/eat_more_organ_meat/d5jwdnp
+- https://www.quora.com/What-do-butchers-do-with-the-organs-of-the-animals
+
+** STRT [#D] wonder how easier is it to aim for tie in chess than for a win :think:
+:PROPERTIES:
+:CREATED:  [2018-12-14 Fri 23:17]
+:END:
+* Similar pages
+:PROPERTIES:
+:END:
+
+- [[https://jborichevskiy.com/ideas]["Ideas I want to see soon"]] by Jonathan Borichevskiy
+- [[https://samsquire.github.io/ideas]["100 Ideas for Computing"]] by Sam Squire
+- [[https://www.halfbakery.com/editorial/about.html][Halfbakery]], a communal database of original, fictitious inventions, edited by its users
+- [[https://trello.com/b/alB1ryRP/ideas][ideas Trello board]] by Nikita Voloboev
+- [[https://0oo.li][Space to Think]]: a space for exploring ideas

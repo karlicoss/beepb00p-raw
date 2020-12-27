@@ -1,0 +1,702 @@
+#+summary: How to export, access and own your personal data with minimal effort
+#+filetags: :infra:dataliberation:
+#+upid: exports
+#+created: [2020-01-01 Wed]
+
+#+macro: map      @@html:<span style='color:darkgreen; font-weight: bolder'>@@$1@@html:</span>@@
+
+Our personal data is siloed, held hostage, and very hard to access for various technical and business reasons.
+I wrote and vented a lot about it in the [[https://beepb00p.xyz/sad-infra.html][previous post]].
+
+People suggest a whole spectrum of possible solutions to these issues, starting from proposals on dismantling capitalism and ending with high tech vaporwavy stuff like [[https://en.wikipedia.org/wiki/Urbit][urbit]].
+
+I, however, want my data *here and now*. I'm also fortunate to be a software engineer so I can bring this closer to reality by myself.
+
+As a pragmatic intermediate solution, feasible with existing technology and infrastructure without reinventing everything from scratch, 
+I suggested a [[https://beepb00p.xyz/sad-infra.html#data_mirror][*'data mirror'*]], a piece of software that continuously syncs/mirrors user's personal data.
+
+So, as I promised, this post will be somewhat more +boring+ specific.
+
+You can treat this as a tutorial on liberating your data from any service. I'll be explaining some technical decisions and guidelines on:
+- how to reliably export your data from the cloud (and other silos), locally
+- how to organize it for easy and fast access
+- how to keep it up to date without constant maintenance
+- how to make the infrastructure modular, so other people could use only parts they find necessary and extend it
+
+In hindsight, some things feel so obvious, they hardly deserve mention, but I hope they might be helpful anyway!
+
+I will be presenting and elaborating on different technical decisions, patterns and tricks I figured out while developing data mirrors by myself.
+
+I will [[https://beepb00p.xyz/myinfra.html][link]] to my infrastructure map throughout the post, hopefully you'll enjoy exploring it. Links will point at specific clusters of the map and highlight them, so hopefully it will be helpful in communicating the design decisions.
+
+I'm also *very open* for questions like "Why didn't you do Y instead of X?". 
+It's quite possible that I'm slipping in extra complexity somewhere and I would be very happy to eliminate it.
+
+
+#+toc: headlines 2
+
+* Design principles
+Just as a reminder: the idea of the data mirror is having personal data *continuously/periodically synchronized* to the file system, and having *programmatic access* to it.
+
+It might not be that hard to achieve for one particular data source, but when you want to use [[https://beepb00p.xyz/my-data.html][ten or more]],
+each of which with its own quirks it becomes quite painful to implement and maintain over time.
+While there are many reasons to make it simple, generic, reliable and flexible at the same time, it is not an easy goal.
+
+The main principles of my design are modularity, separation of concerns and keeping things as simple as possible.
+This allows making it easy to hook onto any layer to allow for different ways of using the data.
+
+Most of my pipelines for data liberation consist of the following layers
+(please don't be terrified of the word 'layer', typically these are just single scripts)
+
+- [[#export_layer][export layer]]: knows how to get your data from the silos
+
+  The purpose of the export layer is to reliably fetch and serialize raw data on your disk. It roughly corresponds to the concept of the [[https://beepb00p.xyz/sad-infra.html#data_mirror]['data mirror app']]. 
+
+  Export scripts deal with the tedious business of authorization, pagination, being tolerant of network errors, etc.
+  (: [[https://beepb00p.xyz/myinfra.html#exports][exports]])
+
+  Example: the export layer for [[https://github.com/karlicoss/endoexport/blob/e322b44ca1e6e5a779b4e7ea49564ba60d425bfe/export.py#L10-L15][Endomondo data]] 
+  is simply fetching exercise data from the API (using existing library bindings) and prints the JSON out. That's all it does.
+
+  In theory, this layer is the only essential one; merely having raw data on your disk enables you to use other tools to explore and analyze your data.
+  However, long term you'll find yourself doing the same manipulations all over again, which is why we also need:
+
+- [[#dal][data access layer (DAL)]]: knows how to read your data
+
+  For brevity, I'll refer to it as *DAL* (Data Abstraction/Access Layer).
+
+  The purpose of DAL is simply to deserialize whatever the export script dumped and provide minimalistic data bindings.
+  It shouldn't worry about tokens, network errors, etc., once you have your data on the disk DAL should be able to handle it even when you're offline.
+  (: [[https://beepb00p.xyz/myinfra.html#dal][data access layer]])
+
+  It's not meant to be too high level; otherwise, you might lose the generality and restrict the bindings in such ways that they leave some users out.
+
+  I think it's very reasonable to keep both the export and DAL code close as you don't want serializing and deserializing to go out of sync, so that's what I'm doing in my export tools.
+
+  #+name: dal_messenger
+  #+begin_noop
+  Example: [[https://github.com/karlicoss/fbmessengerexport/blob/a8f65a259dfa36ab6d175461994356947ded142a/model.py#L27-L47][DAL for Facebook Messenger]] knows how to read messages from the database on your disk, access certain fields (e.g. message body) and how to handle obscure details like converting timestamps to =datetime= objects. 
+  - it's *not* trying to get messages from Facebook, which makes it way faster and more reliable to interact with data
+  - it's *not* trying to do anything fancy beyond providing access to the data, which allows keeping it simple and resilient
+  #+end_noop
+
+- downstream data consumers
+
+  You could also count it as the third layer, although the boundaries are not very well defined at this stage.
+  (: [[https://beepb00p.xyz/myinfra.html#mypkg][my.]])
+
+  As an input it takes abstract (i.e. non-raw) data from the DAL and actually does interesting things with it: analysis, visualizations, interactions across different data sources, etc.
+
+  For me, it's manifested as [[https://beepb00p.xyz/sad-infra.html#mypkg][a Python package]]. I can simply import it in any Python script, and it knows how to read and access any of my data.
+
+Next, I'm going to elaborate on implementing the export layer.
+
+* Retrieving data
+The first step in exporting and liberating your data is figuring out what and how are you actually supposed to fetch.
+
+I'll mostly refer to Python libraries (since that's what I'm using and most familiar with), but I'm quite sure there are analogs in other languages.
+
+Also remember, this is just to fetch the data! If you get a regular file on your disk as a result, you can use any other programming language you like to access it.
+That's the beauty of decoupling.
+
+Here, I won't elaborate much on potential difficulties during exports, as I wrote about them [[https://beepb00p.xyz/sad-infra.html#exports_are_hard][before]].
+
+** public API
+You register your app, authorize it, get a token, and you are free to call various endpoints and fetch whatever you want.   
+
+I won't really elaborate on this as if you're reading this you probably have some idea how to use it.
+Otherwise, I'm sure there are tutorials out there that would help you.
+
+
+
+Examples: thankfully, most services out there offer public API to some extent
+
+** private API
+Sometimes a service doesn't offer an API. 
+But from the service developer's perspective, it's still very reasonable to have one if you've got backend/frontend communication.
+
+So chances are the service just isn't exposing it, but you can spy on the token/cookies in your browser devtools and use them to access the API.
+
+You can read more about handling such data sources here:
+
+- [[https://willschenk.com/articles/2019/reverse_engineering_apis_using_chrome][Reverse engineering APIs using Chrome Developer Tools]]: an extremely comprehensive and beginner-friendly tutorial
+- [[https://www.freecodecamp.org/news/how-i-used-python-to-find-interesting-people-on-medium-be9261b924b0]["How I used Python to find interesting people to follow on Medium"]]: an example of reverse engineering Medium API and using devtools
+- [[https://blog.tendigi.com/starbucks-should-really-make-their-apis-public-6b64a1c2e923][Starbucks should really make their API public]]: demo of reverse engineering Starbucks Android app, featuring using proxy and forging the signature
+
+Some examples:
+- for [[https://github.com/karlicoss/fbmessengerexport][exporting Messenger data]], I'm using [[https://fbchat.readthedocs.io/en/stable][fbchat]] library. It works by tricking Facebook into believing it's a browser and interacting with private API.
+- even though Pocket has an API, to get highlights from it you need to [[https://github.com/karlicoss/pockexport#setting-up][spy on the API key]] they use in the web app
+
+** scraping
+Sometimes a service doesn't offer an API, doesn't use it even internally and serves HTML pages directly instead.
+Or, reverse engineering the API is so painful scraping becomes a more attractive option.
+
+In addition to the same difficulties you would experience during API exports, there are some extra caveats here:
+
+- authorization is harder: you definitely need username/password and potentially even a 2FA token
+- DDOS protection: captchas, Cloudflare, etc.
+- or even deliberate anti-scraping measures
+
+For Python the holy grail of scraping is [[https://scrapy.org][scrapy]]:
+- [[http://sangaline.com/post/advanced-web-scraping-tutorial][Advanced Web Scraping Tutorial]]: bypassing "403 Forbidden", captchas, and more
+- [[https://gist.github.com/alecxe/fc1527d6d9492b59c610][self-contained minimum example script to run scrapy]]
+
+I'm pretty sure there are similar libraries for other languages, perhaps you could start with [[https://github.com/lorien/awesome-web-scraping][awesome-web-scraping repo]] or [[https://news.ycombinator.com/item?id=15694118][Ask HN: What are best tools for web scraping?]].
+
+For dealing with authorization, my personal experience is that using a persistent [[https://selenium-python.readthedocs.io/api.html#module-selenium.webdriver.firefox.firefox_profile][profile directory]] in Selenium is sufficient in most cases: you can login once manually and, reuse the profile in your scripts.
+
+Examples:
+- even though Hackernews has an [[https://github.com/HackerNews/API][API for public data]], there is no way of getting your upvotes/saves without scraping HTML.
+- Amazon and Paypal have to be [[https://github.com/jbms/finance-dl#supported-data-sources][scraped]] if you want your data.
+- my bank, HSBC doesn't have an API. Not that I expected it from HSBC, I don't live in a fairy tale; but even their manual transactions exports are in PDF which I have to [[https://github.com/karlicoss/hsbc-parser][parse]].
+
+** manual export (GDPR/takeout)
+It's great they exist, and it is the easiest way to get your data if you just want a backup.
+However it doesn't really help in the long run:
+
+- it's very manual: usually requires requesting and clicking on an email link
+- it's slow and asynchronous: normally takes at least a few days
+- the takeout format usually differs from the API format, [[https://www.reddit.com/r/help/comments/8qr9hs/data_request_and_gdpr/e8acolt][sometimes]] ends up as something neither machine friendly nor human friendly
+
+That said, with some effort it can potentially be automated as well.
+
+They can be useful to get the 'initial' bit of your data, past the [[https://beepb00p.xyz/sad-infra.html#data_is_vanishing][API limits]].
+
+Examples:
+
+- [[https://takeout.google.com][Google Takeout]]
+- [[https://help.twitter.com/en/managing-your-account/how-to-download-your-twitter-archive][Twitter Archive]]
+- [[https://github.blog/2018-12-19-download-your-data][Github]] data export
+
+** phone apps
+I don't have an iPhone, so will only be referring to Android in this section, but I'd imagine the situation is similar.
+
+These days, a service might not even offer a desktop version at all and considering that scraping data off mobile apps is way harder getting it from the phone directly might be an easier option. The data is often kept as an sqlite database which in many ways is even more convenient than an API!
+
+On Android the story is simple: apps keep their data in =/data/data/= directory, which is not accessible unless you *root* your phone.
+These days, with [[https://magiskmanager.com][magisk]] it's considerably easier; however, it's still definitely not something a typical Android user would be able to do. Rooting your phone can bring all sorts of trouble by triggering root detection (e.g. common in banking apps), so be careful. And of course, phones come unrooted for a reason, so do it at your own risk.
+
+Once you have root you can write a script to copy necessary files from =/data/data/= to your target directory, synchronized with your computer (e.g. via [[https://play.google.com/store/apps/details?id=com.ttxapps.dropsync&hl=en_GB][Dropbox]] or [[https://play.google.com/store/apps/details?id=com.github.catfriend1.syncthingandroid&hl=en_GB][Syncthing]]).
+
+Examples:
+- you can export Whatsapp data by copying =/data/data/com.whatsapp/databases/msgstore.db=
+- [[https://github.com/karlicoss/promnesia/blob/master/scripts/backup-phone-history.sh][scripts]] for exporting mobile Chrome/Firefox browsing history
+- exporting [[https://bluemaestro.com][Bluemaestro]] environment sensor data
+
+** devices
+Here I am referring to standalone specific-purpose gadgets like sleep trackers, e-ink readers, etc. The distinguishing thing is the device doesn't have Internet access or doesn't talk to any API.
+
+You've got some options here:
+
+- the device is capable of synchronizing with your phone (e.g. via Bluetooth)
+
+  It's probably easiest to rely on [[#export_phone][phone app exports]] here.
+  If the sync has to be triggered manually, you can benefit from some [[https://play.google.com/store/apps/details?id=com.llamalab.automate&hl=en][UI automation]].
+
+- the device is running Linux and has Internet access
+
+  That's often the case with e-ink readers.
+
+  You can potentially run the export script on the device itself and send the data somewhere else.
+  Another option is running an SSH server on the device and pulling data from it, but it's quite extreme.
+
+- the device can mount to a computer
+
+  Then, you can use [[https://en.wikipedia.org/wiki/Udev][udev]] to trigger export when the device is plugged in.
+  If udev feels too complicated for you, even a cron script running every minute might be enough.
+
+Examples:
+
+- using [[https://github.com/karlicoss/kobuddy#as-a-backup-tool][kobuddy]] for semiautomatic exports from Kobo e-ink reader
+
+
+* Types of exports: a high-level view
+Hopefully, the previous section answered your questions about 'where do I get my data from'.
+The next step is figuring out what you actually need to request and how to store it.
+
+Now, let's establish a bit of vocabulary here.
+Since data exports by their nature are somewhat similar to [[https://en.wikipedia.org/wiki/Backup#Backup_methods][backups]], I'm borrowing some terminology.
+
+The way I see it, there are three styles of data exports:
+** full export
+Every time you want your data, go exhaustively through all the endpoints and fetch the data.
+The result is some sort of JSON file (reflecting the complete state of your data) which you can save to disk.
+
+*** summary
+- advantages
+  - very straightforward to implement
+
+- disadvantages
+  - *might be impossible* due to [[https://beepb00p.xyz/sad-infra.html#data_is_vanishing][API restrictions]]
+  - takes *more resources*, i.e. time/bandwidth/CPU
+  - takes *more space* if you're keeping old versions
+  - might be *flaky* due to excessive network requests
+
+
+*** examples
+When would you use that kind of export?
+When there isn't much data to retrieve and you can do it in one go.
+
+- [[https://github.com/karlicoss/pockexport][Exporting Pocket data]]
+
+  There are no apparent API limitations preventing you from fetching everything, and it seems like a plausible option. Presumably, it's just a matter of transferring a few hundred kilobytes. YMMV though: if you are using it extremely heavily you might want to use a [[#synthetic][synthetic export]].
+
+** incremental export
+'Incremental' means that rerunning an export starts from the last persisted point and only fetches missing data.
+
+Implementation wise, it looks like this:
+- query previously exported data to determine the point (e.g. timestamp/message id) to continue from
+- fetch missing data starting from that point
+- merge it back with previously exported data, persist on disk
+
+*** summary
+- advantages
+  - takes less resources
+  - more resilient (if done right) as it needs fewer network operations
+
+- disadvantages
+  - potentially very error-prone, harder to implement
+    - if you're not careful with [[https://beepb00p.xyz/sad-infra.html#pagination][pagination]] and misinterpret documentation you might never request some data
+    - if you're not careful with [[https://beepb00p.xyz/sad-infra.html#consistency][transactional logic]], you might leave your export in an inconsistent and corrupt state
+
+Incremental exports are *always* harder to program. Indeed, [[#full][full export]] is just an edge case of an incremental one.
+(Fun fact: most of your phone apps already implement incremental sync. It's a shame the logic can't be reused.)
+
+*** examples
+If it's so tricky, why would you bother with exporting data incrementally?
+
+- too much data
+
+  This doesn't even mean too much in terms of bandwidth/storage, more of 'too many entities'.
+
+  E.g. imagine you want to export your Twitter timeline of 10000 tweets, which is about 1Mb of raw text data.
+  Even if you account for extra garbage and assume 10 Mb or even 100 Mb of data it's basically nothing if you're running it once a day.
+
+  However, APIs usually impose pagination (e.g. 200 tweets per call), so to get these 10000 tweets you might have to do ~10000 / 200 = 50~ API calls. 
+  Suddenly the whole thing feels much less reliable, so you might want to make it incremental in order to minimize the number of network calls.
+
+  For example:
+  - [[https://github.com/fabianonline/telegram_backup][Telegram]]/[[https://github.com/karlicoss/fbmessengerexport][Messenger]]/Whatsapp -- basically IM always means there's too much data to be exported at once
+
+- flaky/slow API
+
+  If it's the case you want to minimize network interaction.
+
+  For example:
+  - [[#export_scrape][web scraping]] is always somewhat slow; in addition, you might have to rate limit yourself so you don't get banned by DDOS prevention.
+    Also, it's even flakier than using APIs, so you might want to avoid extra work if possible.
+  - [[https://shop-eu.emfit.com/products/emfit-qs][Emfit QS]] sleep data: API is a bit flaky, so I minimize network interaction by only fetching missing data.
+
+
+** synthetic export
+This is a blend between full export and incremental export.   
+(If someone thinks of a better term for describing this concept, please let me know!)
+
+It's similar to a full export in the sense that there isn't that much data to retrieve: if you could, you would just fetch it in one go.
+
+What makes it similar to the incremental export is that you don't have all the data available at once - only the latest chunk.
+The main motivation for a synthetic export is that no single export file will give you all of the data.
+
+There are various reasons for that:
+
+- API restrictions
+
+  Many APIs restrict the number of items you can retrieve through each endpoint for caching and performance reasons.
+
+  Example: [[https://github.com/karlicoss/rexport#limitations][Reddit]] limits your API queries to 1000 entries.
+
+- Limited memory
+
+  Example: autonomous devices like HR monitors or temperature monitors are embedded systems with limited memory.
+
+  Typically, they use some kind of [[https://en.wikipedia.org/wiki/Circular_buffer][ring buffer]] so when you export data, you only get, say, the latest 10000 measurements.
+
+- Disagreement on the 'state' of the system
+
+  Example: Kobo reader uses an [[https://github.com/karlicoss/kobuddy][sqlite database]] for keeping metadata like highlights, which is awesome!
+  However, when you delete the book from your reader, it removes your annotations and highlights from the database too.
+
+  There is absolutely no reason to do this: I delete the book because I don't need it on my reader, not because I want to get rid of the annotations.
+  So in order to have all of them my only option is having regular database snapshots and assembling the full database from these pieces.
+
+- Security
+
+  Example: [[https://docs.monzo.com/#list-transactions][Monzo bank API]]. 
+
+  #+begin_quote
+  After a user has authenticated, your client can fetch all of their transactions, and after 5 minutes, it can only sync the last 90 days of transactions. If you need the user’s entire transaction history, you should consider fetching and storing it right after authentication. 
+  #+end_quote
+
+  So that means that unless you're happy with manually authorizing every time you export, you will only have access to the last 90 days of transactions.
+
+  Note: I feel kind of sorry complaining at Monzo, considering they are the nicest guys out there in terms of being dev friendly; and I understand the security concerns.
+  But that's the only example of such behavior I've seen so far, and it does complicate things.
+
+One important difference from other types of exports is that you *have to* do them regularly/often enough.
+Otherwise you inevitably miss some data and in the best case scenario have to get it [[#export_manual][manually]], or in the worst case [[https://beepb00p.xyz/./takeout-data-gone.html][lose it forever]].
+
+Now, you could deal with these complications the same way you would with incremental exports by retrieving the missing data only.
+The *crucial difference* is that if you do make a mistake in the logic, it's not just a matter of waiting to re-download everything. 
+Some of the data might be gone *forever*.
+
+So I take a hybrid approach instead:
+
+- at [[#export_layer][export time]], retrieve all the data I can and keep it along with a timestamp, like a [[#full][full export]].
+
+  Basically, it makes it an 'append-only system', so there is no opportunity for losing data.
+
+- at [[#dal][data access time]], we dynamically build (synthesize) the full state of the data
+
+  We go through all exported data chunks and reconstruct the full state, similarly to [[#incremental][incremental export]].
+  That's where 'synthetic' comes from.
+
+  The 'full export' only exists at runtime, and errors in merging logic are not problematic as you never overwrite data.
+  If you do spot a problem you only have to change the code with no need for data migrations.
+
+*** illustrative example
+I feel like the explanations are a bit abstract, so let's consider a specific scenario.
+
+Say you've got a temperature sensor that takes a measurement every minute and keeps it in its internal database.
+It's only got enough memory for 2000 datapoints so you have to grab data from it every day, otherwise the older measurements would be overwritten (it's implemented as a ring buffer).
+
+It seems like a perfect fit for synthetic export. 
+
+- export layer: every day you run a script that connects to the sensor and copies the database onto your computer
+
+  That's it, it doesn't do anything more complicated than that.
+  The whole process is atomic, so if Bluetooth connection fails, we can simply retry until we succeed without having to worry about the details.
+
+  As a result, we get a bunch of files like:
+
+  #+begin_example
+    # ls /data/temperature/*.db
+    ...
+    20190715100026.db
+    20190716100138.db
+    20190717101651.db
+    20190718100118.db
+    20190719100701.db
+    ...
+  #+end_example
+
+- data access layer: go through all chunks and construct the full temperature history
+
+  E.g. it would look kind of like:
+
+  #+begin_src python
+    def measurements() -> Iterator[float]:
+        processed: Set[datetime] = set()
+        for db in sorted(Path('/data/temperature').glob('*.db')):
+    	for timestamp, value in query(db, 'SELECT * FROM measurements'):
+    	    if timestamp in processed:
+    		continue
+    	    processed.add(timestamp)
+    	    yield value
+  #+end_src
+
+  I hope it's clear how much easier this is compared with maintaining some sort of master sqlite database and updating it.
+
+*** summary
+- advantages
+  - much easier way to achieve incremental exports without having to worry about introducing inconsistencies
+  - *very resilient*, against pretty much everything: deleted content, data corruption, flaky APIs, programming errors
+  - *straightforward* to normalize and unify -- you are not overwriting anything
+
+- disadvantages
+  - takes *extra space*
+
+    That said, storage shouldn't be that much of a concern unless you export *very* often.
+    I elaborate on this problem [[#disk_space][later in the post]].
+
+  - *overhead* at access time
+
+    When we access the data we have to merge all snapshots every time. I'll elaborate on this [[#dal_performance][later as well]].
+
+*** more examples
+- Github API is restricted to 300 latest events, so synthetic logic is used in [[https://github.com/karlicoss/ghexport/blob/master/dal.py][ghexport]] tool
+- Reddit API is restricted to 1000 items, so synthetic logic is used in [[https://github.com/karlicoss/rexport/blob/874e6116bfba8cbd63fa3b4d93810a1488cb8464/dal.py#L136][rexport]] tool
+
+  I elaborate on Reddit [[https://beepb00p.xyz/unnecessary-db.html#example_reddit][here]].
+
+- Chrome only keeps 90 days of browsing history in its database
+
+  [[https://beepb00p.xyz/unnecessary-db.html#chrome_dal][Here]] I write in detail about why synthetic exports make a lot of sense for Chrome.
+
+* Export layer
+Map: [[https://beepb00p.xyz/myinfra.html#exports][export layer]].
+
+No matter which [[#types][of these]] ways you have to use to export your data, there are some common difficulties, hence patterns that I'm going to explore in this section.
+
+Just a quick reminder of [[https://beepb00p.xyz/sad-infra.html#exports_are_hard][the problems]] that we're dealing with:
+
+- authorization: how to log in?
+- pagination: how to query the data correctly?
+- consistency: how to make sure we assemble the full view of data correctly without running into concurrency issues?
+- rate limits: how to respect the service's policies and avoid getting banned?
+- error handling: how to be defensive enough without making the code too complicated?
+
+My guiding principle is: during the export, do the *absolute minimum* work required to reliably get raw data on your disk.
+This is kind of vague (perhaps even obvious), so I will try to elaborate on what I mean by that.
+
+This section doesn't cover the exact details, it's more of a collection of tips for minimizing the work and boilerplate. If you are interested in reading the code, <a href='https://github.com/search?type=Repositories&q=user%3Akarlicoss+++topic%3Aexport'>here</a> are some of the export scripts and tools I've implemented.
+
+** use existing bindings
+This may be obvious, but I still feel it has to be said.
+Unless retrieving data is trivial (i.e. single GET request), chances that someone has already invested effort in dealing with various API quirks.
+Bindings often deal with dirty details like rate limiting, retrying, pagination, etc. So if you're lucky you might end up spending very little effort on actually exporting data.
+
+If there is something in bindings you don't like or lack, it's still easier to [[https://en.wikipedia.org/wiki/Monkey_patch][monkey patch]] or just fork and patch them up (don't forget to open a pull request later!).
+
+Also if you're the author of bindings, I have some requests. Please:
+
+- don't print in stdout, it's a pain to filter out and suppress. Ideally use proper logging modules
+- don't be overly defensive, or allow to [[https://beepb00p.xyz/mypy-error-handling.html#global_policy][configure]] non-defensive behavior
+
+  It's quite sad when the library silently catches all exceptions and replaces them with empty strings/nulls/etc., without you even suspecting it.
+  It's especially problematic in Python, where "Ask forgiveness, not permission" is very common.
+
+- expose raw underlying data (e.g. raw JSON/XML from the API)
+
+  If you forget to handle something, or the user disagrees with the interpretation of data, they would still be able to benefit from the data bindings for retrieval and only alter the deserialization.
+
+  Example of good data object:
+  - [[https://github.com/pawelad/pymonzo/blob/b5c8d4f46dcb3a2f475797a8b8ef1c15f6493fb9/src/pymonzo/api_objects.py#L38-L45][pymonzo]] exposes programmer-friendly fields and also keeps raw data
+
+- expose generic methods for handling API calls to make it easy to add new endpoints
+
+  Same argument: if you forgot to handle some API calls, it makes it much easier for consumers to quickly add them.
+
+*** examples
+To export [[https://github.com/karlicoss/hypexport][Hypothes.is]] data I'm using existing [[https://github.com/judell/Hypothesis][judell/Hypothesis]] bindings.
+
+- the bindings handle [[https://github.com/judell/Hypothesis/blob/91f881693546aaddc4096327a97f5cf342c3770a/hypothesis.py#L69][pagination and rate limits]] for you
+- the bindings return raw JSONs, making it trivial to serialize the data on disk
+
+- the bindings expose generic [[https://github.com/judell/Hypothesis/blob/91f881693546aaddc4096327a97f5cf342c3770a/hypothesis.py#L138][~authenticated_api_query~]] method
+
+  For instance, profile data request was missing from the bindings; and it was [[https://github.com/karlicoss/hypexport/blob/7a80b36aa55da8b541e2778141eb84ada384d734/hypexport.py#L14][trivial]] to get it anyway
+
+Thanks to good bindings, the actual export is pretty [[https://github.com/karlicoss/hypexport/blob/7a80b36aa55da8b541e2778141eb84ada384d734/hypexport.py#L6-L19][trivial]].
+
+Another example: to export [[https://github.com/karlicoss/rexport/blob/master/export.py][Reddit data]], I'm using [[https://github.com/praw-dev/praw][praw]], an excellent library for accessing Reddit from Python.
+
+- praw handles rate limits and pagination
+- praw exposes a logger, which makes it easy to [[https://github.com/karlicoss/rexport/blob/874e6116bfba8cbd63fa3b4d93810a1488cb8464/export.py#L107][control it]]
+- praw supports all endpoints, so exporting data is just a matter of [[https://github.com/karlicoss/rexport/blob/d001e2d07d716130106ebe07a021f98d84a5ed93/rexport.py#L73-L84][calling the right API methods]]
+- one shortcoming of praw though is that it won't give you access to raw JSON data for some reason, so we have to use some [[https://github.com/karlicoss/rexport/blob/874e6116bfba8cbd63fa3b4d93810a1488cb8464/export.py#L37-L60][hacky logic]] to serialize.
+
+  If praw kept original data from the API, the [[https://github.com/karlicoss/rexport/blob/master/export.py][code for export]] would be half as long.
+
+** don't mess with the raw data
+Keep the data you retrieved *as intact as possible*.
+
+That means:
+
+- don't insert it in in a database, unless it's really necessary
+- don't convert formats (e.g. JSON to XML)
+- don't try to clean up and normalize
+
+Instead, *keep the exporter code simple* and don't try to interpret data in it.
+Move data interpretation burden to the [[#dal][data access layer]] instead.
+
+The rationale here is it's a potential source of inconsistencies. If you make a bug during data conversion, you might end corrupting your data forever.
+
+I'm elaborating on this point [[https://beepb00p.xyz/unnecessary-db.html#asis][here]].
+
+** don't  be too defensive
+- never silently fallback on default values in case of errors, unless you're really certain about what you're doing
+
+- don't add retry logic just in case
+
+  In my experience, it's fair to assume that if the export failed, it's a random server-side glitch and not worth fine-tuning - it's easier to simply start the export all over again.
+  I'm not dealing with that in the individual export scripts at all, and using [[#arctee][arctee]], to retry exports automatically.
+
+  If you know what you're doing (e.g. some endpoint is notoriously flaky) and do need retries, I recommend using an existing library that handles that like [[https://github.com/litl/backoff#examples][backoff]].
+
+** allow reading credentials from a file
+- you don't want them in your shell history or in crontabs
+- keeping them in a file can potentially allow for fine access control
+
+  E.g. with Unix permissions you could only allow certain scripts to read secrets.
+  Note that I'm not a security expert and would be interested to know if there are better solutions to that
+
+  Personally, I found it so boilerplaty I extracted this logic to a separate [[https://github.com/karlicoss/exporthelpers/blob/master/export_helper.py][helper module]]. You can find an example [[https://github.com/karlicoss/instapexport#exporting][here]].
+
+* How to store it: organizing data
+Map: [[https://beepb00p.xyz/myinfra.html#fs][filesystem]].
+
+
+As I mentioned, for the most part I'm just keeping the raw API data.
+For storage I'm just using the filesystem; all exports are kept or symlinked in the same directory (~/exports~) for ease of access:
+
+#+begin_src bash
+  find /exports/ | sort | head -n 20 | tail -n 7
+#+end_src
+
+ 
+: /exports/feedbin
+: /exports/feedly
+: /exports/firefox-history
+: /exports/fitbit
+: /exports/github
+: /exports/github-events
+: /exports/goodreads
+
+** naming and timestamping
+I find that the only important bit is if you keep multiple export files (e.g. [[#synthetic][synthetic]]), make sure their names include timestamps and the time order is consistent with lexicographic order.
+
+This means the only acceptable date/time format is some variation of [[https://en.wikipedia.org/wiki/ISO_8601][~YYYY MM DD HH MM SS Z~]]. 
+Feel free to sprinkle in any separators you like, or use milliseconds if you are really serious. Any other date format, e.g. =MM/DD/YY=, using month names, or not using zero-padded numbers is going to bring you serious grief.
+
+E.g.:
+
+#+begin_src bash
+  ls /exports/instapaper/ | tail -n 5
+#+end_src
+
+ 
+: instapaper_20200101T000005Z.json
+: instapaper_20200101T040004Z.json
+: instapaper_20200101T080010Z.json
+: instapaper_20200101T120005Z.json
+: instapaper_20200101T160011Z.json
+
+
+The reason is it's automatically sort/max friendly, which massively reduces the cognitive load when working with data.
+
+To make timestamping automatic and less boilerplaty, I'm using a [[#arctee][wrapper script]].
+
+** backups
+Backups are trivial: I can just run [[https://borgbackup.readthedocs.io/en/stable][borg]] against =/exports=.
+What is more, borg is deduplicating, so it's very friendly to incremental and synthetic exports.
+
+** synchronizing between computers
+I synchronize/replicate it across my computers with Syncthing, also used Dropbox in the past.
+
+** disk space concerns
+Some back of the envelope math arguing it shouldn't be a concern for you:
+
+- the amount of data you generate grows linearly. That means that running exports periodically would take 'quadratic' space
+- with time, your available storage grows exponentially (and only gets cheaper)
+
+Hopefully that's convincing, but if this is an issue it can also be addressed with compression or even using deduplicating backup software like [[https://borgbackup.readthedocs.io/en/stable][borg]]. Keep in mind that would come at the cost of slowing down access, which may be helped with caching.
+
+I don't even bother compressing most of my exports, except for the few which [[#arctee][arctee wrapper]] handles.
+
+There are also ways to benefit from compression without having to do it explicitly:
+
+- keeping data under borg and using [[https://borgbackup.readthedocs.io/en/stable/usage/mount.html][=borg mount=]] to access it.
+
+  You get deduplication for free, however this makes exporting and accessing data much more obscure. In addition, =borg mount= locks the repository so it's going to be read-only while you access it.
+
+- using a filesystem capable of compressing on the fly
+
+  E.g. [[https://serverfault.com/questions/740456/lightweight-transparent-compression-filesystem][ZFS/BTRFS]].
+
+  It seems straightforward enough, thought non-standard file systems might be incompatible with some software, e.g. [[https://www.linuxuprising.com/2018/11/how-to-use-dropbox-on-non-ext4.html][Dropbox]].
+  I haven't personally tried it.
+
+* Data access layer (DAL)
+Map: [[https://beepb00p.xyz/myinfra.html#dal][data access layer]].
+
+As I [[#design][mentioned]], all that DAL does is maps raw data (saved on the disk by the [[#export_layer][export layer]]) onto abstract objects making it easier to work with in your programs. "Layer" sounds a bit intimidating and enterprisy but usually it's just a single short script.
+
+It's meant to deal with data cleanup, normalization, etc. Doing this at runtime rather than during the export makes it easier to work around data issues, allows experimentation, and is more forgiving if you make some bugs.
+
+  As I mentioned in the [[#design][design principles]], I'm trying to keep data retrieval code and data access code separate
+since they serve very different purposes and deal with very different errors.
+
+Just as a reminder what we get as a result:
+
+- resilience
+
+  Accessing and working with data on your disk is considerably easier and faster than using APIs.
+- offline
+
+  You only access data on your disk, which makes you completely independent on the Internet.
+
+- modularity and decoupling: you can use separate tools (even written in different programming languages) for retrieving and accessing data
+
+  That's very important, so we all can benefit from existing code and reinventing less wheels.
+- backups
+
+  Keeping raw data makes them trivial
+
+** performance concerns
+A natural question is: if you run through all your data snapshots each time you access it, wouldn't it be too slow?
+
+First, it's somewhat similar to the worries about the [[#disk_space][disk space]]. Data grows at the quadratic rate; and while processing power doesn't seem to follow Moore's law anymore there is still some potential to scale horizontally and use multiple threads. In practice, for most data sources that I use this process is almost instantaneous without parallelizing anyway.
+
+In addition:
+
+- if you're using iterators/generators/coroutines (e.g. [[https://github.com/karlicoss/rexport/blob/874e6116bfba8cbd63fa3b4d93810a1488cb8464/dal.py#L130-L136][example]]), that overhead will be amortized and basically unnoticeable
+- you can still use caching. Just make sure it doesn't involve boilerplate or cognitive overhead to use. E.g. [[https://beepb00p.xyz/unnecessary-db.html#cachew_cachew][cachew]].
+
+** examples
+#+name: dal_messenger
+#+begin_noop
+Example: [[https://github.com/karlicoss/fbmessengerexport/blob/a8f65a259dfa36ab6d175461994356947ded142a/model.py#L27-L47][DAL for Facebook Messenger]] knows how to read messages from the database on your disk, access certain fields (e.g. message body) and how to handle obscure details like converting timestamps to =datetime= objects. 
+- it's *not* trying to get messages from Facebook, which makes it way faster and more reliable to interact with data
+- it's *not* trying to do anything fancy beyond providing access to the data, which allows keeping it simple and resilient
+#+end_noop
+
+You can find more specific examples along with the motivation and explanations here:
+
+- [[https://beepb00p.xyz/unnecessary-db.html#example_reddit][Reddit]]
+- [[https://beepb00p.xyz/unnecessary-db.html#relational][Instapaper/Endomondo]]
+- [[https://beepb00p.xyz/unnecessary-db.html#maintaining][Pocket]]
+- [[https://beepb00p.xyz/unnecessary-db.html#example_chrome][Chrome]]
+
+* Automating exports
+In my opinion, it's absolutely essential to automate data exports when possible. 
+You really don't want to think about it and having a recent version of your data motivates you to actually use it, otherwise there is much less utility.
+
+In addition, it serves as a means of backup, so you don't have to worry about what happens if the service ceases to exist.
+
+** scheduling
+I run most of my data exports at least daily.
+
+I wrote a whole [[https://beepb00p.xyz/scheduler.html][post]] on scheduling and job running with respect to the personal infrastructure. In short:
+
+- on desktop: at the moment, I'm mostly using cron (to be more specific, [[https://beepb00p.xyz/scheduler.html#fcron][fcron]]).
+
+  I'm still [[https://beepb00p.xyz/scheduler.html#solution][thinking]] of an alternative, but overall using cron is okay.
+
+- on Android phone: [[https://beepb00p.xyz/scheduler.html#phone][I'm using Automate app and cron]]
+
+** arctee
+This is a [[https://github.com/karlicoss/arctee][wrapper script]] I'm using to run most of my data exports.
+
+Many things are very common to all data exports, regardless of the source.
+In the vast majority of cases, you want to fetch some data, save it in a file (e.g. JSON) along with a timestamp and potentially compress it.
+
+This script aims to minimize the common boilerplate:
+
+- =path= argument allows easy ISO8601 timestamping and guarantees atomic writing, so you'd never end up with corrupted exports.
+- =--compression= allows to compress simply by passing the extension. No more =tar -zcvf=!
+- =--retries= allows easy exponential backoff in case service you're querying is flaky.
+
+Example:
+
+: arctee '/exports/rtm/{utcnow}.ical.zstd' --compression zstd --retries 3 -- /soft/export/rememberthemilk.py
+
+
+1. runs =/soft/export/rememberthemilk.py=, retrying it up to three times if it fails
+
+   The script is expected to dump its result in stdout; stderr is simply passed through.
+2. once the data is fetched it's compressed as =zstd=
+3. timestamp is computed and compressed data is written to =/exports/rtm/20200102T170015Z.ical.zstd=
+
+The wrapper operates on regular files and is therefore, programming language agnostic as long as your export script simply outputs to stdout (or accepts a filename, so you can use =/dev/stdout=). It doesn't really matter how exactly (e.g. which programming language) it's implemented.
+
+That said, it feels kind of wrong having an extra script for all these things since they are not hard in principle, just tedious and boring to do all over again. If anyone has bright ideas on simplifying this, I'd be happy to know!
+
+
+* --
+Approaches that I described here have worked pretty well for me so far. It feels fairly composable, flexible and easy to maintain.
+
+I'm sharing this because I would *really* like to make it accessible to more people, so they can also benefit from using their data.
+
+I'd be happy to hear any suggestions on simplifying and improving the system!
+
+Big thanks to [[https://jborichevskiy.com][Jonathan]] for reading the draft and suggesting helpful edits.

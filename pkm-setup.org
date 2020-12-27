@@ -1,0 +1,131 @@
+#+summary: My personal knowledge setup
+#+filetags: :pkm:orgmode:learning:
+#+upid: pkm_setup
+
+So, what is [[https://en.wikipedia.org/wiki/Personal_knowledge_management][personal knowledge management]]? TLDR, it's a process of organizing your *tasks, thoughts and information* important to you, so a fairly useful practice.
+
+I guess almost everyone at least at some point of their life tried to bring more organization: used a calendar, checklists, notebook etc.
+Perhaps you also were learning something and were wondering of more efficient ways of memorizing, organizing and acting on that information.
+
+This is what I'm loosely going to refer as [[https://beepb00p.xyz/tags.html#pkm][PKM]] further on.
+
+Some of the reasons why what I'm going to write about might be useful to you:
+
+- you generally want to be more organized in your life but not sure how
+- you are reading lots of stuff, but then you feel like you quickly forget it (especially on the Internet, where information is denser than in books)
+- you think that flesh is weak and want to offload remembering things to external persistent medium  ([[https://beepb00p.xyz/tags.html#extendedmind][#extendedmind]])
+- you are looking for better ways of accessing, processing and retaining new information
+
+I'm writing that because my 'system' has more or less settled and stabilized, and I feel that I could be useful by helping out other people and sharing the ideas.
+
+At this point, it also starts getting hard to keep up with all the things and hacks I implemented and maintaining let alone improving them, so I need to spread my ideas to the community.
+
+A bit of disclaimer: some of the things I am doing may seem excessive and tedious -- but you don't have to use exactly the same setup, I'm merely sharing for you something to kick off!
+My own setup has been molded throughout the years with many influences from different people (who I will try to credit as long as I recall). Often some things I'm trying seem like too much effort even for me, but if you never overshoot, you might never hit that sweet spot between efficiency and convenience.
+
+I'm *very happy to discuss* if you have any questions/suggestions/etc.
+
+Thinks related to knowledge are very entangled so it's hard to write about a single aspect in isolation, so you will notice these posts are very interconnected, kind of like wiki.
+
+This is the plan, which I will fill with links as I write.
+
+
+#+toc: headlines 2
+
+* STRT task/todo management
+I'm [[https://beepb00p.xyz/pkm-todos.html][in progress]] of writing a longer post, but in short I'm using org-mode.
+If you think you're not ready for org-mode, I recommend trying [[https://www.rememberthemilk.com][Remember The Milk]].
+
+* STRT personal wiki
+Aka [[https://beepb00p.xyz/tags.html#exobrain][#exobrain]].
+
+Wiki is a somewhat more universally understood term (unlike 'personal knowledge repository'), so I am gonna stick with it even though it's.
+That's just a fancy name for somewhere where you store your notes. Mine is public and you can see it in the header: [[https://beepb00p.xyz/./exobrain][Exobrain]].
+It's backed by org-mode.
+
+Some of the things I tried and used before:
+
+- random text/.doc files (up to 2010?)
+- [[https://zim-wiki.org][zim]] (2011-2015)
+- [[https://github.com/jgm/gitit][gitit]] (2012/2013)
+- Evernote (2013)
+- Sublime Text on top of markdown/text files
+- Google Keep (2015-2017)
+- Latex documents for math/physics notes (2015-2016)
+- Remember The Milk (2016-2018)
+- [[https://en.wikipedia.org/wiki/Org-mode][Org mode]] notes (2017-now)
+
+* [[https://beepb00p.xyz/pkm-search.html][Searching information]]
+
+* TODO logging and capturing
+Capturing or clipping is a way of getting pieces of information/links in your personal wiki. 
+It has to be seamless, requiring *minimal* cognitife effort. I'm using:
+
+- on computer: [[https://orgmode.org/manual/Capture.html][org-capture]]
+- in web browser: [[https://beepb00p.xyz/./grasp.html][grasp]], web extension I wrote
+- on Android: [[https://github.com/orgzly/orgzly-android][Orgzly]]
+- whiteboards
+
+* STRT processing and organizing information
+- see posts about Orger ([[https://beepb00p.xyz/orger.html][1]], [[https://beepb00p.xyz/orger-todos.html][2]]), in particular, [[https://beepb00p.xyz/orger-todos.html#reddit][reddit processing workflow]]
+
+* [[https://beepb00p.xyz/annotating.html][Annotating information]]
+* STRT discovering new information
+Mainly, to consume new information passively, I'm using:
+
+- RSS (2009-)
+- twitter (2010-)
+- pinboard (2014-)
+- reddit (2016-)
+
+In addition I'm using, [[https://beepb00p.xyz/axol.html][Axol]], a tool of my own that monitors results for certain queries on pinboard, reddit, twitter, hackernews and github.
+That way I can just read summaries of the topics I'm interested at once a month instead making sure I don't miss interesting content and people.
+
+* STRT spaced repetition and habits
+- [[https://orgmode.org/worg/org-contrib/org-drill.html][org-drill]] on my desktop
+- [[https://www.memrise.com][Memrise]] to learn German on my phone
+- example of using Orger [[https://beepb00p.xyz/orger-todos.html#krill][to drill new words from my Kobo reader]]
+
+* STRT syncing
+Continuous sync of my data and information is a biggie for me.
+
+- first, I've always had one desktop/big sturdy laptop and one small portable for travel/coffee shops/etc
+- second, I need to be able to access information on my phone, when I may not have good network (or any) [[https://beepb00p.xyz/tags.html#offline][#offline]]
+
+Eventual sync (e.g. via Git) might be fine for personal wiki. 
+For todos, however, I really don't want to have this overhead of thinking whether I need to do some extra work in order to sync.
+
+I'm using Dropbox and Syncthing to access my data and information from every device.
+
+* STRT tools and infrastructure
+See [[https://beepb00p.xyz/tags.html#infra][#infra]]
+
+- Some motivation behind integrating my personal data: [[https://beepb00p.xyz/sad-infra.html][the sad state of personal infrastructure]].
+- I'm using special [[https://beepb00p.xyz/hpi.html][my.]] Python package to access all of my personal information and interact with it.
+- [[https://github.com/karlicoss/promnesia][promnesia]] is a browser extension I'm working on that enhances browsing history and integrates with your knowledge base
+* TODO timeline
+See [[https://beepb00p.xyz/tags.html#lifelogging][#lifelogging]]  
+
+I've got a personal timeline of all my events, e.g. reading/watching/sleeping/exercising/etc.
+* STRT regular backups
+I [[https://beepb00p.xyz/my-data.html][collect most of my digital trace]] and regularly back up pretty much everything.
+I'm using [[https://borgbackup.readthedocs.io/en/stable][borg backup]] for it.
+* TODO future
+Things that I want to try or integrate eventually:
+
+- Voice interaction
+
+  It's impressive how pathetic current state of affairs is.
+  For instance, even if I was willing to accept Google Keep, Google Home isn't able to integrate with it!
+
+  If you say 'ok google please take a note', it would take it and it ends up... 
+  Erm, I had to google it, and apparently they end up in some [[https://support.google.com/googlenest/thread/937460?hl=en][obscure Google Assistant tab]], not accessible from Desktop. Must be a result of some internal promo fights.
+
+  Anyway, I hope [[https://mycroft.ai/][Mycroft AI]] gets better and then it would be easy to work with it since it's open source.
+
+- VR
+
+  Not sure yet how to incorporate it in my knowledge routine. I can imagine using it for very specific tasks and visualization. Perhaps some sort of method of loci? 
+  So far it seems that using textual representation and keyboard are the fastest way.
+
+- NLP (e.g. entity extraction) and similar things

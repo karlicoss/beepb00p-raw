@@ -1,0 +1,1215 @@
+#+summary: mypy assisted error handling, exception mechanisms in other languages, fun with pattern matching and type variance
+#+upid: mypy_error_handling
+#+filetags: :mypy:python:plt:
+
+TLDR: I overview few error handling techniques (with the emphasis on Python, although I mention few other programming languages), some existing Python libraries and suggesting a 
+simple and clean [[https://mypy.readthedocs.io/en/latest/introduction.html][mypy]]-based approach.
+
+You might learn few things about error handling in different languages, pattern matching, type variance, mypy's capabilities in general and clues for making your code and interfaces more mypy-friendly (and IDE friendly if you're using LSP/Intellij).
+* Intro aka computers are hard
+I am somewhat obsessed with personal data and information, analyzing data for quantified self, lifelogging etc. 
+I am trying to integrate all my information sources and make it easy to access and search.
+You can see some examples in [[https://github.com/karlicoss/my][my]] package and Orger: [[https://beepb00p.xyz/orger.html][part I]], [[https://beepb00p.xyz/orger-todos.html][part II]].
+
+To get this data, manipulate with it and interact with, of course, you need to extract it first (e.g. from json/csv), parse it (e.g. from plaintext),
+or even worse, reverse engineer it from vendor locked formats (e.g. in my [[https://github.com/karlicoss/kobuddy][kobo parsing library]]).
+
+If you ever worked with data and had to parse some semi-structured data (let alone natural language), or scraped web pages, you might start getting flashbacks now.
+Undocumented APIs, bad characters, cryptic regexes, corrupt fields, unexpected nulls, logical inconsistencies, all sorts of things.
+You will almost never get it right from the first few attempts, and then when it finally does what your want... it breaks after couple of days because of course you missed some edge cases or data provider just gives you utter garbage for no reason. And thing you've spent so much effort on stops working, spams your mailbox and requires attention.
+
+Ew. *Data is messy*. 
+
+Most modern programming languages are fairly unforgiving to unexpected, and would crash at the slightest opportunity.
+Some languages do have quirks (e.g. 'undefined' in JS), but generally well written software aborts very soon after something unexpected starts happening.
+And for good reasons:
+
+- if it didn't, your program's state would lose the properties the author intended it to have.
+
+  Ignoring the errors will almost surely prevent the program from getting to desired result anyway and end up with even more severe, or potentially catastrophic inconsistencies. How about formatting your disk if you're /really/ unlucky?
+
+- another good reason to fail fast is that it makes the programmer more likely to notice and then fix the bug
+
+So in most cases, as long as you can get away with it, it's *good to throw exception or abort* the program immediately in some way.
+You might not be able to do that if you're literally doing rocket science or [[https://isocpp.org/wiki/faq/exceptions#why-exceptions][flight control software]], but most of us aren't.
+For typical software engineering problems, some errors are less crucial and more manageable than other errors. So we try to be pragmatic when we program, evaluate failure risks and use try/catch mechanisms where appropriate.
+
+Now, I'm sure we as an engineers we could handwave about about that stuff forever, so let me be more specific straightaway
+and introduce a motivating *real life problem* that I actually had to solve.
+
+* The problem: parsing Kindle highlights
+Say, you own a Kindle book. Electronic books are great. Yeah okay they don't smell like the real thing, but the possibility of highlighting bits of text and typing your comment without distracting on external means of annotation is incredibly helpful.
+However, then when you want to go through your highlights after reading to refresh your memory or perhaps to share with a friend,
+you find out it's [[https://beepb00p.xyz/annotating.html#kindle][not so convenient]] to actually quickly access them.
+
+So you decide to write a script that would process the highlights, perhaps group them by book, displays timestamps and render a nice HTML page
+so you could easily open it from phone and recall latest books you read to discuss with friends.
+
+On device, Kindle keeps bookmarks and highlights are stored ... in =My Clippings.txt= file. 
+
+#+html: <details><summary>Click to view 'clippings.txt' </summary>
+#+begin_src
+  PHYS771 Lecture 12: Proof (scottaaronson.com)
+  - Your Highlight on Page 2 | Added on Sunday, July 21, 2013 10:06:53 AM
+
+  Roger Penrose likes to talk about making direct contact with Platonic reality, but it's a bit embarrassing when you think you've made such contact and it turns out the next morning that you were wrong!
+  ==========
+  [Tong][2013] Dynamics and Relativity  
+  - Your Highlight on Page 120 | Added on Sunday, August 4, 2013 6:17:21 PM
+
+  It is worth mentioning that although the two people disagree on whether the light hits the walls at the same time, this does not mean that they can't be friends.
+  ==========
+  PHYS771 Lecture 12: Proof (scottaaronson.com)
+  - Your Highlight on Page 14 | Added on Sunday, August 4, 2013 8:41:53 PM
+
+  No hidden-variable theory can be local (I think some guy named Bell proved that).
+#+end_src
+#+html: </details>
+
+Yes, it's a messy format and not very machine friendly. But oh well it's a file, you're a programmer. You know the drill.
+
+<<def_parse_entry>>
+<<code_initial>>
+#+begin_src python -n
+  from datetime import datetime
+  from typing import NamedTuple, Sequence
+  import re
+  from pathlib import Path
+  from itertools import groupby
+  from textwrap import wrap
+
+  class Highlight(NamedTuple):
+      dt: datetime # date when highlight was made
+      title: str   # book title
+      page: str    # highlight location
+      text: str    # highlighted text
+
+  class Book(NamedTuple):
+      "Represents book along with its highlights"
+      title: str
+      highlights: Sequence[Highlight]
+
+  def parse_entry(entry: str) -> Highlight:
+      groups = re.search(
+  	r'(?P<title>.*)$\n.*Highlight on Page (?P<page>\d+).*Added on (?P<dts>.*)$\n\n(?P<text>.*)$', 
+  	entry, 
+  	re.MULTILINE,
+      )
+      assert groups is not None, "Couldn't match regex!"
+      dt = datetime.strptime(groups['dts'], '%A, %B %d, %Y %I:%M:%S %p')
+      return Highlight(
+  	dt=dt,
+  	title=groups['title'],
+  	page=groups['page'],
+  	text=groups['text'],
+      )
+
+  def iter_highlights():
+      data = Path(clippings_file).read_text()
+      for entry in data.split('=========='):
+  	yield parse_entry(entry.strip())
+
+  def iter_books():
+      key = lambda e: e.title
+      for book, hls in groupby(sorted(iter_highlights(), key=key), key=key):
+  	highlights = list(sorted(hls, key=lambda hl: hl.dt))
+  	yield Book(title=book, highlights=highlights)
+
+  def print_books():
+      for r in iter_books():
+  	print(f'* {r.title}')
+  	for h in r.highlights:
+  	    text = "\n      ".join(wrap(h.text))
+  	    print(f'  - {h.dt:%d %b %Y %H:%M}  {text} [Page {h.page}]')
+  	print()
+  print_books()
+#+end_src
+
+ 
+#+begin_example
+  ,* PHYS771 Lecture 12: Proof (scottaaronson.com)
+    - 21 Jul 2013 10:06  Roger Penrose likes to talk about making direct contact with Platonic
+        reality, but it's a bit embarrassing when you think you've made such
+        contact and it turns out the next morning that you were wrong! [Page 2]
+    - 04 Aug 2013 20:41  No hidden-variable theory can be local (I think some guy named Bell
+        proved that). [Page 14]
+
+  ,* [Tong][2013] Dynamics and Relativity  
+    - 04 Aug 2013 18:17  It is worth mentioning that although the two people disagree on
+        whether the light hits the walls at the same time, this does not mean
+        that they can't be friends. [Page 120]
+#+end_example
+
+
+For the purposes of this post, to keep the example output clean, I am just using plain text.
+Even though it's not quite HTML with CSS, it still looks kinda nice, doesn't it?
+(if you're wondering why ~yield~ I'll explain it [[#iterator][further down]])
+
+Now:
+
+- imagine you've set this script to run in cron, and it's been fine for a while. You left for a three week holiday to finally get some rest from programming; started reading this new book about quant finance (yeah, you've always had interesting ways of getting a rest from computer) and... your script stopped working.
+
+  #+begin_example
+    Traceback (most recent call last):
+      File "<stdin>", line 55, in <module>
+      File "<stdin>", line 49, in print_books
+      File "<stdin>", line 44, in iter_books
+      File "<stdin>", line 34, in iter_highlights
+      File "<stdin>", line 21, in parse_entry
+    AssertionError: Couldn't match regex!
+  #+end_example
+
+  You swear out loud, reach for the laptop you promised to distance yourself from and turns our your parser chokes over =page= instead of =Page= in one of new entries. (and yes, this was actually the case in my Kindle export)
+
+  #+html: <details><summary>Click to view updated 'clippings.txt' </summary>
+  #+begin_src
+    PHYS771 Lecture 12: Proof (scottaaronson.com)
+    - Your Highlight on Page 2 | Added on Sunday, July 21, 2013 10:06:53 AM
+
+    Roger Penrose likes to talk about making direct contact with Platonic reality, but it's a bit embarrassing when you think you've made such contact and it turns out the next morning that you were wrong!
+    ==========
+    [Tong][2013] Dynamics and Relativity  
+    - Your Highlight on Page 120 | Added on Sunday, August 4, 2013 6:17:21 PM
+
+    It is worth mentioning that although the two people disagree on whether the light hits the walls at the same time, this does not mean that they can't be friends.
+    ==========
+    PHYS771 Lecture 12: Proof (scottaaronson.com)
+    - Your Highlight on Page 14 | Added on Sunday, August 4, 2013 8:41:53 PM
+
+    No hidden-variable theory can be local (I think some guy named Bell proved that).
+    ==========
+    My Life as a Quant: Reflections on Physics and Finance (Emanuel Derman)
+    - Your Highlight on page 54 | Added on Tuesday, October 4, 2013 12:11:16 PM
+
+    The Black-Scholes model allows us to determine the fair value of a stock option.
+  #+end_src
+  #+html: </details>
+
+  You could argue that you should have made the regex in ~parse_entry~ case independent in the first place, but it's not something you would normally expect. 
+  Kindle specifically got all sorts of nasty things: roman numerals for page numbers, locale dependent dates, inconsistent separators, and so on.
+
+  Perhaps you even fix this particular problem, but it's a *matter of short time till next parsing issue*. It's quite sad if you have to constantly tend for things that are meant to simplify and enhance your life.
+
+Or,
+
+- you wrote this parser and decided that it could be useful for other people.
+
+  So for a small fee, you are providing a service that fetches highlights from their Kindles, displays on 
+  profile pages and lets their friends comment. 
+
+  Imagine user's highlights result in the same error described above. It would be pretty sad if parsing a single entry
+  took down the whole user's page or prevented updates. No matter how fast you'd be willing to fix these things, *users would leave discouraged*.
+
+With the way code is written at the moment, any exception would take the whole program down.
+So, we need some way of getting around these errors and carrying on.
+
+What do we do? 
+
+* A non-solution #1: logging
+One simple strategy would be to make parsing fully defensive, wrap the whole ~parse_entry~ call in ~try/except~ and log:
+
+#+begin_src python -n 33
+  import logging
+  def iter_highlights():
+      data = Path(clippings_file).read_text()
+      for entry in data.split('=========='):
+  	try:
+  	    yield parse_entry(entry.strip())
+  	except Exception as e:
+  	    logging.exception(e)
+#+end_src
+
+Logging typically works well for minor things not worthy a proper error (i.e. warnings) and as a means of retrospective error analysis and debugging. 
+In our case logging wouldn't do the job:
+
+- you're not aware that error is happening at all. If it's your personal tool, chances are you don't have time to go through all the logs and inspect them regularly.
+- user expects to see their data, but can't find it. It's pretty frustrating.
+
+What do we want?
+
+- keep track of errors, render as much as we can, but terminate with non-zero exit code
+- potentially present errors in the interface so you or your users wouldn't worry about lost data
+
+So we need some way of propagating the errors up the call hierarchy instead of throwing immediately or suppressing.
+
+* A non-solution #2: special error value
+Often it's tempting to fallback to some sort of special 'default' or 'error' value. I bet you've seen this before: ~0~ or ~INT_MAX~ meaning error for integer type, or ~""~ for string types. We could try something similar and squeeze exception into the ~Highlight~ object itself. 
+
+#+begin_src python -n 33
+  def iter_highlights():
+      data = Path(clippings_file).read_text()
+      for entry in data.split('=========='):
+  	try:
+  	    yield parse_entry(entry.strip())
+  	except Exception as e:
+  	    yield Highlight(dt=datetime.now(), page='', book="ERROR", text=str(e))
+#+end_src
+
+One obvious problem is that it's very nontransparent and *relies on implicit convention*: there is no way of telling that this function might return some special ~Highlight~ which should be treated as error. That not only complicates code, but might also introduce logical inconsistencies.
+
+E.g. if your ~Highlight~ object also returned book's ISBN and you filled it with some arbitrary text, it would almost surely not be a valid ISBN, that might cause failures down the pipeline.
+
+Sometimes it's inevitable though, e.g. I'm giving an example [[#dataframe][later]].
+
+* Almost solution #1: Result container
+An abstraction that stood the test of time well is a container that holds a *result* representing one of two:
+- *success value*, representing the *desired outcome* of type ~T~
+- or *'error value'*, holding *error description* of type ~E~.
+
+I will try to stick to the same semantics further down, 'result' typically meaning that it could be either desired value or error.
+
+You can vaguely think of it as an interface ~Result~, and two implementations: ~Ok~ and ~Error~.
+In runtime, you can ask the instance behind ~Result~, which of these alternative it holds and act accordingly.
+
+It has manifested as:
+
+- in Rust: [[https://doc.rust-lang.org/std/result/enum.Result.html][std::result::Result]]. Example borrowed from [[https://doc.rust-lang.org/1.30.0/book/second-edition/ch09-02-recoverable-errors-with-result.html][here]]:
+  #+begin_src rust
+    let f: Result<File, io::Error> = File::open("hello.txt");
+    let f = match f {
+        Ok(file) => file,
+        Err(error) => {
+    	panic!("There was a problem opening the file: {:?}", error)
+        },
+    };
+  #+end_src
+
+- in Haskell: [[https://wiki.haskell.org/Handling_errors_in_Haskell#Error_using_the_Either_type][~Either E T~]]
+
+  #+begin_src haskell
+    main = do
+      line <- getLine
+      case runParser emailParser line of
+        Right (user, domain) -> print ("The email is OK.", user, domain)
+        Left  (pos, err)     -> putStrLn ("Parse error on " <> pos <> ": " <> err)
+  #+end_src
+
+  Yes, ~Left~ meaning error and ~Right~ meaning success are not necessarily obvious. It's kinda a pun: "right" also means "correct".
+  Also notice that error is not just a string, but also contains the position where parsing failed.
+
+- in C++: there is a proposal for [[https://web.archive.org/web/20191218143638/https://issues.isocpp.org/show_bug.cgi?id=29][~std::expected<E, T>~]]
+
+So, Rust and Haskell programmers seem to be quite happy with it? *Why can't we have same in Python?*
+Well, some people tried! So I'll review a python library that does that: [[https://github.com/dbrgn/result#result][result.Result]] ([[https://github.com/dbrgn/result/releases/tag/v0.4.1][v0.4.1]] at the time of writing).
+
+Let's try it on our program and see how it works.
+To make it easier to compare to [[code_initial][the original code]] I suggest duplicating the tab in a separate window and tiling them side by side.
+
+#+begin_src python -n 33
+  from result import Ok, Err
+  def iter_highlights():
+      data = Path(clippings_file).read_text()
+      for entry in data.split('=========='):
+  	try:
+  	    yield Ok(parse_entry(entry.strip()))
+  	except Exception as e:
+  	    yield Err(str(e))
+#+end_src
+
+We've had to wrap success and error values in ~Ok~ and ~Err~, but so far it's not too bad.
+
+#+begin_src python +n
+  from itertools import tee
+  def iter_books():
+      vit, eit = tee(iter_highlights())
+      values = (r.value for r in vit if r.is_ok())
+      errors = (r.err() for r in eit if r.is_err())
+      key = lambda e: e.title
+      for book, hls in groupby(sorted(values, key=key), key=key):
+  	highlights = list(sorted(hls, key=lambda hl: hl.dt))
+  	yield Ok(Book(title=book, highlights=highlights))
+      yield from map(Err, errors)
+#+end_src
+
+We use [[https://docs.python.org/3/library/itertools.html#itertools.tee][~itertools.tee~]] here so we don't have to pollute our code with temporary lists.
+
+#+begin_src python +n
+  def print_books():
+      for r in iter_books():
+  	if r.is_ok():
+  	    v = r.value
+  	    print(f'* {v.title}')
+  	    for h in v.highlights:
+  		text = "\n      ".join(wrap(h.text))
+  		print(f'  - {h.dt:%d %b %Y %H:%M}  {text} [Page {h.page}]')
+  	    print()
+  	else:
+  	    e = r.err()
+  	    print(f"* ERROR: {e}")
+  print_books()
+#+end_src
+
+ 
+#+begin_example
+  ,* PHYS771 Lecture 12: Proof (scottaaronson.com)
+    - 21 Jul 2013 10:06  Roger Penrose likes to talk about making direct contact with Platonic
+        reality, but it's a bit embarrassing when you think you've made such
+        contact and it turns out the next morning that you were wrong! [Page 2]
+    - 04 Aug 2013 20:41  No hidden-variable theory can be local (I think some guy named Bell
+        proved that). [Page 14]
+
+  ,* [Tong][2013] Dynamics and Relativity  
+    - 04 Aug 2013 18:17  It is worth mentioning that although the two people disagree on
+        whether the light hits the walls at the same time, this does not mean
+        that they can't be friends. [Page 120]
+
+  ,* ERROR: Couldn't match regex!
+#+end_example
+
+<<kindle_output>>
+
+Cool, we rendered as much as we can, and we get the error displayed as well, so nothing crashes and the users are not as unhappy.
+The error looks a bit out of nowhere, but at least it's there. We will address how we can improve it [[#error_context][later]].
+
+Sadly, for someone else who looks at ~iter_highlights~ or ~iter_books~ signatures, it's not obvious that it yields ~Result~ objects, not ~Book/Highlight~ objects without reading the code.
+It's a thankless job for a human to keep track of, and [[https://mypy.readthedocs.io/en/latest/introduction.html][*mypy*]] is a perfect fit for this task.
+Gladly, ~result~ library already [[https://github.com/dbrgn/result/blob/master/result/result.py][comes with type annotations]].
+
+So, let's try to use mypy to aid us at writing correct code.
+
+Let's focus just on ~iter_highlights~ and ~iter_books~ and use the ~Result~ type.
+
+#+name: example_typed_iter_hl
+#+begin_src python -n 34
+  from result import Ok, Err, Result
+  from typing import Iterator
+  Error = str
+
+  def iter_highlights() -> Iterator[Result[Error, Highlight]]:
+      data = Path(clippings_file).read_text()
+      for entry in data.split('=========='):
+  	try:
+  	    yield Ok(parse_entry(entry.strip()))
+  	except Exception as e:
+  	    yield Err(str(e))
+#+end_src
+
+#+begin_src mypy +n
+  from itertools import tee
+  def iter_books() -> Iterator[Result[Error, Book]]:
+      vit, eit = tee(iter_highlights())
+      values = (r.ok() for r in vit if r.is_ok())
+      errors = (r      for r in eit if r.is_err())
+      key = lambda e: e.title
+      for book, hls in groupby(sorted(values, key=key), key=key):
+  	highlights = list(sorted(hls, key=lambda hl: hl.dt))
+  	yield Ok(Book(title=book, highlights=highlights))
+      yield from errors
+#+end_src
+
+ 
+#+begin_example
+  Mypy output [exit code 1]:
+  input.py: note: In function "iter_books":
+  input.py:52: error: Item "None" of "Optional[Highlight]" has no
+  attribute "dt"  [union-attr]
+  	    highlights = list(sorted(hls, key=lambda hl: hl.dt))
+  							 ^
+  input.py:53: error: Argument "highlights" to "Book" has incompatible
+  type "List[Optional[Highlight]]"; expected "Sequence[Highlight]"  [arg-type]
+  	    yield Ok(Book(title=book, highlights=highlights))
+  						 ^
+  input.py:54: error: Incompatible types in "yield from" (actual type
+  "Result[str, Highlight]", expected type "Result[str, Book]")  [misc]
+  	yield from errors
+  	^
+  Found 3 errors in 1 file (checked 1 source file)
+#+end_example
+
+
+Umm. Let's go through the errors:   
+
+- errors 1 and 2 are due to ~ok()~ method being too defensive and [[https://github.com/dbrgn/result/blob/0778597ddb737754780b3aca956ad944282ee870/result/result.py#L75-L81][returning ~None~]] if ~is_ok~ is ~False~. Ideally, you'd throw exception here, because such a situation is a *programming bug*. We can just enforce non-optional type here via ~unopt~ helper.
+- error 3 happens because even though we filtered error values, mypy has no idea about that, so it still assumes that ~errors~ might hold ~Highlight~ objects. You could blame mypy of not being smart enough, but it would be a very *hard if not impossible analysis* in general case. We can get around this by unpacking error and wrapping back in ~Err~.
+
+Let's apply these insights and try again:
+
+#+begin_src mypy -n 45
+  from typing import Optional, TypeVar
+  X = TypeVar('X')
+  def unopt(x: Optional[X]) -> X:
+      # similar to https://doc.rust-lang.org/std/option/enum.Option.html#method.unwrap
+      assert x is not None
+      return x
+
+  from itertools import tee
+  def iter_books() -> Iterator[Result[Error, Book]]:
+      vit, eit = tee(iter_highlights())
+      values = (unopt(r.ok())  for r in vit if r.is_ok())
+      errors = (unopt(r.err()) for r in eit if r.is_err())
+      key = lambda e: e.title
+      for book, hls in groupby(sorted(values, key=key), key=key):
+  	highlights = list(sorted(hls, key=lambda hl: hl.dt))
+  	yield Ok(Book(title=book, highlights=highlights))
+      for err in errors:
+  	yield Err(err)
+#+end_src
+
+ 
+: Mypy output [exit code 0]:
+: Success: no issues found in 1 source file
+
+
+Phew! With some minor changes and restructuring we've convinced mypy.
+
+<<container_downsides>>
+It does come with some downsides:
+
+- *readability*: there is a bit of visual noise since you need to add ~Ok/Err~ wrappers and access the success value via ~.value~ property
+- *safety*: you could forget to call ~is_ok/is_err~ before calling ~ok/err~, and mypy won't even blink.
+
+  <<contract_too_complicated>>
+  The contract =if .is_ok() is True, then it's safe to call .ok()= is too complicated to be encoded as a type that mypy can handle. You'll get ~None~ or exception thrown in runtime. The author of the library admits it by the way, so it's not a criticism, just highlighting limitations of mypy here!
+
+Ok, we've learned something, let's try again. 
+
+** By the way, what's up with [[https://docs.python.org/3/library/typing.html#typing.Iterator][~Iterator~]] everywhere?
+Glad you asked! Several reasons I'm using generators here:
+
+- it makes code cleaner because there is *no need for temporary lists*, calling ~.append~ and then returning them in the end.
+- it makes code faster (again, no temporary lists), and also it *feels faster* because you print items as soon as you process
+- ~Iterator~ type is *covariant*, whereas ~List~ is not. I'm elaborating on it [[covariance][later]]. I'm also using [[https://docs.python.org/3/library/typing.html#typing.Sequence][~Sequence~]] for the same reason.
+
+If you're not very familiar with =yield= and Python's generators, I highly recommend an excellent article that explains them in detail:
+ [[https://barahilia.github.io/blog/computers/2017/01/04/to-yield-or-not-to-yield.html][To yield or not to yield]].
+
+* Almost solution #2: use error combinators
+Now, let's try out [[https://github.com/dry-python/returns#result-container][returns.result]] library ([[https://github.com/dry-python/returns/releases/tag/0.11.0][v0.11.0]] at the time of writing), clearly inspired by Haskell's ~Either~ monad and ~do~ notation.
+I'm quite glad someone already implemented it and I didn't have to reinvent the wheel here.
+
+
+So, let's try and rewrite the code using ~returns.result.Result~:
+
+#+name: combinators_preamble
+#+begin_src mypy -n 19
+  from returns.result import safe
+
+  @safe
+  def parse_entry(entry: str) -> Highlight:
+      groups = re.search(
+  	r'(?P<title>.*)$\n.*Highlight on Page (?P<page>\d+).*Added on (?P<dts>.*)$\n\n(?P<text>.*)$', 
+  	entry, 
+  	re.MULTILINE,
+      )
+      assert groups is not None, "Couldn't match regex!"
+      dt = datetime.strptime(groups['dts'], '%A, %B %d, %Y %I:%M:%S %p')
+      return Highlight(
+  	dt=dt,
+  	title=groups['title'],
+  	page=groups['page'],
+  	text=groups['text'],
+      )
+
+  from returns.result import Result
+  from typing import Iterator
+  def iter_highlights() -> Iterator[Result[Highlight, Exception]]:
+      data = Path(clippings_file).read_text()
+      for entry in data.split('=========='):
+  	yield parse_entry(entry.strip())
+#+end_src
+So far the only difference from [[code_initial][the original code]] is [[https://returns.readthedocs.io/en/latest/pages/result.html#safe][~@safe~]] decorator on ~parse_entry~, which basically deals with catching all exceptions and wrapping into ~Result~.
+
+As a consequence, ~iter_highlights~ required no changes in its body. (which may not be a desirable thing as we'll see [[#error_context][later]])
+
+#+name: combinators_iter_books
+#+begin_src mypy +n
+  from typing import cast
+  from returns.result import Success, Failure
+  from itertools import tee
+  def iter_books() -> Iterator[Result[Book, Exception]]:
+      vit, eit = tee(iter_highlights())
+      sentinel = cast(Highlight, object())
+      values = (r.unwrap()  for r in vit if r.value_or(sentinel) is not sentinel)
+      errors = (r.failure() for r in eit if r.value_or(sentinel) is     sentinel)
+      key = lambda e: e.title
+      for book, hls in groupby(sorted(values, key=key), key=key):
+  	highlights = list(sorted(hls, key=lambda hl: hl.dt))
+  	yield Success(Book(title=book, highlights=highlights))
+      for e in errors:
+  	yield Failure(e)
+#+end_src
+
+Ok, that definitely requires some explanation...
+
+~returns~ library public API doesn't provide any way to tell between success and failure ([[https://returns.readthedocs.io/en/latest/pages/result.html#what-is-the-difference-between-success-and-success][kind of deliberately]]). The types ~_Success~ and ~_Failure~ are private, and the only method that we can use seems to be [[https://returns.readthedocs.io/en/latest/pages/result.html#returns.result.Result.value_or][~result.value_or(default)~]]. This method returns the success value if ~result~ is ~Success~ and falls back to ~default~ if ~result~ is a ~Failure~. So we use a *sentinel object to distinguish* between actual success values and ~default~ ones, and also have to trick mypy with a ~cast~.
+
+Apart from this obscurity, the function suffers from exactly the same issues as the ~iter_books~ implementation from [[container_downsides][the previous section]], and for the same reason: contract is too complicated to be expressed in mypy.
+
+One could argue that this function is going to look awkward anyway since we need to separate list of results into successes and errors. Let's see the function that should be more straightforward:
+
+#+name: combinators_print_books
+#+begin_src mypy +n
+  from typing import Callable
+  def print_books() -> None:
+      for r in iter_books():
+  	def print_ok(r: Book) -> None:
+  	    print(f'* {r.title}')
+  	    for h in r.highlights:
+  		text = "\n      ".join(wrap(h.text))
+  		print(f'  - {h.dt:%d %b %Y %H:%M}  {text} [Page {h.page}]')
+  	print_error = lambda e: print(f"* ERROR: {e}")
+  	r.map(print_ok).fix(print_error)
+#+end_src
+
+The idea here is that we can use ~map~ method (that works like ~fmap~ in Haskell) and use it to print successful results,
+and chain it with ~fix~ that works like like ~fmap~, but for errors. In a sense, these methods encapsulate pattern matching 
+(which Python lacks syntactically) so as long the implementor did the dirty business of correctly doing it dynamically, you're safe.
+However I feel that this particular library overdid this encapsulation a bit, hence very hacky implementation of ~iter_books~.
+
+Lambdas [[https://stackoverflow.com/a/1233520/706389][*can't be multiline*]], so we have to define a local function for ~print_ok~.
+
+There is a [[https://github.com/python/mypy/issues/4226][bug in mypy]] that sometimes prevents you from inlining the lambda and struggles with type inference. Here I'm hitting this bug with ~print_error~, that's why it's not ~.fix(lambda e: print(f"* ERROR: {e}"))~.
+
+Another potential problem is one could forget to implement one of ~map/fix~ clauses, since *nothing enforces calling them*. Even if you're detecting unused variables, missing ~.fix~ clause could stay unnoticed forever. It's very similar to forgetting [[https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/catch][~catch~]] when using Javascript Promises.
+
+It might be possible to enforce with some static analysis though, e.g. via mypy plugin by flagging dangling/temporary ~Result~ values (e.g. similarly to [[https://doc.rust-lang.org/std/result/#results-must-be-used][~must_use~]] attribute in Rust), but it's a project on its own.
+
+Well at the very least it works and type checks!
+#+begin_src mypy +n
+  print_books()
+#+end_src
+
+ 
+#+begin_example
+  Python output [exit code 0]:
+  ,* PHYS771 Lecture 12: Proof (scottaaronson.com)
+    - 21 Jul 2013 10:06  Roger Penrose likes to talk about making direct contact with Platonic
+        reality, but it's a bit embarrassing when you think you've made such
+        contact and it turns out the next morning that you were wrong! [Page 2]
+    - 04 Aug 2013 20:41  No hidden-variable theory can be local (I think some guy named Bell
+        proved that). [Page 14]
+  ,* [Tong][2013] Dynamics and Relativity  
+    - 04 Aug 2013 18:17  It is worth mentioning that although the two people disagree on
+        whether the light hits the walls at the same time, this does not mean
+        that they can't be friends. [Page 120]
+  ,* ERROR: Couldn't match regex!
+
+  Mypy output [exit code 0]:
+  Success: no issues found in 1 source file
+#+end_example
+
+Overall I'm not sold, Python simply *lacks syntax* that lets you unpack and compose ~Result~ objects in a clean way and you end up with boilerplate.
+[[https://returns.readthedocs.io/en/latest/pages/io.html#returns.io.IO.lift][~lifts~]] are not very readable in Haskell, let alone in Python.
+
+I think authors did a great experiment though, the more people have fun with types, the more good abstractions we'll find. 
+
+I don't want to discourage people from using their library, so if it's your personal project and it makes your code more manageable or it just feels fun then by all means go for it!
+
+But as much as I like ideas from functional programming, I'm almost certain that it's gonna look confusing to an average Python programmer,
+ and won't be welcome warmly in your team.
+
+* Still-not-quite-a-solution #3: (Value, Error) pairs
+Before we go on to the solution I propose let me mention another notable pattern of error handling.
+
+It's commonly used in [[https://blog.golang.org/error-handling-and-go][Go]].
+
+#+begin_src go
+  f, err := os.Open("filename.ext")
+  if err != nil {
+      log.Fatal(err)
+  }
+  // do something with the open *File f
+#+end_src
+
+
+However, it's not limited only by Go, e.g. you'd often encounter it implicitly in C (which had no exceptions) or C++ code.
+For instance, [[https://en.cppreference.com/w/cpp/filesystem/is_symlink][~std::filesystem::is_symlink~]] comes in two flavours:
+
+- ~bool is_symlink( const std::filesystem::path& p )~, which throws exceptions on errors.
+- ~bool is_symlink( const std::filesystem::path& p, std::error_code& ec ) noexcept~, which sets ~ec~ on errors. 
+
+  You can think of it as if it returned ~std::tuple<bool, std::error_code>~. I assume it's not that way because the compiler wouldn't be able to distinguish between signatures.
+
+
+Personally I as well as many other people find it pretty ugly. No judgment here though as I have no idea behind the design requirements and rationale for such a model in Go.
+Pretty sure one can get used to it after a while and that there are some static flow analyzers that help to ensure correct error handling.
+
+Main issue with this approach regarding Python is that it's not mypy friendly as return type of ~Open~ would have to be ~Tuple[Optional[Success], Optional[Error]]~.
+In the type theory language, it is a [[https://en.wikipedia.org/wiki/Product_type][product type]], so in addition to all members of ~Success~ type and all members of ~Error~ type, it also got inhabitants that *don't make sense for our program*, such as ~(None, None)~ and also all of ~Tuple[Success, Error]~. 
+
+In other words, nothing on type level prevents the callee (~os.Open~) from returning something like ~(file_descriptor, "whoops")~, which has ambiguous meaning.
+If we use it we would have to pay with sacrificing type safety or *extra code on caller site* to eliminate these impossible program states:
+
+#+begin_src python
+  f, err = open('filename.ext')
+  if err is None:
+      assert f is not None
+      # ok, now we have both mypy and runtime safety: open returned error
+  elif:
+      assert f is None
+      # ok, now we have both mypy and runtime safety: open returned value
+#+end_src
+
+* Solution: keep it simple
+It seems that we were on the right track with the [[#container][container type]] and [[#combinators][combinators]], but never completely satisfied.
+Let's recall the problems we had again:
+
+- *readability*: extra wrappers and accessor methods like ~Ok/Success/Error/.is_ok()/.unwrap()~.
+
+  It's *visual noise* and also they creep throughout the code, so if you decide you won't need them later,
+  you might have to refactor a lot of code.
+
+- *safety*: it's still possible to write logically inconsistent code like ~if res.is_error(): return res.value * 10~.
+
+- *composability*: ~fmap~-style combinators are not really going to look good because Python lacks multiline lambdas.
+- *performance and memory use*: not going to make claims here as I haven't benchmarked, but there is a potential for overhead caused by extra wrapper objects.
+
+First, we'll attack readability and safety. Yes, at the same time!  
+
+In part it's solved with syntactic sugar in other languages like ~do~ syntax in ~Haskell~, or ~try!~ macro and ~?~ operator in [[https://doc.rust-lang.org/edition-guide/rust-2018/error-handling-and-panics/the-question-mark-operator-for-easier-error-handling.html][Rust]]. Sometimes it's inevitable and you have to inject values into rust's ~Result~ explicitly via ~Ok/Err~ constructors. However checking for  ~.is_ok()~ or ~isRight~ is really not that common in idiomatic Rust and Haskell. Reason is *pattern matching*! E.g. if we had pattern matching in Python we could write something like:
+
+#+begin_src python
+  def print_books():
+      for r in iter_books():
+  	match r:
+  	    Book b:
+  		print(f'* {b.title}')
+  		for h in b.highlights:
+  		    text = "\n      ".join(wrap(h.text))
+  		    print(f'  - {h.dt:%d %b %Y %H:%M}  {text} [Page {h.page}]')
+  		print()
+  	    Error e:
+  		print(f"* ERROR: {e}")
+#+end_src
+
+That's cleaner than checking for ~is_ok/is_err~ and unpacking; and also makes it type safe because ~b~ and ~e~ already have the appropriate types. In our imaginary world where python had this syntax, surely mypy would have supported it too, right?
+
+Oh wait. It kind of [[https://mypy.readthedocs.io/en/latest/kinds_of_types.html#union-types][supports it already]]!
+
+#+begin_src python
+  from typing import Union
+
+  def f(x: Union[int, str]) -> None:
+      x + 1     # Error: str + int is not valid
+      if isinstance(x, int):
+  	# Here type of x is int.
+  	x + 1      # OK
+      else:
+  	# Here type of x is str.
+  	x + 'a'    # OK
+#+end_src
+
+So, mypy keeps track of the [[https://en.wikipedia.org/wiki/Typing_environment][typing context]] and *narrows it down* after certain operations, in particular, ~isinstance~ checks and [[https://mypy.readthedocs.io/en/latest/kinds_of_types.html#optional-types-and-the-none-type][~is None/is not None~ checks]].
+
+That looks *very similar to pattern matching* both in terms of syntax and typing rules.
+
+So, it seems that ~Union~ would represent our result type. Do we still need to come up with some special wrapper for errors?
+Not really, Python already has a fairly convenient candidate for it: ~Exception~! Most often you have it anyway in ~except~ clause, if it's not enough, you can inherit it, add extra fields and treat as any other type.
+
+On the other hand, Exceptions almost never end up as function return values (and when they do, it's normally some fairly unambiguous code dealing specifically with error handling). Hmm, how convenient 🤔.
+
+So even though we don't have explicit tagged unions in Python, if we agree that error values are represented as Exceptions, then we do get a disjoint type (i.e. ~Ok~ and ~Error~ are mutually exclusive) at runtime.
+
+So, rules of thumb: 
+
+- use ~Union[T, Exception]~ to represent type for results that hold ~T~ but can also end up with an error
+- ~return~ or ~yield~ exceptions and success values without using any extra wrappers
+- 'pattern match' through ~isinstance~
+
+Let's see how we can rewrite our program by employing these principles:
+
+#+begin_src mypy -n 33 -r
+  from typing import TypeVar, Union (ref:simple_error_api)
+  T = TypeVar('T')
+  Res = Union[T, Exception]
+
+  from typing import Iterator
+
+  def iter_highlights() -> Iterator[Res[Highlight]]:
+      data = Path(clippings_file).read_text()
+      for entry in data.split('=========='):
+  	try:
+  	    yield parse_entry(entry.strip())
+  	except Exception as e:
+  	    yield e                   (ref:throw_exc)
+
+  from itertools import tee
+
+  def iter_books() -> Iterator[Res[Book]]:
+      vit, eit = tee(iter_highlights())
+      values = (r for r in vit if not isinstance(r, Exception))
+      errors = (r for r in eit if     isinstance(r, Exception))
+      key = lambda e: e.title
+      for book, hls in groupby(sorted(values, key=key), key=key):
+  	highlights = list(sorted(hls, key=lambda hl: hl.dt))
+  	yield Book(title=book, highlights=highlights)
+      yield from errors
+
+  def print_books() -> None:
+      for r in iter_books():
+  	if not isinstance(r, Exception):
+  	    print(f'* {r.title}')
+  	    for h in r.highlights:
+  		text = "\n      ".join(wrap(h.text))
+  		print(f'  - {h.dt:%d %b %Y %H:%M}  {text} [Page {h.page}]')
+  	    print()
+  	else:
+  	    print(f"* ERROR: {r}")
+  print_books()
+#+end_src
+
+ 
+#+begin_example
+  Python output [exit code 0]:
+  ,* PHYS771 Lecture 12: Proof (scottaaronson.com)
+    - 21 Jul 2013 10:06  Roger Penrose likes to talk about making direct contact with Platonic
+        reality, but it's a bit embarrassing when you think you've made such
+        contact and it turns out the next morning that you were wrong! [Page 2]
+    - 04 Aug 2013 20:41  No hidden-variable theory can be local (I think some guy named Bell
+        proved that). [Page 14]
+
+  ,* [Tong][2013] Dynamics and Relativity  
+    - 04 Aug 2013 18:17  It is worth mentioning that although the two people disagree on
+        whether the light hits the walls at the same time, this does not mean
+        that they can't be friends. [Page 120]
+
+  ,* ERROR: Couldn't match regex!
+
+  Mypy output [exit code 0]:
+  Success: no issues found in 1 source file
+#+end_example
+
+
+Yay, it works and typechecks. Now you can decide for yourself how clean it is by comparing it side by side with [[code_initial][the original code]] without error handling. You'd see that the only differences (apart from indentation) is code for error handling.
+
+
+Here's what I like about this approach: 
+
+- no extra wrapper classes, code is *clean and readable*
+
+  Also note that surprisingly, Python's dynamic nature actually helps here.
+  E.g. if you rewrote ~iter_books~ in Rust, you'd have to use ~Ok~ and ~Err~ to wrap the return values into ~Res~ object.
+  I can imagine that you might get away with explicit wrapping if you use language with conversions like ~Scala~ or ~C++~.
+
+- because of no runtime wrappers, *on the 'successful' code path, the callee doesn't need extra code* to wrap/unwrap anything.
+
+  You can prototype and mess with your program in the interpreter without having to think about errors.
+  If you do get an error, it would just most likely crash the whole program with ~AttributeError~, which is essentially the desired non-defensive
+  behaviour during prototyping.
+
+  You can completely ignore mypy and error handling, until you're happy, then you harden your program by making sure it complies to mypy.
+
+- *no extra dependencies*: ~typing~ module is a part of Python's standard library
+
+  It means:
+
+  - you can use it anywhere, you're not even required to install =mypy= to run the code
+  - anyone can interface with your code without having to use your dependencies
+
+- *no memory overhead* caused by constant wrapping and unwrapping. 
+
+  I don't really want to make claims about CPU here. I tried isolated micro benchmarking; using ~isinstance(r, Exception)~ runs in 50ns,
+  using ~is_err()~ call and then unpacking ~err()~ runs is 60ns.
+  But these numbers might not make sense under a realistic data flow.
+
+- *easy to operate and transform* values, you just write regular Python code without extra lambdas or kludgy local functions.
+
+  If you don't need to handle the error, you can just yield it up the call stack as we do in ~iter_books~.
+
+- *doesn't require modifying existing types*, and introducing invalid states that signal errors (mentioned [[#error_object][here]])
+
+- <<covariance>> *correct variance* for free
+
+  [[https://en.wikipedia.org/wiki/Covariance_and_contravariance_(computer_science)][Variance]] reflects how compound types (e.g. containers/functions) behave with
+  respect to inheritance of their arguments and return types.
+  You might have also heard of this as Liskov substitution principle.
+  I wouldn't try to explain it here, as it's a topic that deserves a whole post and something you need to experiment with and get comfortable. You can also find some explanations and examples [[https://mypy.readthedocs.io/en/latest/generics.html#variance-of-generic-types][here]].
+
+  It short, we can let ~Res[T]~ to be covariant with respect to ~T~, because it's a simple immutable wrapper around ~T~.
+
+  If you were defining your own generic class, you'd have to declare ~T = TypeVar('T', covariant=True)~.
+  It's somewhat misleading, because *variance is a property of a generic container*, however for some historic reasons in mypy, you specify variance in the definition of type variable.
+  However, because ~Res~ is merely an alias to ~Union~, you [[https://mypy.readthedocs.io/en/latest/generics.html#generic-type-aliases][don't have to remember to do it]], because ~Union~ is already defined as covariant in both its type arguments.
+
+Downsides:
+- ~isinstance~ looks a bit verbose and might be frowned upon as it's *often considered as code smell*
+
+  We can't get around this and hide in a helper function for the same reason mentioned [[contract_too_complicated][above]], 
+  but it might be solved in mypy in [[https://github.com/python/mypy/issues/5206][some near future]], though.
+
+That's basically what I wanted to show! I've been using this pattern for a while now and I think it could work well.
+Remember about typing contexts and how ~isinstance~ / ~is None~ checks impact it, and you can keep your code clean and safe.
+
+Not suggesting you to go and rewrite all your code from using ~try/catch~ now though. Every error handling style has its place, and 
+hopefully you'll figure out parts of your projects where it's applicable.
+
+* Tips & tricks
+
+** Custom error type
+While [[(simple_error_api)][the three line API]] is enough in most cases, you might want something more fancy.
+
+One improvement is allowing *arbitrary error type*.
+
+#+name: api_error
+#+begin_src mypy -n
+  from typing import TypeVar, Union
+  T = TypeVar('T')
+  E = TypeVar('E')
+  ResT = Union[T, E]
+#+end_src
+
+#+begin_src mypy +n
+  from typing import NamedTuple, Iterator
+  class Error(NamedTuple):
+      text: str
+
+  Res = ResT[T, Error]
+  def iter_numbers() -> Iterator[Res[int]]:
+      for s in ['1', 'two', '3', '4']:
+  	try:
+  	    yield int(s)
+  	except Exception as e:
+  	    yield Error(str(e))
+
+  def print_negated() -> None:
+      for n in iter_numbers():
+  	if not isinstance(n, Error):
+  	    print(-n)
+  	else:
+  	    print('ERROR! ' + n.text)
+
+  print_negated()
+#+end_src
+
+ 
+: Python output [exit code 0]:
+: -1
+: ERROR! invalid literal for int() with base 10: 'two'
+: -3
+: -4
+: 
+: Mypy output [exit code 0]:
+: Success: no issues found in 1 source file
+
+
+The downside now is that you do need to wrap your exception (i.e. presumably you still want to keep the message and stacktrace) in ~Error~ container.
+
+** unwrap
+Sometimes it's desirable to quickly switch result back to non-defensive version. You can do it by using a simple helper function ~unwrap~ (naming inspired by [[https://doc.rust-lang.org/std/result/enum.Result.html#method.unwrap][rust]]):
+
+#+begin_src mypy
+  from typing import Union, TypeVar
+  T = TypeVar('T', covariant=True)
+  Res = Union[T, Exception]
+  def unwrap(res: Res[T]) -> T:
+      if isinstance(res, Exception):
+  	raise res
+      else:
+  	return res
+
+  good: Res[int] = 123
+  bad: Res[int] = RuntimeError('bad')
+  print(unwrap(good))
+  print(unwrap(bad))
+#+end_src
+
+ 
+#+begin_example
+  Python output [exit code 1]:
+  123
+  Traceback (most recent call last):
+    File "input.py", line 13, in <module>
+      print(unwrap(bad))
+    File "input.py", line 6, in unwrap
+      raise res
+  RuntimeError: bad
+
+  Mypy output [exit code 0]:
+  Success: no issues found in 1 source file
+#+end_example
+
+** Global error policy
+When you're actively working on your code and running tests, you want to make sure that there are no errors and be as non-defensive as possible.
+However, in the field, you want to keep the code more defensive. To switch behaviours quickly, you can use the following trick:
+
+#+name: error_policy
+#+begin_src mypy -n 5
+  from typing import Generic
+  X = TypeVar('X', bound=Exception, covariant=True)
+
+  class Error(Generic[X]):
+      defensive_policy = True
+
+      def __init__(self, exc: X) -> None:
+  	self.exc = exc
+  	if not Error.defensive_policy:
+  	    raise exc
+
+  Res = ResT[T, Error[Exception]]
+#+end_src
+
+The idea here is ~Error.defensive_policy~ determines if exception will be handled defensively or thrown straightaway. *This is enforced on type level*, because in order to get ~Error~ you need to call its constructor at some point.
+
+Also note the use of ~bound=Exception~ on the type variable, this is because we can only ~raise~ something that inherits ~Exception~.
+
+#+name: error_policy_example
+#+begin_src mypy +n
+
+  from typing import Iterator
+  def iter_numbers() -> Iterator[Res[int]]:
+      for s in ['1', 'two', '3', '4']:
+  	try:
+  	    yield int(s)
+  	except Exception as e:
+  	    yield Error(e)
+
+  def print_negated() -> None:
+      for n in iter_numbers():
+  	if not isinstance(n, Error):
+  	    print(-n)
+  	else:
+  	    print('ERROR! ' + str(n.exc))
+#+end_src
+
+Now, the default behavior is defensive:
+
+#+begin_src mypy +n
+  print_negated() 
+#+end_src
+
+ 
+: Python output [exit code 0]:
+: -1
+: ERROR! invalid literal for int() with base 10: 'two'
+: -3
+: -4
+: 
+: Mypy output [exit code 0]:
+: Success: no issues found in 1 source file
+
+
+And if we set the error policy to non-defensive, we get exception as soon as we get parsing error:
+
+#+begin_src mypy -n 33
+  Error.defensive_policy = False
+  print_negated()
+#+end_src
+
+ 
+#+begin_example
+  Python output [exit code 1]:
+  -1
+  Traceback (most recent call last):
+    File "input.py", line 33, in <module>
+      print_negated()
+    File "input.py", line 27, in print_negated
+      for n in iter_numbers():
+    File "input.py", line 24, in iter_numbers
+      yield Error(e)
+    File "input.py", line 14, in __init__
+      raise exc
+    File "input.py", line 22, in iter_numbers
+      yield int(s)
+  ValueError: invalid literal for int() with base 10: 'two'
+
+  Mypy output [exit code 0]:
+  Success: no issues found in 1 source file
+#+end_example
+
+Even though you never actually return ~Error~ under the non-defensive policy, you *don't have to change any of the type signatures*: ~Iterator[int]~ is still a perfectly good ~Iterator[Res[int]]~. Thanks, [[covariance][covariance]]!
+
+I'm using this technique in my [[https://github.com/karlicoss/kobuddy#as-a-standalone-app][Kobo parser]] and control it via =--errors= argument.
+On CI, it runs in non-defensive mode of course. However when other people use the library for the first time they, something is likely to fail. It deals with decoding binary blobs in unspecified format after all! So one can run it in defensive mode, get most of their data and just ignore (hopefully few) errors till they are fixed.
+
+** Improving error context
+If you remember [[kindle_output][the output]], we got a rather cryptic =ERROR: Couldn't match regex!=.
+That's of course not desirable because you can't easily tell what exactly is causing the error.
+
+Normally, you'd use  [[https://www.python.org/dev/peps/pep-3134/#explicit-exception-chaining][exception chaining]], i.e. ~raise EXCEPTION from CAUSE~ syntax [[(throw_exc)][here]].
+
+However the problem is that ~raise ... from ...~ is a compound statement, so you can't write ~yield RuntimeError(entry) from e~.
+(see my investigation attempt [[https://stackoverflow.com/questions/58355639/why-raise-exception-from-cause-not-raise-exception-from-cause][here]])
+
+I find it handy to have a helper function here: 
+
+#+begin_src mypy
+  from typing import TypeVar
+  E = TypeVar('E', bound=Exception)
+  def echain(e: E, from_: Exception) -> E:
+      e.__cause__ = from_
+      return e
+#+end_src
+
+, then you can write  ~yield echain(RuntimeError(entry), from_=e)~, and use ~traceback.format_exception~ to unroll it and get the stacktrace.
+The result looks like this:
+
+#+begin_example
+  ,* ERROR: Traceback (most recent call last):
+          File "/tmp/tmp.afhyiITIK2", line 45, in iter_highlights
+            yield parse_entry(entry.strip())
+          File "/tmp/tmp.afhyiITIK2", line 26, in parse_entry
+            assert groups is not None, "Couldn't match regex!"
+        AssertionError: Couldn't match regex!
+      
+        The above exception was the direct cause of the following exception:
+      
+        RuntimeError: 
+        My Life as a Quant: Reflections on Physics and Finance (Emanuel Derman)
+        - Your Highlight on page 54 | Added on Tuesday, October 4, 2013 12:11:16 PM
+      
+        The Black-Scholes model allows us to determine the fair value of a stock option.
+#+end_example
+
+Now that's better!
+
+** Fine grained defensiveness
+Remember [[def_parse_entry][~parse_entry~]]? Its return type is ~Highlight~, so it can return a single highlight or throw a single error,
+that will be handled by ~iter_highlights~. 
+
+If we change return type to ~Iterator[Res[Highlight]]~, we can be more defensive and do some *neat fallbacks*:
+
+#+begin_src python
+  def parse_entry(entry: str) -> Iterator[Res[Highlight]]:
+      groups = re.search(
+  	r'(?P<title>.*)$\n.*Highlight on Page (?P<page>\d+).*Added on (?P<dts>.*)$\n\n(?P<text>.*)$', 
+  	entry, 
+  	re.MULTILINE,
+      )
+      assert groups is not None, "Couldn't match regex!"
+      dts   = groups['dts']
+      title = groups['title']
+      page  = groups['page']
+      text  = groups['text']
+      if len(dts) == 0:
+  	yield Exception("Bad timestamp!")
+  	dt = datetime.now() # might be better than no highlight at all
+      else:
+  	dt = datetime.strptime(dts, '%A, %B %d, %Y %I:%M:%S %p')
+      if len(text) == 0:
+  	yield Exception("Empty highlight, something might be wrong")
+      yield Highlight(
+  	dt=dt,
+  	title=title,
+  	page=page,
+  	text=text,
+      )
+#+end_src
+
+You can think of ~Exceptions~ coming from ~parse_entry~ as sort of warnings and you can handle them accordingly in ~iter_highlights~, e.g. attach extra context.
+
+Of course, this complicates code, and you can't predict all possible errors anyway, so there is always some balance of how defensive you can be.
+
+
+** Error values, revisited
+One case where I find [[#error_object]['special error value']] more or less appropriate is when your function returns a pandas ~DataFrame~.
+
+When manipulating dataframes, you typically don't iterate explicitly, but apply more idiomatic (and often efficient!) combinators like ~merge~, ~join~, ~concat~ etc,
+ so it makes sense to try and keep errors inside the dataframe. For me, it looks somewhat like this:
+
+#+begin_src python
+  def iter_workout_data() -> Iterable[ResT[Exercise, ParsingException]]:
+      ...
+
+  def rows() -> Iterable[Dict]:
+      for r in iter_workout_data():
+  	if isinstance(r, ParsingException):
+  	    yield {
+  		'timestamp': r.timestamp,
+  		'error'    : 'parsing failed',
+  	    }
+  	else: # otherwise it's an instance of Exercise
+  	    yield {
+  		'timestamp': r.timestamp,
+  		'exercise' : r.exercise_name,
+  		'volume'   : r.exercise_volume,
+  	    }
+
+  def make_dataframe() -> pandas.DataFrame:
+      return pandas.DataFrame(rows())
+#+end_src
+
+It looks pretty clean since ~DataFrame~ constructor automatically creates the necessary columns and fills missing values with ~None~.
+(you can see some frame examples [[https://beepb00p.xyz/./heartbeats_vs_kcals.html][here]]).
+
+Then in the dataframe processing code I would typically check for presence of non-nil value in 'error' column and act accordingly. 
+E.g. [[https://i.postimg.cc/sDxt4NPN/dash-exercise.png][here]] I'm using the timestamp attached to the parsing errors to plot them neatly close to the rest of data.
+
+
+** Cursed pattern matching mechanism
+This is forbidden knowledge liberated during the latest Area 51 raid. Tsss... don't tell the government.
+
+Have to admit, this is a pretty weird idea that I haven't got practical use for, but still.   
+
+What's a construction in Python language that's dispatching objects according to their type? ~try/catch~!
+
+#+begin_src mypy
+  class A(Exception): pass
+  class B(Exception): pass
+  class C(Exception): pass
+
+  from typing import Any
+  def dispatch(x: Any) -> None:
+      try:
+  	raise x
+      except A as e:
+  	print("Matched A!")
+      except B as e:
+  	print("Matched B!")
+      except Exception as e:
+  	print(f"Unhandled object: {type(e)} {e}")
+
+  dispatch(B())
+  dispatch(C())
+  dispatch(A())
+#+end_src
+
+ 
+: Python output [exit code 0]:
+: Matched B!
+: Unhandled object: <class '__main__.C'> 
+: Matched A!
+: 
+: Mypy output [exit code 0]:
+: Success: no issues found in 1 source file
+
+
+It certainly looks unconventional, and you can only use that as long as your object inherits from ~Exception~.
+
+We can exploit this for our specific case on ~Union[T, Exception]~ by using [[#unwrap][~unwrap~]]:
+
+#+begin_src python
+  def print_books():
+      for r in iter_books():
+  	try:
+  	    b = unwrap(r)
+  	except Exception as e:
+  	    # e has type Exception (duh!)
+  	    print(f"* ERROR: {e}")
+  	else:
+  	    # b has type Highlight!
+  	    print(f'* {b.title}')
+  	    for h in b.highlights:
+  		text = "\n      ".join(wrap(h.text))
+  		print(f'  - {h.dt:%d %b %Y %H:%M}  {text} [Page {h.page}]')
+  	    print()
+#+end_src
+
+This looks a bit odd. We still have to type ~Exception~, you can't just write ~except e~, which hardly makes it different from ~isinstance~. 
+Note that we have to use ~else~ block: if you put code in it under ~try~, you'll start catching exceptions coming from the printing code, which is unintended.
+
+And the obvious downside is that there is a potential to forget to handle exception signaled by ~unwrap~ and mypy can't help you here.
+
+
+* Closing points
+- mypy is your best friend
+- sometimes existing and simple things work better and cleaner
+
+  Not trying to advocate avoiding syntactic sugar, decorators and libraries at any cost, however you might experience friction
+  while trying to introduce them in more conservative teams.
+
+- it's kind of ironic that you can't achieve similar level of safety and cleanliness in many statically typed programming languages
+
+  Python is often hated by static typing advocates (I suppose as any other dynamically typed language).
+  Have to admit, I was one of these haters few years ago. But in this case Python nails it.
+- writing is damn hard
+
+  Literate programming is even harder, however I'm glad I've started doing this in Emacs and Org mode.
+  That saved me from otherwise massive amounts of code duplication and reference rot.
+
+* Other links
+- A good overview of different approaches to error handling: [[http://joeduffyblog.com/2016/02/07/the-error-model][Joe Duffy - The Error Model]]
+- [[http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2019/p0709r4.pdf][Zero-overhead deterministic exceptions: Throwing values]] by Herb Sutter
+- [[https://barahilia.github.io/blog/computers/2017/01/04/to-yield-or-not-to-yield.html][To yield or not to yield]]: good summary of Python's generator's strengths
+
+* --
+Let me know what you think! I'm open to all feedback.

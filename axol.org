@@ -1,0 +1,60 @@
+#+summary: personal automatic news feed
+#+filetags: axol
+#+draft: true
+#+upid: axol
+
+[[https://github.com/karlicoss/axol][Axol]] is a tool similar to [[https://www.google.co.uk/alerts][Google Alerts]].
+Unlike Google Alerts, it's actually reliable and you can read the results in your RSS/Atom reader.
+
+I'm in the progress of documenting and cleaning it up, but I've been personally using it for months and quite happy with it!
+
+On the high level it does two things:
+
+1. crawls for results from different sources
+
+   At the moment supported sources are
+
+   - Reddit
+   - Hackernews
+   - Github
+   - Twitter
+   - Pinboard
+
+   Adding new sources is fairly easy, ideally it would be a matter of writing a simple adapter.
+
+   Crawlers are meant to run periodically, e.g. I'm running them every few days via cron.
+   (the tool is not really meant for instant search alerts, you're better off using something else for it)
+
+   The results are automatically deduplicated and kept in sqlite databases.
+
+2. Generates the feeds and HTML reports
+
+   - Feeds can be consumed by your RSS reader, so you can go through new results regularly.
+   - HTML reports are a nice way to overview:
+
+     - the most popular results
+     - the most relevant users/subreddits
+     - the overlap among different queries
+
+
+In addition, it can be used as a tool for doing one-off standalone searches:
+
+: axol adhoc "Google Alerts"
+
+
+This will search for "Google Alerts" simultaneously on all websites and open browser tabs with HTML summaries.
+
+
+* amend                                                              :refile:
+
+** DONE set up search term alerts on rare topics i'm interested in :google:searchalert:blog:pkm:
+** TODO need dynamic sorting on pages (esp. summary...)       :gr:axol:emind:
+** ugh. basically I can't really view 60meg thing in browser...        :axol:
+** STRT Yeah, def need backend for proper reading. These huge htmls are not sustainable, also need easy way to exclude :axol:
+
+** DONE Do not enforce primary key? That way updates are sort of automatic :axol:
+
+** DONE Set up searches for qs and pkm on GitHub?     :pkm:kibitzr:blog:axol:
+
+** TODO we've got search alerts at home                         :social:axol:
+Search alerts at home: ....

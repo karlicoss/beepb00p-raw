@@ -1,0 +1,416 @@
+#+summary: Or yet another rant about YAML
+#+upid: python_configs
+#+filetags: :plt:python:
+
+#+macro: green      @@html:<span style='color:green'  >@@$0@@html:</span>@@
+
+In this post, I'll try to explain why I find most config formats frustrating to use and
+suggest that using a real programming language (i.e. general purpose one, like Python) is often (but [[#cons][*not always*]]) a feasible and more pleasant alternative for writing configs.
+
+#+toc: headlines 2
+
+* Most modern config formats suck
+In this section, I'm mostly referring to JSON/YAML/TOML/ini files, which are the most common config formats I encounter.
+
+I'll refer to such configs as *plain configs*. Not sure if there is a better name for it, please let me know!
+
+An incomplete list of my frustrations:
+
+- JSON *doesn't have comments*, [[https://stackoverflow.com/a/33963845/706389][by design]] 🤯
+- bits of configs *can't be reused*
+
+  For example, while YAML, in theory, supports reusing/including bits of the config (they call it [[https://confluence.atlassian.com/bitbucket/yaml-anchors-960154027.html][anchors]]),
+  some software like [[https://github.community/t5/GitHub-Actions/Support-for-YAML-anchors/td-p/30336/page/3][Github Actions]] doesn't support it
+
+  Usually, you just don't have any means of reusing parts of your config and have to copy-paste.
+
+  - ~.gitconfig~ uses a [[https://git-scm.com/docs/git-config#_includes][custom syntax]] for merging the configs
+
+- can't contain *any logic*
+
+  This is considered as a positive by many, but I would argue that when you can't define temporary variables, helper functions, substitute strings or concatenate lists, it's a bit fucked up.
+
+  The workarounds (if present) are usually pretty horrible and impose cognitive overhead. Programming language constructs are *reinvented from scratch*:
+
+  - variables and string interpolation
+
+    - Ansible uses [[https://docs.ansible.com/ansible/latest/user_guide/playbooks_templating.html][Jinja templates]] (!) for variable manipulations.
+
+    - Github Actions use a [[https://help.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions][custom syntax]] for that
+
+      In addition, they've got [[https://help.github.com/en/actions/reference/context-and-expression-syntax-for-github-actions#functions][their own]] set of functions to manipulate the variables.
+      Have fun learning a new language you never wanted to!
+
+  - scoping
+
+    I.e. there are several custom scopes for [[https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#env][=env= directive]] in Github Actions.
+
+  - control flow
+
+    - ~for~ loop: build matrices and 'excludes' always give me a headache
+    - ~if~ statement: e.g. [[https://circleci.com/docs/2.0/configuration-reference/#the-when-step-requires-version-21][=when=]] in CircleCI
+
+
+- can't be validated
+
+  You can validate the config syntax itself (i.e. check JSON for correctness), but you can't do semantic checks.
+
+  This is kind of a consequence of not having logic in the config files.
+  Typically you'll have to write a supplementary program to check your configs and remember to call it before passing to a program.
+
+  Very few programs bother with that and usually, your program crashes because of something that would be *trivial to catch with any simple type system*.
+
+- YAML simply stands out with its implicit conversions and portability issues
+
+  There are enough rants about it, so I'll just leave a link to a good one: [[https://www.arp242.net/yaml-config.html]["YAML: probably not so great after all"]].
+
+Summary: we spend time learning *useless syntax, instead of productive work*.
+
+* Workarounds
+So what happens when people encounter these problems?
+Often they end up using a 'real' (i.e. general purpose, Turing complete) programming language anyway:
+
+- you write a program to filter out custom comment syntax
+- you write a program to merge configs or use a templating engine
+- you write a program that 'evaluates' the config
+
+  Often, you *end up reimplementing an interpreter* for a simple functional language in the process.
+
+- you write a program to validate the config
+
+  For the most part, it's boilerplate for type checking. You're not only working on a solved problem but in addition, end up with mediocre error messages as a result.
+
+All this stuff is unpleasant and distracts you from your main objective.
+
+Perhaps you can see where I'm coming with this.
+
+* Use a real programming language
+The idea is to write your config in your target programming language.
+I'll have Python in mind here, but the same idea can be applied to *any dynamic enough language* (e.g. Javascript/Ruby).
+
+Then, you simply import/evaluate your config file and voila -- you're done. That's it.
+
+- Toy example:
+
+  =config.py=
+  #+begin_src python
+    from typing import NamedTuple
+
+    class Person(NamedTuple):
+        name: str
+        age: int
+
+    PEOPLE = [
+        Person('Ann'  , 22),
+        Person('Roger', 15),
+        Person('Judy' , 49),
+    ]
+  #+end_src
+
+  Using the config: (see [[https://lobste.rs/s/qyhvhc/your_configs_suck_try_real_programming#c_0btczk][this]] if you're wondering why I use ~exec~ , not ~import~.)
+  #+begin_src python
+    from pathlib import Path
+
+    config = {}
+    exec(Path('config.py').read_text(), config)
+    people = config['PEOPLE']
+
+    print(people)
+  #+end_src
+
+  : [Person(name='Ann', age=22), Person(name='Roger', age=15), Person(name='Judy', age=49)]
+
+I find it pretty neat.
+Let's see how it helps us with the problems I described:
+
+- comments: duh
+- includes: trivial, use imports
+
+  You can even import the very package you're configuring.
+  So you can define a DSL for configuration, which will be imported and used in the config file.
+
+- logic
+
+  You have your language's syntax and libraries available to use.
+  For example, something like [[https://docs.python.org/3/library/pathlib.html][=pathlib=]] alone can save you massive amounts of config duplication.
+
+  Of course, one could go crazy and make it incomprehensible.
+  But personally I'd rather accept potential for abusing the power of the language rather than being restricted.
+
+- validation
+
+  You can keep validation logic right in the config, so it would be checked at the time of loading.
+  Mature static analysis tools (i.e. JS flow/eslint/pylint/mypy) can be used to aid you.
+
+
+** Downsides
+Are there any problems with that approach? Sure:
+
+- interoperability
+
+  #+begin_quote
+  Okay, maybe if your program is in Python it makes sense. But what if it isn't, or you'll rewrite it to another language (i.e. compiled, like c++) later.
+  #+end_quote
+
+  If you'll be running your software somewhere without an interpreter, then sure, good point.
+  Modern [[https://en.wikipedia.org/wiki/Foreign_function_interface][FFI]] is tedious and linking against your config is going to be pretty tricky.
+
+  In case of Python specifically, it's present in most modern OS distributions. So you might get away with the following:
+
+  1. make your Python config executable
+  2. in the =main()= function, build the config, convert to JSON and dump to the stdout
+
+     This step is possible with no boilerplate due to Python's dynamic nature.
+  3. in your c++ code, execute the Python config (i.e. use ~popen()~), read the raw JSON and process
+
+  Yep, you will still have to manually deserialize config in the c++ code. But I think that's at least *not worse* than only using JSON and editing it manually.
+
+  Obviously that has a performance hit (i.e. milliseconds taken to run the Python interpreter). Make your own judgment whether it's acceptable for you.
+  If the tool you're configuring is running for hours, you're probably going to be fine, or you can always generate the config in advance/cache.
+
+- general-purpose programming languages are *harder to reason about*
+
+  This is somewhat subjective. Personally, I'd be more likely overwhelmed by an overly verbose plain config. I'd always prefer a neat and compact DSL.
+
+  A large factor here is code style: I'm sure you can make your config file readable in almost any programming language,
+  even for people not familiar with the language at all.
+
+  However, I appreciate that my experience is different from other engineers (i.e. sysadmins) who would not trade off flexibility for the increase of configuration complexity.
+
+- general-purpose languages are *hard to modify programmatically*
+
+  To some extent it overlaps with the previous point.
+  For example, =git config= commands manipulates the =.git/config= file.
+  It's easy to modify an INI file, because it's basically a dictionary, so you only have to locate the key in the config file and change a single line.
+
+  If the config is (say) a Python program, the model can be much more complicated than a dictionary, and it might be tricky to modify settings programmatically.
+  Most likely, you'll have to resort to only appending new code to the config, which may not always be enough.
+
+  To me, it's a very strong point against code as a config. As counter-points:
+
+  - not many programs have (or need) TUI/GUI for editing settings
+  - the settings that belong to the UI are usually very simple, and possible to adjust by appending only
+
+    For example, Emacs customization interface is [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Saving-Customizations.html][backed by an Elisp config]].
+
+<<security>>The most serious issues are probably security and termination checking:
+
+- security
+
+  I.e. if your config executes arbitrary code, then it may steal your passwords or format your hard drive.
+
+  Whether security is actually something you need to think about *depends on your threat model*:
+
+  - if your configs are supplied by third parties you don't trust, then I agree that plain configs are safer.
+  - however, often, especially for end-user software, it's not the case
+
+    Often the user controls their own config, and the program runs under the same permissions.
+
+  In addition, this is something that can be potentially solved by sandboxing. Whether it's worth the effort depends on the nature of your project, but for something like CI executor *you need a sandbox anyway*.
+
+  Also, note that using a plain config format doesn't necessarily save you from trouble. See [[https://www.arp242.net/yaml-config.html#insecure-by-default]["YAML: insecure by default"]].
+
+- termination checking
+
+  Even if you don't care about security, you don't want your config to hang the program.
+
+  Personally, I've never run into such issues, but here are some potential workarounds for that:
+
+  - explicit timeout for loading the config
+  - using a subset of the language might help, for example, [[https://docs.bazel.build/versions/master/skylark/language.html#differences-with-python][Skylark]]
+
+    Anyone knows examples of /conservative/static analysis tools that check for termination in general purpose languages?
+
+    Note this is not the same as the [[https://en.wikipedia.org/wiki/Halting_problem][Halting problem]]. You don't want to determine whether *any* program terminates, you want to figure out a
+    *reasonable subset of the language* that terminates.
+
+  Even if your config language is Turing incomplete, you might have to resort to using timeouts anyway:
+
+  - your config can take *very* long time to evaluate, while taking finite time to complete in theory
+
+    See [[http://www.haskellforall.com/2020/01/why-dhall-advertises-absence-of-turing.html]["Why Dhall advertises the absence of Turing-completeness"]]
+
+    While an [[https://gist.github.com/Gabriel439/77f715350ecc0443eed5fa613ac6b78e][Ackermann]] function is a contrived example,
+    that means that if you truly care about malicious inputs, you want to sandbox anyway.
+    If your configs support some form of including, you can [[https://lobste.rs/s/qyhvhc/your_configs_suck_try_real_programming#c_rtbmnp][very likely]] construct an input that will inflate it
+    exponentially.
+
+  Note that using a plain config doesn't mean it won't loop infinitely:
+
+  - See [[https://www.gwern.net/Turing-complete#accidentally-turing-complete]["Accidentally Turing complete"]] for an excellent overview
+
+** Why Python?
+Some reasons I find Python specifically enjoyable for writing config files:
+
+- Python is present on almost all modern operating systems
+- Python syntax is considered simple (not a bad thing!), so hopefully Python configs aren't much harder to understand than plain configs
+- [[https://docs.python.org/3/library/dataclasses.html][data classes]], functions and generators form a basis for a compact DSL
+- [[https://docs.python.org/3/library/typing.html][typing annotations]] serve as documentation and validation at the same time
+
+However, you can achieve a similarly pleasant experience in *most modern programming languages* (provided they are dynamic enough).
+
+** Who else does it?
+Some projects that allow for using code as configuration:
+
+- [[https://webpack.js.org/configuration][Webpack]], web asset bundler, uses a Javascript as a config
+
+- [[https://setuptools.readthedocs.io/en/latest/setuptools.html#basic-use][setuptools]], the standard way of installing Python packages
+
+  Allows using *both* =setup.cfg= and =setup.py= files.
+  That way if you can't achieve something solely with plain config, you can fix this in =setup.py=, which gives you a balance between declarative and flexible.
+
+- [[https://jupyter.org][Jupiter]], interactive computing tool
+
+  Uses a [[https://github.com/jupyter/jupyter_core/blob/master/jupyter_core/tests/dotipython_empty/profile_default/ipython_nbconvert_config.py][python file]] to configure the export.
+
+- [[https://www.gnu.org/software/emacs][Emacs]]: famously uses Elisp for its configuration
+
+  While I'm not a fan of Elisp at all, it does make Emacs very flexible and it's possible to achieve any configuration you want.
+
+  On the other hand, if you've ever read other people's Emacs setups, you can see it also demonstrates how things can get out of hand when you allow
+  a general purpose language for configuration.
+
+- [[https://github.com/brookhong/Surfingkeys#edit-your-own-settings][Surfingkeys]] browser extension: uses a Javascript DSL for configuration
+
+- [[https://docs.gradle.org/current/userguide/tutorial_using_tasks.html#sec:build_scripts_are_code][Gradle]] provides Groovy and Kotlin DSLs for writing build files
+
+- [[https://awesomewm.org][Awesome Window Manager]] uses Lua for configuration
+
+- [[https://guix.gnu.org][Guix]] package manager: uses [[https://www.gnu.org/software/guile][Guile Scheme]] for configuration
+
+- [[https://github.com/getpelican/pelican][Pelican]] static site generator: uses [[https://raw.githubusercontent.com/getpelican/pelican/master/samples/pelican.conf.py][Python]] for configuration
+
+Some languages are designed specifically for configuration:
+
+- [[https://docs.bazel.build/versions/master/skylark/language.html#differences-with-python][+Bazel+ Skylark]] uses a subset of Python for describing build rules
+
+  While it's deliberately restricted to ensure termination checking and determinism, configuring Bazel is orders of magnitude more pleasant than any other build system I've used.
+
+- [[https://mesonbuild.com/Syntax.html][Meson build system]]: borrows the syntax from Python
+
+- [[https://nixos.wiki/wiki/Nix_Expression_Language][Nix]]: language designed specifically for the Nix package manager
+
+  While a completely new language feels like an overkill, it's still nicer to work with than plain configs.
+
+- [[https://dhall-lang.org][Dhall]]: language designed specifically for config files
+
+  Dhall advertises itself as "JSON + functions + types + imports". And indeed, it looks great, and solves most of the issues I listed.
+
+- [[https://jsonnet.org][Jsonnet]]: JSON + variables + control flow
+
+  See [[https://jsonnet.org/articles/comparisons.html][comparison]] with other configuration languages
+
+Downsides of such languages is that they aren't widespread yet. If you don't have bindings for your target language, you'd end up parsing JSON again.
+However, at least it makes writing configs pleasant.
+
+But again, if your program is written in Javascript and doesn't interact with other languages, why don't you just make the config Javascript?
+
+
+* What if you don't have a choice?
+Some ways I've found to minimize the frustration while using plain configs:
+
+- write as little in config files as possible
+
+  This typically applies to CI pipeline configs (i.e. Gitlab/Circle/Github Actions) or Dockerfiles.
+
+  Often such configs are *bloated with shell commands*, which makes it impossible to run locally without copying line by line.
+  And yeah, there [[https://circleci.com/docs/2.0/local-cli][are]] [[https://github.com/nektos/act][ways]] to debug, but they have a pretty slow feedback loop.
+
+  - use tools that are better suited to set up local virtual environments, like [[https://github.com/tox-dev/tox][tox-dev/tox]]
+  - prefer helper shell scripts and call them from your pipeline
+
+    It is a bit frustrating since it introduces indirection and scatters code around.
+    But, as an upside, you can lint (e.g. [[https://www.shellcheck.net][shellcheck]]) your pipeline scripts, and make it easier to run locally.
+
+    Sometimes you can get away if your pipeline is short, so use your own judgment.
+
+  Let the CI only handle setting up a VM/container for you, caching the dependencies, and publishing artifacts.
+
+- generate the config instead of writing manually
+
+  The downside is that the generated config may diverge if edited manually.
+
+  You can add the warning comment that the config is autogenerated with the link to the generator, and make the config file read-only to discourage manual editing.
+
+  In addition, if you're running CI, you can make the consistency check a part of the pipeline itself.
+
+
+* Extra links
+- [[https://www.arp242.net/flags-config.html][(commandline) flags are great for configuration]]
+
+  Overall, I agree, but there are still cases when using flags isn't feasible.
+
+  It's also prone to leaking secrets (keys/tokens/passwords) -- both in your shell history and via =ps=.
+
+- [[https://wiki.archlinux.org/index.php/Xmonad#Configuration][Xmonad]]: config *is* the executable
+
+  Interesting approach, but not always feasible, e.g. you might not have the compiler installed.
+
+- [[https://github.com/magefile/mage#about][Mage]]: a tool for writing makefiles in Go
+
+- Dhall wiki: [[https://github.com/dhall-lang/dhall-lang/wiki/Programmable-configuration-files][Programmable configuration files]]
+- [[https://news.ycombinator.com/item?id=19108787][Why are we templating YAML? (HN)]]
+
+*Updates* from the comments (thanks everyone!):
+
+- [[https://www.lua.org/history.html][The evolution of an extension language: a history of Lua]]: apparently Lua has started as a config language
+- [[https://news.ycombinator.com/item?id=20847943][Cue]]:  A language for defining, generating, and validating data
+
+  I've *really* struggled to find a code example on the website, so [[https://github.com/cuelang/cue/blob/master/doc/tutorial/kubernetes/README.md][here you go]].
+
+- [[https://news.ycombinator.com/item?id=14298715][The configuration complexity clock]]: a case for hard-coding
+
+* --
+A followup question, which I don't have an answer for: why is it that way?
+I'm sure Ansible/CircleCI or Github Actions are developed by talented engineers who have considered pros and cons of using YAML.
+Do the pros really outweigh the cons?
+
+Open to all feedback, and feel free to share your config pain and how are you solving it!
+
+*Updates*:
+
+- [2020-04-11] Added P.S. section
+
+* [2020-04-11 Sat] P.S.
+Thanks everyone for the discussions and comments!
+
+There were some polar opinions involved, so I'd like to clarify the most common objections here:
+
+- "Programs as a config are a security nightmare"
+
+  I admit that I have a programmer's mindset (as opposed to sysadmin's), and very likely underestimate the security risks.
+
+  But again, [[security][I agree]] that executable configs are *not always* a good idea.
+  You can still have the best of both worlds by providing a DSL for generating a plain config and consuming the plain config.
+
+- "If your config is a program, it might end up arbitrarily complex and incomprehensible"
+
+  Sure, but again, it largely depends on the discipline. You can also make a plain config incomprehensible and hard to modify.
+
+  The best compromise here is probably configuration languages like Dhall.
+
+- "What happens in 20 years, when there is no <insert programming language> around"
+
+  That's a good point, but languages don't disappear in an eye blink. There will be plenty of time to adapt.
+  In addition, if your software and config are written in the same language, the software will need to be rewritten anyway, which is a bigger problem.
+
+  Also even plain config formats come and go. 20 years ago XML was common for configuration; how many times you've seen it lately?
+  Does your programming language even include XML parser in the standard library?
+
+- "If your config is so complex you need a DSL, your design has gone wrong and your software sucks"
+
+  Frankly, I've found many of such comments as very opinionated and not constructive, but I'll try to respond.
+
+  Software comes in very different shapes and while having the simplest configuration possible is desirable (ideally, none!),
+   sometimes it would change the very nature of the thing you're trying to develop. Sure, you can stop calling it 'software' and start calling a 'library'
+   at this point, but I don't feel it changes the point of the discussion.
+
+  Perhaps, my constructive takeaways from this argument would be:
+
+  - think how flexible your configuration might have to be, and whether you need to give up on plain configs early
+
+    A good example of this would be some mail filtering systems, that started simple and ended as Turing complete.
+
+  - in the rapid development phase, resort to having a flexible config
+
+    *When/if* your software matures, think about supporting plain configs or/and using a special configuration language.

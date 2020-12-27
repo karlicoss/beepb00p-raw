@@ -1,0 +1,54 @@
+#+draft: true
+#+filetags: programming
+#+upid: kython
+
+[[https://github.com/karlicoss/kython][Kython]] is a set of various Python utilities I've found myself to use often.
+
+
+I used to have it as a symlink from =~/.local/lib/python3.x=.
+
+Note: now it's an editable installation, but that doesn't really have much benefit apart from allowing to depend on it (TODO link to git dependency?)
+
+
+* TODO it's nice to use some nonstandard but convenient library, and later vendorize/hardcode/get rid of imported bits :kython:motivation:
+
+
+* TODO googling for an existing solution is a cognitive overhead, considering that often it's hard to google :kython:motivation:
+so having temporary ones TODO
+for instance, lconcat, strptime?
+
+
+* TODO [2019-12-06 Fri 09:49] motivation for kython                    :blog:
+every time you need to do something repetitive, there is a chance it's useful for other people too and there is a shorter version
+
+however, chances are you tried searching for some oneliner multiple times and never managed
+
+having a common library offers a compromise
+on one hand it frees up your brain from anxiety about copy pasting bits of code and cognitive effort of digging them from TODO??
+on the other hand, when you run across/come up with a solution that's easy enough to memorize and trivial, you can quickly find all uses TOOD
+
+why have them dead in your personal wiki when they can be alive as a python code
+
+
+when you release your code to the public, you can vendorize the bits you used
+
+* amend                                                              :refile:
+** [2020-04-12 Sun 22:29] cached_property
+** TODO For the, use set comprehension?                              :kython:
+** TODO use Counter to verify unique keys?                           :kython:
+** TODO groupby(sorted) vs dict-by: dict doesn't require comparable key.. :kython:kerror:blog:
+** [2020-01-04 Sat 11:04] ok, os.PathLike also doesn't accept string, so PathIsh makes sense :python:kython:
+** TODO pathlab/README.rst at master · barneygale/pathlab path interface for archives :kython:
+https://github.com/barneygale/pathlab/blob/master/README.rst
+
+
+** TODO actually json state is so convenient and reusable since we need to remember certain things we did pretty often... :mind:kython:
+** START make parts of kython as decoupled as possible so I can bundle it alongside my stuff independently (and update too!) :coding:blog:kython:
+** TODO title: write your own standard library                  :kython:blog:
+this is how I came up with
+- error handling
+- configs?
+- discovered pathlib
+- ????
+** TODO more-itertools                                               :kython:
+* STRT remove org stuff from kython? just rely on inorganic or make a symlink? :org:kython:inorganic:

@@ -1,0 +1,20 @@
+#+summary: How I visited a contemporary art museum and didn't get it
+#+filetags: :art:
+#+upid: contemp_art
+
+Today I visited [[https://www.ludwigmuseum.hu/en][Ludwig Museum]] in Budapest, which hosts a contemporary art gallery.
+
+I don't think I generally 'get' contemporary art. However I don't get conventional either! I'm quite an unsophisticated person, some of art I like and appretiate, some don't. So I'm usually trying to expose myself to it just to keep up.
+
+Anyway, by the time I got to the third floor of the exhibition I started to get irritated. Usually, I can appreciate at least some of art objects, but none of the ones I had seen so far made any sense. 
+
+Some irritation was directed internally: "Ugh why am I doing this to myself, I should have gotten a coffee, sat on grass and enjoyed reading Penrose instead". But also a bit at the artists: "Ok, it's 2019, hasn't humanity seen enough white squares and various kinds of gradients?".
+
+So as I walked among popart on the last floor my mind wandered and I remembered a post I read on [[https://slatestarcodex.com/2019/02/26/rule-genius-in-not-out/][SSC]]. The idea that I had absorbed from it is that I shouldn't really judge people who are trying to come up with new ideas and things; they are already a minority and it's not worth wasting my mental resources as long as they are not harming anyone.
+
+Perhaps it's similar with art? They are exploring new territory, new mediums, so they are quite likely to make mistakes, such as things very few people get, if not [[https://en.wikipedia.org/wiki/The_Shard][hated by many]].
+But the 1% that does manage to push the boundary would result in something beautiful that no one else would otherwise make (I'm sure you fancy at least some contemporary [[https://www.huffpost.com/entry/2014-archdaily-building-of-the-year-awards_n_4645591][buildings]] or [[https://www.tate.org.uk/visit/tate-modern][art works]] unless you were born in 1830). 
+
+Not sure what happens to the remaining 99%. Maybe they give up on trying to invent new art and just become decent designers/architects? Would be interesting to check if that's actually the case.
+
+This realization made the irritation go and made the rest of exploration a bit more pleasurable.

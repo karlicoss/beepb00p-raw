@@ -1,0 +1,25 @@
+#+upid: blog_graph
+
+This is an experiment, an alternative way to represent blog posts, as a graph.
+Click [[https://beepb00p.xyz/./][*this*]] if you want to get back to the plain list.
+
+The idea is that if you encounter a blog, it's often unclear how to start reading it:
+typically it's an overwhelming linear list of posts, ordered by date. (thanks [[https://jborichevskiy.com/about][Jonathan]] for bringing my attention to it!)
+
+Representing as a graph allows to relax this linear structure by introducing a partial order (shown by edges).
+You can start reading from a title that seems most interesting to you, and keep exploring the related posts.
+
+- clicking on a post title brings you to the post
+- clicking on a tag will bring you to the description of the tag
+- hovering over a node or clicking on a [[https://beepb00p.xyz/blog-graph.html#pkm-setup][date]] will highlight all connections to the corresponding post, to make the navigation easier
+- clusters correspond to 'themes' (although it's pretty fuzzy)
+
+If you have any ideas on improving this page, or notice any problems, please let me know!
+You can find the source [[https://github.com/karlicoss/beepb00p/blob/master/misc/index.py][here]].
+
+#+html: <div style='overflow: scroll;'>
+#+html: </div>
+
+* Todos
+- [ ] coloured edges?
+- [ ] some posts are still missing, add them

@@ -1,0 +1,357 @@
+#+summary: Featuring Roam Research
+#+created: [2020-04-18 Sat]
+#+filetags: :infra:hpi:orger:promnesia:
+#+upid: myinfra_roam
+
+I have a [[https://beepb00p.xyz/sad-infra.html][frustration]] around the fact that our personal data is scattered, siloed and incredibly hard
+to use for any purposes, not anticipated by the original developers.
+
+[[https://beepb00p.xyz/my-data.html][One of my big efforts]] is unifying all of this scattered data into a system that makes it easier
+to oversee, combine, interact with and build *new tools* around it.
+
+In this post I want to illustrate how to integrate a new data source in the system, with [[https://roamresearch.com][Roam Research]] data as an example.
+
+I've chosen Roam for this post because:
+
+- it's a cool, useful and rich data source
+- it hasn't been integrated before [[https://beepb00p.xyz/myinfra.html][in my system]], so it's easy to follow and document all the steps necessary
+
+Throughout the post, I will link to my previous writing on building the [[https://beepb00p.xyz/tags.html#infra][#infra]], so I won't go into explaining every tiny detail and technical rationales here.
+But if you have some questions, feel free to ask anyway!
+
+#+toc: headlines 1
+
+* What is Roam Research?
+[[https://roamresearch.com][Roam]] is a new note taking/thinking tool.
+If you're an org-mode user, you can think of it as having a web app with a directory of org files with the main focus (as I see it) on:
+
+- easy note capture
+- markup and [[https://orgmode.org/manual/Internal-Links.html][internal links]]
+- [[https://roamresearch.com/#/app/help/page/ihYVODd74][bidirectional links]]
+
+  This is pretty unique to Roam, and the nearest org-mode analogy is probably tags or [[https://orgmode.org/manual/Custom-Agenda-Views.html][custom agendas]]
+
+You can learn more about Roam [[https://roamresearch.com/#/app/help/page/1wnq-ZAAN][here]], which is a welcome page and a sandbox at the same time (very cool!).
+
+If you want to get a glimpse of Org-mode *workflow* without having to use Emacs, Roam is probably *the* tool you should try.
+
+So, let's say you've been using Roam and want to use its data outside of the web app, for some other purpose. What do you do?
+
+For this demo, I'll be using a *public* [[https://roamresearch.com/#/app/covid19/graph][covid19 Roam database]].
+* Export raw data
+The first step is figuring out how to get the raw data.
+
+Roam doesn't have a public API yet, but they let you export a JSON from the web interface, which is good enough for us.
+How to proceed with this knowledge? I apply the principles from [[https://beepb00p.xyz/exports.html#export_layer]["Building data liberation infrastructure"]]:
+
+- use an existing library to fetch the data
+
+  It is *counterproductive* to reimplement this all over again.
+  Luckily, there is one, [[https://github.com/MatthieuBizien/roam-to-git][MatthieuBizien/roam-to-git]]! It's very decent and does all the heavy lifting like browser automation.
+
+  The only thing I had to do is implementing a [[https://github.com/karlicoss/exports/blob/master/roamresearch.py][wrapper]] to call it and extract the JSON from the archive.
+
+- keep the raw data intact
+
+  I simply store the *JSON without any changes* on my filesystem.
+  There is not much point trying to squeeze inherently hierarchical Roam data into a database.
+  If performance ever becomes an issue, a transparent [[https://beepb00p.xyz/unnecessary-db.html#cachew][caching layer]] can always be added.
+
+  Roam is under active development, so it's likely that the export format will change.
+  It would be pretty sad if it breaks exports, and keeping the data unchanged means I always have a recent version on my disk.
+
+* Automate export
+Ok, now we can get a snapshot of Roam data with a single script run: ~./roamresearch.py > export.json~. What's next?
+
+The idea is that we run it *periodically*, for example, few times a day. It does mean that the data on your disk is lagging behind slightly, but that gives you 90% of the benefits without all the downsides of
+implementing a realtime synchronization. You also need an API for two-way synchronization anyway (unless you want to poll the service like crazy).
+
+Running it manually is not much fun, and there are several tools that can aid us in it.
+I've done an overview in [[https://beepb00p.xyz/scheduler.html][this post]], and personally, I'm using an experimental tool, [[https://github.com/karlicoss/dron][dron]], which is basically a nice Systemd frontend.
+But it really doesn't matter what exactly to use, so the simplest is a good old *cron job*:
+
+: 00 05 * * * /soft/export-scripts/roamresearch.py > /exports/roamresearch/data.json
+
+
+This will export your data every day at 5:00 and save it to a JSON file. The file will be used by other tools and scripts to get *the most recent snapshot* of the data.
+
+- For me the command looks a bit more sophisticated:
+
+  : /soft/arctee/arctee.py /exports/roamresearch/roamresearch_{utcnow}.json -- /soft/export-scripts/roamresearch.py
+
+
+  This keeps every export along with a timestamp, ensures atomic writing to minimize concurrency issues and retries automatically.
+  I elaborate more on it [[https://beepb00p.xyz/exports.html#arctee][here]], but it's not super crucial for Roam, more of a nice-to-have thing.
+
+Once you automate JSON exports, you also get Roam *data backups for free* (you back up your disk, right?).
+
+There is a problem though. Working with JSON is okay for a one-off thing, but if you want to truly benefit from using the data for different applications, you better off having some abstract interface
+for it.
+While Roam's JSON export is fairly reasonable (unlike many other services), it's pretty annoying to figure out the schema
+
+Take a look at the [[https://github.com/MatthieuBizien/roam-to-git-demo/blob/27e5fdace2de47dd810caa10e7fb366a8c661a57/json/roam-to-git-demo.json#L123-L143][raw data]]. It's clear, that you'll need
+(at least) to:
+
+- convert integer timestamps into datetime objects
+- keep track of optional and required fields
+- deconstruct the hierarchy
+
+This is annoying, boring and error-prone to do all over again.
+We need some central way to encapsulate and adapt raw JSON data for easier programmatic use.
+Say hello to the [[https://beepb00p.xyz/exports.html#dal][data access layer]]!
+
+* Adapt the data
+The data access layer is responsible for deserializing and converting raw (i.e. JSON/sqlite) format into abstract objects, easy to work in your code.
+
+Normally I'd try to use existing data bindings, but Roam is pretty new and I haven't found any, so I implemented my own.
+The data adapter is integrated into [[https://github.com/karlicoss/HPI][HPI]] package, which is a central entry point for all of my data access.
+
+The whole thing is contained within a single [[https://github.com/karlicoss/HPI/pull/26/files][pull request]] and takes about 100 LOC.
+
+If you browse through the code you can also see the importance of raw data encapsulation: for example,
+[[https://github.com/karlicoss/HPI/blob/96a850faf94c781be2fdc24f01699cba9edf580e/my/roamresearch.py#L36-L54][~created~]] or
+[[https://github.com/karlicoss/HPI/blob/96a850faf94c781be2fdc24f01699cba9edf580e/my/roamresearch.py#L75-L82][~permalink~]] properties.
+You really don't want to reimplement this all over again.
+
+To link HPI package with your private data, you add a small section to your private config in =~/.config/my/my/config/__init__.py=:
+
+#+begin_src python
+  class roamresearch:
+      export_path = '/exports/roamresearch/'
+      username = 'covid19'
+#+end_src
+
+After this, you get IDE help when working with Roam data. For example, =mypy= will remind me that =title= is optional, so I won't have =None= related issues.
+
+** Interactive queries
+At this stage, you can play with the data *interactively* in your Python interpreter. For example:
+
+- "what's the most active note in my database?"
+
+  #+begin_src python
+    import my.roamresearch as RR
+    roam = RR.roam()
+    note = max(roam.notes, key=lambda n: len(n.children))
+    print(note)
+  #+end_src
+
+   
+  : Node(created=2020-02-27 02:29:22.725000+00:00, title=Worst-Case Scenario Planning, body=None)
+
+- "what's the most 'dangling' link in my database"
+
+  This could be useful to organize it, and fill frequently occurring references with more context.
+
+  The code is very straightforward:
+
+  #+begin_src python
+    import my.roamresearch as RR
+    roam = RR.roam()
+
+    import re
+    def all_internal_links():
+        for note in roam.traverse(): # go recursively through all Roam outlines
+    	links = re.findall(r'\[\[(.*?)\]\]', note.body or '') # extract the [[links]]
+    	yield from links
+
+    existing = { # figure out which links already have meaningful pages for them
+        n.title for n in roam.traverse()
+        if not n.empty()
+    }
+    missing = [
+        link for link in all_internal_links()
+        if link not in existing
+    ]
+
+    from collections import Counter
+    print(Counter(missing).most_common(5))
+  #+end_src
+
+   
+  | slider         | 22 |
+  | China          | 12 |
+  | Open Questions | 10 |
+  | Travel         |  8 |
+  | COVID-19       |  6 |
+
+  =[[slider]]= is a just a parsing artifact, but you can see that perhaps it's a good time to add some content on the "China" page!
+
+This is cool because you don't have to wait till developers add new features or come up with a query language (which is also really hard!).
+You can use a powerful programming language you already know.
+
+* Use Orger for org-mode mirror
+Now that accessing the data is a matter of ~import my.roamresearch~, we can enjoy using it!
+
+One very useful tool for interacting with my data is [[https://beepb00p.xyz/orger.html][Orger]].
+Orger is a library that helps you generate an org-mode representation of your data.
+
+I won't go into the Orger module implementation details -- you can check out the code here: [[https://github.com/karlicoss/orger/blob/master/modules/roamresearch.py][~roamresearch.py~]].
+There are also [[https://github.com/karlicoss/orger/blob/master/modules][more]] modules for other services like Twitter, Reddit, Instapaper, etc.
+
+We will use Orger to generate a *read-only* mirror of the Roam [[https://roamresearch.com/#/app/covid19/graph][database]].
+The idea is that you run Orger script periodically to get a reasonably up-to-date representation of your Roam data.
+You'll still use Roam web app to modify your notes.
+(note, this makes it different from what [[https://github.com/jethrokuan/org-roam][org-roam]] offers)
+
+Of course, it would be cool to have proper bidirectional sync, so your modifications to the org-mode file are reflected in Roam.
+But it's a *much* harder problem, especially without an API.
+
+But even having a read-only replica enables you to do lots of cool things!
+I invite you to [[https://www.youtube.com/watch?v=ib_PDJpTh-Q][watch a short *demo*]] I recorded, and I'll highlight some features here in writing.
+
+You benefit from *the existing infrastructure and tooling* around org-mode:
+
+- the org-mode markup and text editor integration
+
+  Roam markup maps naturally into org-mode (perhaps not very surprising).
+
+  So you can use outlines/colors/bold/italic/linka/code blocks/whatnot. As a bonus, you get all the associated Emacs customizations.
+
+- the Emacs navigation features
+
+  You can use your favorite keybindings *with no need to learn new hotkeys* hardcoded by the developers. For example:
+
+  - editor specific: with =evil-mode= you can just use Vim navigation (~hjkl~ , ~$~ / ~w~ / ~b~ / etc.)
+  - org-mode specific: folding/unfolding (~Shift+Tab/Tab~), outline navigation (~{~ , ~}~), jumping to the heading (~gh~)
+
+    Again, if you're an =evil= person, just check out [[https://github.com/Somelauw/evil-org-mode/blob/master/doc/keythemes.org][=evil-org-mode=]].
+
+  - Link navigation: you can use [[https://github.com/noctuid/link-hint.el#readme][link-hint]] to quickly navigate links with your keyboard (~SPC s l~ in Doom Emacs)
+
+    This is similar to web browser extensions like vimperator,
+    [[https://www.pakstech.com/blog/browse-web-with-keyboard/#tridactyl][Tridactyl]] and
+    [[https://www.pakstech.com/blog/browse-web-with-keyboard/#surfingkeys][Surfingkeys]].
+
+  Navigating in your text editor is very fast and you never experience network latency or backend hiccups.
+
+- if you need to edit the notes, you can jump back into the Roam web interface by following the permalink
+- ~[[Internal Links]]~ in Roam also have first-class support in org-mode, so you can jump within the file
+
+- the Emacs search modules
+
+  - regular plaintext search (~/~ if you're a Vim person)
+  - =helm-swoop=: shows you the search results *and*  the context in which each result occurred.
+
+    It's probably easier if you check out the [[https://github.com/emacsorphanage/helm-swoop#readme][demo gif]] than to put it in words.
+
+  - =helm-ripgrep=: I'm using it for a global incremental search (a [[https://beepb00p.xyz/pkm-search.html#snippet_other][single keybinding]] away) over [[https://beepb00p.xyz/pkm-search.html#other][*all*]] of my personal data.
+
+    And if you're still not using [[https://github.com/BurntSushi/ripgrep][ripgrep]], you should seriously give it a try.
+
+  *Typically*, web apps provide a pretty [[https://beepb00p.xyz/sad-infra.html#why_search][pathetic]] search experience.
+  Sometimes it's just not unavailable.
+  When it is, it's slow, the results are paginated, ranked by some magic algorithm and the scope is often restricted
+  for performance reasons.
+  Roam actually stands out because unlike most, it *does have* an incremental search within the notes.
+
+  Searching in Emacs is an incredibly pleasant experience.
+  The search is incremental, updates results as fast as you type, and you can configure it as you wish.
+
+  Warning: once you get used to a fast incremental search in Emacs, you will struggle to go back.
+  You'll end up grumpy and as frustrated about web apps as me. Think twice.
+
+And some extra things I haven't mentioned in the video:
+
+- you get (read-only) offline mode for free
+
+  Roam does offer offline mode in the browser, but however talented Roam engineers are, a plain text file will always be more reliable.
+
+  Fun fact: during the first attempt to record the demo, Roam web app wasn't loading :P
+
+- you get mobile access
+
+  Roam doesn't have first-class mobile support yet, so with an org-mode mirror, you can benefit from the existing org-mode apps for your phone.
+
+  Again, Roam specifically might implement it in the future, but the point is that you can be *ahead of the developers* and do it yourself.
+** if org-mode is so cool why not just use it *instead* of Roam?
+Better ask someone who actively uses Roam, because I'm a stubborn org-mode user!
+If you're like me, you probably tend to stay away from web apps.
+
+In that case, perhaps, check out [[https://github.com/jethrokuan/org-roam][jethrokuan/org-roam]], which implements a workflow similar to Roam, but within Emacs.
+
+But even I can come up with some objective (I hope) reasons to avoid Emacs:
+
+- entry barrier
+
+  I won't lie, I spent a while grasping and learning Emacs and I *still* struggle at times.
+
+  But also, most of the frustrations are when I'm trying to implement things that wouldn't even be possible in other apps and editors without
+  modifying their source code or self-hosting.
+  With a reasonable config, like [[https://github.com/hlissner/doom-emacs][doom emacs]], you can get very far just on the defaults.
+
+- cloud sync
+
+  As with all cloud apps, this a curse and a blessing at the same time.
+
+  The "blessing" bit will be especially evident if Roam adds real-time collaboration (and I bet it's *more "when" than "if"*).
+
+  I have to admit, to my knowledge, org-mode gang doesn't have much to offer here.
+
+- easier integration with web
+
+  For example, you can embed tweets in Roam, and there is lots of potential for dynamic features.
+
+Org-mode mirror can *complement* your Roam database and serve as an *additional* interface and a means of learning org-mode,
+without having to fully succumb to it.
+* Promnesia: integrate Roam with your browser
+[[https://github.com/karlicoss/promnesia][Promnesia]] is an extension for enhancing your browser history.
+It unifies the browsing history, which is siloed in various apps and services; and lets you explore the history in context, showing the information on where and how you've encountered the links.
+If you want to learn more about it, check out [[https://github.com/karlicoss/promnesia#demos][demos]], here I'll only concentrate on demonstrating Roam.
+
+To use Roam data in Promnesia, all you need is to add a small bit to the [[https://github.com/karlicoss/promnesia/blob/master/doc/config.py][config]]:
+
+#+begin_src python
+  from promnesia.sources import roamresearch
+  SOURCES = [
+     ...,
+     Source(roamresearch.index, name='roam'),
+     ...,
+  ]
+#+end_src
+
+And that's it! This enables Roam Research module [[https://github.com/karlicoss/promnesia/blob/master/src/promnesia/sources/roamresearch.py][(40 lines of code)]], which consumes the data from [[#dal][HPI]].
+
+You can also index others' public Roam databases. If Roam is a second brain, this can be a way of *interfacing with others' second brains*!
+
+I've [[https://www.youtube.com/watch?v=wyJI96AH91o][recorded a demo]], showing various workflows for your Roam data, which are enabled by Promnesia.
+
+Here's a text summary of the features, demonstrated in the video:
+
+- the sidebar
+
+  Shows your browsing history for the *current page* along with the source, timestamp, and the *context*, in which the link occurred.
+
+  Clicking on the permalink brings us straight to the outline within the Roam Research web app.
+
+- what are the *github repositories* saved in this Roam database?
+
+  If you open the sidebar on =github.com=, you can see the subpages along with the contexts, in particular,
+  links to all the github repositories saved in Roam.
+
+- what are the *tweets* saved in this Roam database
+
+  Similarly, if you open =twitter.com=, you can see all the tweets in your browsing history.
+  If you open a specific Twitter profile, you get to see all the tweets from a specific person.
+
+  I find it extremely useful to recall when you've engaged with the content from a specific person,
+  for example, to figure out whether you should follow them.
+
+- *full text search* over your browsing history
+- *how did I get on this page*?
+
+  You can trace through all of your history to remember why you bookmarked a page.
+
+- what links on this page have I already visited?
+
+  When you press 'mark visited', Promnesia highlights the links you've already visited so you can explore new information more efficiently.
+
+There is some room for improvement, especially in terms of the UI (e.g. markup handling could be better), but these are easy to fix.
+
+These workflows aren't unique to Roam, and possible with many other data sources.
+Promnesia already supports [[https://github.com/karlicoss/promnesia/tree/master/src/promnesia/sources][many]], and adding new is very easy.
+You can find find more links, screenshots, and demos in the [[https://github.com/karlicoss/promnesia#demos][repository]].
+
+Thanks for watching, check it out, and let me know if you can think of other cool features!
+
+* --
+Happy to hear your feedback or help you set up the tools I mention!

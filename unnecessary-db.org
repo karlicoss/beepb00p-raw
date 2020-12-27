@@ -1,0 +1,637 @@
+#+summary: Parse, don't normalize
+#+filetags: :infra:dataliberation:cachew:
+#+upid: against_db
+In my previous post about the [[https://beepb00p.xyz/my-data.html][data I collect]], I mentioned numerous scripts I implemented, to export my personal data from the cloud, locally.
+
+In this post, I want to start sharing some of the design principles I discovered for making these scripts *robust, generic and flexible*.
+This is part of a series on building your own [[https://beepb00p.xyz/sad-infra.html#data_mirror]['data mirror']], and there are also more posts to follow!
+
+Once you've managed to get through [[https://beepb00p.xyz/sad-infra.html#exports_are_hard][various difficulties]] and retrieve your data from the cloud, you want to persist it on the disk.
+
+If the exported data is already in an sqlite database, that's great (lucky you!). Keep it and don't let go 🙃
+
+Typically though, you end up with some JSON/XML from the API, or HTML if you had to scrape. After that, you have a choice:
+
+- keep it as is 
+
+  This is the simplest thing to do and also the approach [[#asis][I advocate for]].
+
+  - during export, keep the data on disk as is
+
+    No matter how you dislike the format; just store it.
+    E.g. if it was an XML, let it be XML. If you scraped an HTML, just keep it as is.
+
+  - to access the data, implement bindings on your favorite programming language that extract the necessary bits in runtime
+
+    I elaborate more on it [[#asis][later]].
+
+  If this is obvious to you, then great, hope you will learn something useful from this post nevertheless!
+
+- keep it in a database
+
+  This is what I see some projects doing; I also bruised myself with this approach when I started exporting my data.
+
+  Come up with a database schema and create a *"master database"*, holding all of your past data.
+
+  - during export, extract the necessary data from XML/JSON/whatever and put it in the database.
+  - to access the data, query the database directly or implement data bindings on your favorite programming language.
+
+In this post, *I want to argue very strongly against forcing the data in the database, unless it's really inevitable*.
+More broadly, this also applies to any attempts of normalizing data before persisting it, even if it's not a database.
+
+Now before someone thinks I'm some sort of weirdo database hater, I want to make some things clear!
+
+- this article refers to storing *your own personal data and digital trace*
+
+  In general, there absolutely are cases where using a database is the only feasible and reasonable way of keeping and accessing data.
+  However, the amounts of data involved are quite different too.
+
+- I want to argue about this not because I don't like databases/SQL or any other personal preferences
+
+  Quite the opposite, *I wish I could run SQL queries against Instapaper's or Twitter's servers*. Needless to say, it's [[https://beepb00p.xyz/sad-infra.html#why][not quite the way things work]].
+
+  I want to argue on this point because I feel like an unnecessary use of databases is a source of friction for implementing, and more importantly, maintaining your personal data exports, and [[#api_extended][restricts you]] from using your data to the full capacity when you want it.
+
+My main claim is that for personal data, databases have benefits as a means of *intermediate* storage, for caching, and as *one of* the interfaces to your data, but *not as the primary* storage of exported data.
+
+#+toc: headlines 2
+
+* What do you suggest?
+Before I jump into explaining what's my problem with databases, let me summarize my current approach, so that it's clear what I'm suggesting as an alternative.
+
+Liberating your data involves fairly different, if not complementary, parts (or 'layers'):
+
+- "data export" part: knows how to get data from the cloud and saves it on the disk. Deals with APIs, network, etc.
+- "data access" part: knows how to interpret whatever you exported on your disk and maps onto abstract entities/classes/objects
+
+  I'll refer to it interchangeably as *"data access layer (DAL)"* or *"data bindings"* further in the article.
+
+My suggestions are:
+
+- during data export, *store data as is*, don't try to clean it up or normalize
+
+  This allows you to keep your data safe as soon as you managed to retrieve it, and more forgiving to bugs and inconsistencies.
+
+- during data access, merge and *normalize your data in runtime*
+
+  This makes the export part simpler, saves you time on maintaining data and allows for faster iterations while working with it.
+
+  Normalizing on every access might cause some overhead, of course, which I'll discuss [[#performance][later]].
+
+- if necessary use databases as an intermediate layer to speed access up and as an additional interface to your data
+
+  Nothing wrong with using databases for [[#cachew][caching]] if you need it!
+
+And as a specific example:
+
+** example: Reddit export
+[[https://github.com/karlicoss/rexport][rexport]] is a script to export user's Reddit data like saved post/comments/submissions and upvotes.
+
+- export layer
+
+  If you ignore the argparse boilerplate, the export [[https://github.com/karlicoss/rexport/blob/874e6116bfba8cbd63fa3b4d93810a1488cb8464/export.py#L69-L96][itself]] is very simple, just a matter of calling API methods (I'm using existing bindings) and combining the results into a JSON object.
+  After that, data is immediately persisted on a disk.
+
+  Reddit API is restricted to the 1000 latest items, so to have a full view of my data, I need to 
+  - export it regularly (which I do)
+  - save each exported data slice in a new file, which I also do
+
+    Using timestamp as a filename is a natural choice, I'm using [[https://github.com/karlicoss/arctee][arctee]] tool to do this for all of my exports.
+
+- data access layer
+
+  The data access layer provides simple Python classes that make it pleasant to work with the data. 
+
+  My bindings simply expose saved JSON data via Python's properties: e.g. [[https://github.com/karlicoss/rexport/blob/874e6116bfba8cbd63fa3b4d93810a1488cb8464/dal.py#L52-L65][~Comment~]]. 
+
+  - if I ever need to extract something else from the raw JSON (e.g. upvotes), that would only be a matter of adding three lines of code into ~Comment~ class
+  - in contrast, had I kept the data in a database, that would have required a database migration for =Comments= table [[#api_extended][at the very least]].
+
+  Now, remember I mentioned that Reddit only gives you the latest 1000 items, so I end up with overlapping data slices? To get a full view of my data, I'm simply going through individual JSON files in chronological order and merging together in [[https://github.com/karlicoss/rexport/blob/874e6116bfba8cbd63fa3b4d93810a1488cb8464/dal.py#L136-L153][~accumulate~]] method.
+
+- [optional] caching layer
+
+  I've got Reddit data way into past and export it every day, so merging together all these files during data access can indeed take a noticeable time.
+
+  I'm overcoming this by using a [[https://github.com/karlicoss/my/blob/12330dd6041b9a4ee66571dca845947988e6f474/my/reddit.py#L51][~@cachew~]] annotation on the ~comments()~ method.
+
+  One annotation, that's it. Look ma, no SQL! Okay, okay, there is quite a bit of SQL involved, but it's all hidden inside [[https://github.com/karlicoss/cachew#how-it-works][cachew]]. It would also work for any other source of personal data.
+* Databases are good
+In this section, I'll present typical arguments *for* using databases, and will try to argue, that in most circumstances (for keeping personal data), the benefits are not pragmatic and not worth [[#databases_hard][the tradeoffs]].
+
+Note that generally, databases have numerous other benefits, however, I'll emphasize again, here I'm only considering aspects that are relevant to *personal data storage*.
+
+When I say 'database' here, I typically mean Sqlite, which is most commonly used for personal data, although specific database, relational or not, shouldn't matter.
+
+** take less space
+Yes, however in most cases your data export will take few megabytes anyway. If you compress it, it's hundreds of kilobytes.
+
+Storage saved by using a database instead of plaintext is marginal and not worth the effort.
+
+Only exceptions I can think of are: 
+
+- instant messaging apps: number of text messages approaches millions
+- continuous data like room temperature, CO2 levels, etc
+
+  If you have a minute by minute stream of *uniform data*, a database is probably the way to go.
+
+** efficient data access
+The same point applies as in the [[#space][previous section]]. If a your data export contains several thousand items, you won't notice the difference.
+
+In addition, there are [[#cachew][ways]] of getting most of the database benefits without having to sacrifice simplicity and without writing SQL boilerplate.
+
+** query language
+SQL is extremely powerful and helps you to interact with your data without distracting on low-level retrieval details.
+
+That's a very good point, but query language doesn't necessarily mean a database. 
+E.g. see [[https://pandas.pydata.org][pandas]] which is capable of what SQL is capable of, and even more convenient than SQL for our data exploration purposes.
+
+In addition, see [[#relational][the counterargument]] about the restrictions of the relational model.
+
+And finally, nothing prevents you from providing a database as an [[#cachew][additional interface]] to your data.   
+
+*Example*: exposing [[https://github.com/karlicoss/my/blob/6787c9c0d6a6e0aff49565cf299464a7a9b40e9f/my/jawbone/__init__.py#L267-L280][jawbone sleep data]] as a dataframe.
+
+** SQL rows are a better 'data interface' than JSON
+That's kind of a subjective point (although I'd rather agree).
+
+However, raw rows, while good enough for simple queries, can only get you so far.
+
+   While Sqlite is more pleasant to query than JSON (but still, do check out out [[https://stedolan.github.io/jq][jq]]),
+once you start using your data repeatedly, you want to abstract away from the low-level rows and encode with proper datatypes (in your favorite target programming language). E.g. you want to use strings that have the familiar methods, datetime types, data classes, etc.
+
+I want an [[https://en.wikipedia.org/wiki/Data_access_layer][abstract interface]] to my data, and I'm not alone, [[https://en.wikipedia.org/wiki/Object-relational_mapping][ORMs]] exist for a reason.
+
+So, in either case, you need to write data bindings. Say, you want to export some data from an API.
+
+We're comparing two options:
+
+- option 1
+
+  during export:
+  - retrieve the JSON from the API
+  - keep it on the disk as is. Trivial step, just save in the file.
+  during data access:
+  - parse JSON
+  - map data onto the abstract interface
+- option 2
+
+  during export:
+  - retrieve the JSON from the API
+  - parse JSON, transform and normalize data [[#relational][to conform to the database]]
+  - insert in the database. Often not a trivial step due to transactions and multiple insert/update statements.
+  during data access:
+  - make a SQL query
+  - map data onto the abstract interface
+
+Note that you have fewer steps if you follow the first approach. And it's not only about the time saved on implementing: the less you transform the data, the less the chance you screw something up. I'll elaborate with a specific example of a royal screw up [[#example_chrome][later]].
+
+** types and constraints
+Even though schemas in Sqlite are annotated with types, that *doesn't give you strong typing guarantees in runtime*, a concept that is gently called [[https://www.sqlite.org/quirks.html#flexible_typing][*"flexible typing"*]]. In other words, your data is implicitly coerced which may be convenient but might cause some unanticipated failures later.
+
+SQL [[https://www.tutorialspoint.com/sql/sql-check.htm][constraints]] are a potentially great way to guarantee intrinsic consistency of your data.
+If you encode consistency checks in your target SQL, you will be protected from corrupting the logical state, even if you try to mess with the database manually.
+
+This is great in theory, however, doesn't work so well on practice for personal data:
+
+- when you use something like PostgreSQL, you've got [[https://severalnines.com/database-blog/understanding-check-constraints-postgresql][PL/pgSQL]] at hand, a real programming language, to encode your constraints
+- when you use Sqlite, it's a bit more tedious, there is a [[https://www.sqlite.org/c3ref/create_function.html][C API]] to interface with custom functions. Otherwise, you're limited by native Sqlite functions, hence encoding constraints might be very awkward. Needless to say, very few people would (and do) bother using it unless it's absolutely vital to implement such checks.
+
+In addition, with regards to personal data, it's easier to assume a "single writer" model and encode constraint checking in the programming language, during data access.
+
+My observation is: *if you don't own the schema, you won't get it right*. The services break their APIs, underdocument, or return utter garbage all the time.
+
+The alternative I suggest, storing raw data as is, means that at least:
+
+- you won't make it any more inconsistent than it already is
+- if you misinterpret the data, that's just a code change, data is not corrupted
+- you will massively save on your time and mental resources
+
+** easy to map onto any language
+That's a good point, also somewhere along the lines of [[#rows]['better data interfaces']].
+
+Exporting data is one part, and it doesn't particularly matter who implemented it and how, as long as it works for you.
+
+Accessing is different, the realities of the modern [[https://en.wikipedia.org/wiki/Foreign_function_interface][FFI]] are such that typically, it's easier to reimplement the data bindings from scratch on the programming language you prefer.
+
+- if the data is kept as is (e.g. as unnormalized JSON), that means reimplementing the data extraction and parsing logic from scratch
+- if the data is kept in Sqlite, it's already to some extent structured and normalized
+
+  That means that data bindings could be simply a matter of writing datatype definitions and using some database bindings, which is fairly straightforward.
+
+I have to admit, I don't have much to counter this. This is a tradeoff I have accepted while writing tools for export.
+
+I want other people to use them, so we have a collective stake in maintaining them.
+I write in Python, so hopefully, it's covering enough people.
+
+That said, I'll repeat my point that you can still use a database [[#cachew][as an intermediate layer]], without relying on it as a primary data storage. 
+
+* Databases are hard
+Now let's go through things that directly make databases hard.
+
+** relational model
+These days we often just say 'database' when we mean [[https://en.wikipedia.org/wiki/Relational_database]['relational database]]'. 
+Relational databases can be vaguely thought of as "a set of tables, each table storing typed data tuples".
+Such simplicity allows for query language expressiveness and enables the optimizer to reason about data retrieval.
+
+At the same time, this simplicity is a curse and imposes structure that might be incompatible with the format that you receive data in.
+Often, the relational model requires you to rearrange data before inserting, which might break data consistency.
+
+*** Examples
+- Imagine you want to export your Instapaper bookmarks.
+
+  API offers you a [[https://www.instapaper.com/api][=/bookmarks/list=]] method, that lists user's bookmarks.
+  The catch is it doesn't require all of them; it's got a required =folder_id= parameter.
+
+  For your export, that means that you have to go through the folders (i.e. "unread", "archive", etc.), and export each list individually.
+  Instead of a nice and flat bookmark list, you've got a ~Folder → Bookmark~ hierarchy. To make it compatible with the ~Bookmarks~ table, you need to flatten it first.
+
+  There are some potential caveats during that: you could end up with duplicates if folders are not mutually exclusive or just due to inherent data races between multiple API requests, so you have to uniquify the bookmarks, which is an extra thing to think about.
+
+  While in theory, nothing prevents ~Bookmark ↔ Folder~ from fitting in a relational model, the nature of the API interactions makes it awkward to implement on the client side.
+
+- Imagine you want to export your Endomondo workouts.
+
+  API offers you a list of workouts (represented as JSON) with various metadata (types of exercise/datetime/private notes) and in addition, heart rate data and location data.
+
+  How do you keep heart rate and location?
+
+  - in a massive [[https://www.sqlite.org/datatype3.html][~BLOB~]] or ~TEXT~ column? That's barely better than simply serializing everything as JSON.
+  - in separate tables, with timestamps as the primary keys? Then you'd need to refer to them as 'timestamp ranges' which would make it pretty tedious to insert and access.
+
+** coming up with a schema
+Kind of similar to the points on [[#constraints][types]] and the [[#relational][relational model]], often you need first-hand knowledge of the API to come up with a correct and reasonable schema.
+
+Schemas use a fixed number of fields, which requires you to scrupulously inspect the data and make sure you've covered everything by your schema.
+
+** maintaining
+Inevitably, APIs change and extend, often without you knowing that (or not having time to follow the API news).
+If the API starts returning more data, that means the database scheme needs to change.
+
+Depending on the way you implemented it, that means one of two things:
+
+- best-case scenario: you implement checks for the API schema and fail your export script on a mismatch.
+
+  Now you are aware of API changes, but your export script stopped working and requires attention and fixing
+  Depending on the specific service and on how much do you value your data, it might require a [[#api_backward][fast fixing response]].
+
+- worst-case scenario: you had no checks for schema changes and you're not even aware of it.
+
+  Sometimes it's fine, but sometimes that means [[incremental][losing data forever]].
+
+Consider the following scenarios and how we handle them:
+*** API is extended, i.e. returns more data
+Let's consider a specific example, Pocket API.      
+
+At the moment it only lets you access your 'articles', i.e. URLs you bookmarked to Pocket.
+Imagine that you're using a database to export them, so your schema is: ~TABLE Article(STRING id, STRING url, STRING title, DATETIME added)~.
+
+One day, the developers expose highlights (or annotations) from the [[https://github.com/karlicoss/pockexport#setting-up][private API]] and your export script stats receiving it in the response JSON.
+It's quite useful data to have!
+
+However, your database can't just magically change to conform to the new field. In addition, we've got the same issue with mapping onto the [[#relational][relational model]] here: we've got an
+~Article → Highlight~ hierarchy, which we need to manually split up into separate tables. So you'd need to:
+
+- find out that there is a new JSON field in the first place
+
+  That's, of course, regardless of what storage you're using, but in case of a master database, you really might want to [[incremental][find it out sooner than later]].
+
+- come up a schema and create a new table, ~Highlight~
+
+  Don't forget to use the correct primary key, =(highlight_id, bookmark_id)=. Who knows whether =highlight_id= is unique across bookmarks boundaries?
+
+- migrate old data
+
+  Why can't I just create the database from scratch, you ask? Well, that may not always be an option.
+
+  Sometimes you [[incremental][don't have access]] to older data anymore.
+
+The alternative [[#asis][I suggest]] is keeping raw data and dealing normalizing during data access. Let's see how that would work:
+
+- when new =annotations= field is introduced, it's automatically kept on disk along with everything else
+
+  When you find out about it later, you can still use annotations from the previously exported data.
+- supporting this field is extremely easy
+
+  If you keep raw data, it's just a matter of adding a [[https://github.com/karlicoss/pockexport/blob/8e141e12663a611891622bfe57dc8b7babdf6526/dal.py#L48-L52][getter]] method to the ~Article~ class.
+
+  #+begin_src python
+    @property
+    def highlights(self) -> Sequence[Highlight]:
+        default = [] # defensive to handle older export formats that had no annotations
+        jsons = self.json.get('annotations', default)
+        return list(map(Highlight, jsons))
+  #+end_src
+
+  Modifying code is way easier than messing with databases and modifying the data.
+
+*** API breaks backward compatibility
+Imagine that for some reason [[#example_reddit][Reddit API]] started returning [[https://en.wikipedia.org/wiki/ISO_8601][isoformatted]] date strings instead of epochs (i.e. =20200126T19:43:21Z= instead of =1580067801=).
+
+Your existing ~Comment~ table assumed ~INTEGER~ for the comment creation date. Suddenly you started receiving strings, which Sqlite can't handle anymore.
+
+You have similar issues to the previous section: you need to migrate your old data. But there is even a bigger issue: *your data exports are not advancing anymore* until you perform the migration. That's problematic because you might lose data forever if you postpone the fix for too long.
+
+In contrast, if you [[#asis][keep raw data]]:
+
+- your downstream tools, consuming exported data, start choking over wrong type stored in the JSON
+
+  The massive difference though is: there is *no time pressure to fix*, you know that at least your data is getting exported locally
+
+- fixing this issue is really quick: two lines of defensive code
+
+  Testing the fix is trivial, code changes are easy and *reversible* thanks to version control.
+
+Database migrations are very hard, and you want to avoid them at all costs.
+
+* Append, don't modify
+When it comes to exporting data, there are two very different cases:
+
+- you can access all data at once
+
+  This is an easy case, and you can just retrieve all over again every time.
+
+  Example: Pinboard API, there are just a few megabytes of data you have on Pinboard and API doesn't prevent you from retrieving all of it at once.
+
+- <<incremental>>at any time you only have a slice of data available
+
+  There are different reasons for this:
+
+  - many APIs restrict the number of latest items you can retrieve
+
+    Examples:
+    - [[https://github.com/karlicoss/rexport#limitations][Reddit]] limits your API requests to 1000 results, due to some performance considerations
+    - [[https://docs.monzo.com/#list-transactions][Monzo bank API]] only gives you last 90 days of transactions, presumably for security reasons
+
+  - data retention
+
+    Example: chrome history is only retained for 90 days
+
+  - limited memory
+
+    Examples: temperature sensors, HR sensors, and other embedded devices
+
+  That means the data exports are now *incremental*. This case is tricky because:
+
+  - you need to run your export scripts regularly, otherwise, you might miss some data
+  - you need some sort of 'merging' logic to combine a new slice of data with the data already exported
+
+  In this section, we'll be dealing with this case, and this 'merging' logic is what we'll be discussing.
+
+How to deal with 'merging' data? Again, we have two alternatives here:
+
+1. keep everything in a single database
+
+   Come up with a schema for the 'master database'.
+
+   - during export: normalize and insert new data into the master database.
+
+   - during data access: map data rows onto specific classes and datatypes
+
+2. keep exported slices intact
+
+   - during export: save each new data slice along with the timestamp
+
+   - during data access: go through the slices in the order of timestamp increase and assemble the full view of data.
+
+As you might have guessed, I want to advocate against the first approach. Don't try to merge your data during exporting, unless it's really necessary.
+
+
+First of all, all the reasons from the [[#databases_hard][previous section]] apply. In addition:
+
+- you have to be *even more careful* about transactional logic since you might corrupt your export for good
+
+  Remember, you may not be able to retrieve older data anymore.  
+
+  While it's not hard to use transactions, it's still harder than simply using atomic file write.
+
+- slices of data separated in time are *even more likely to be inconsistent*
+
+  As an example, imagine the API changes some internals, i.e. the way IDs are assigned, that doesn't matter when you export everything at once.
+
+  However, for an incremental export, if old IDs were persisted in the database, it may cause issues.
+
+That's where 'append' in the section title comes from, instead of merging data and modifying the master database, we 'append' data on the disk without modifying anything.
+This is not a new approach and a common software engineering practice:
+
+- [[https://en.wikipedia.org/wiki/Persistent_data_structure#Examples_of_persistent_data_structures][Persistent data structures]]
+- [[https://en.wikipedia.org/wiki/ZFS#Copy-on-write_transactional_model][ZFS]]
+- [[https://martinfowler.com/eaaDev/EventSourcing.html][Event sourcing]]
+
+I've already mentioned that regarding [[#example_reddit][Reddit]] a few times, but let me illustrate the 'inconsistency' aspect with a more specific example:
+
+** Example: Chrome history
+As I mentioned, Chrome only keeps the history for the last 90 days.
+Imagine you want to retain all your past browsing history. And no, you [[https://beepb00p.xyz/./takeout-data-gone.html][can't rely on Takeout]] for that, or you might not be using Google at all.
+
+So you want a script that exports your history, say, every week and maintains full browsing history over the years.
+
+Chrome keeps the history in an sqlite file, and exporting it is trivial! It's just a matter of copying =~/.config/google-chrome/Profile/History=.
+
+Imagine you want to come up with a master database schema and merge together weekly history databases.
+That requires some careful inspection of the database in order to find out how it keeps the data.
+
+So you do it and it seems that a subset of schema that =History= database is [[https://web.archive.org/web/20200923160840/https://www.lowmanio.co.uk/blog/entries/how-google-chrome-stores-web-history][already using]] would make sense:
+
+#+begin_src
+  TABLE   urls(
+      id    INTEGER PRIMARY KEY, 
+      url   STRING,
+      title STRING
+  )
+  TABLE visits(
+      id         INTEGER PRIMARY KEY,
+      url_id     INTEGER, // foreign key referring to urls.id
+      visit_time STRING
+  )
+#+end_src
+
+Pseudocode for your export script would look like:
+
+#+begin_src python
+  chunk_db = "~/.config/google-chrome/Profile/History"
+  master_db  = "/exports/chrome/full_history.db"
+
+  for row in query(chunk_db, 'SELECT id, url, title from urls'):
+      insert_or_ignore(master_db, 'urls', row)
+
+  for row in query(chunk_db, 'SELECT id, url_id, visit_tile from visits'):
+      insert_or_ignore(master_db, 'visits', row)
+#+end_src
+
+Note: this code already smells because:
+
+- accessing an opened (by Chrome) sqlite database would fail -- you need to copy the database file first and work with a copy
+- it's also easiest to copy to ensure transactional reads: no one guarantees you Chrome updates the database in a transaction
+- you need a write transaction on =master_db=, otherwise, someone who reads it might see inconsistent data
+- we have to use [[https://sqlite.org/lang_conflict.html][=insert_or_ignore=]] (instead of simple =insert=), because the chunks are overlapping on data, hence primary keys will conflict
+
+  It's kind of an arbitrary choice; the alternative could be using =insert_or_update=. Hopefully, they should be equivalent, although it's unclear which one is morally correct. E.g. what happens if URL's =title= change? But hopefully, that doesn't matter much anyway, right?
+
+  As we'll see this very bit will turn out to be *very problematic*.
+
+
+But anyway, let's carry on. Fast forward few exports and merges, your full history database looks like:
+
+#+html: <style> #urls_old   { display: inline-block; } </style>
+#+html: <style> #visits_old { display: inline-block; } </style>
+
+#+name: urls_old
+| =id= | =url=      | =title= |
+|  100 | reddit.com | Reddit  |
+|  ... | ...        | ...     |
+|  200 | google.com | Google  |
+
+#+name: visits_old
+| =id= | =url_id= | =visit_time=     |
+|  300 |      100 | 2011-02-10 10:00 |
+|  ... |      ... | ...              |
+|  498 |      100 | 2011-04-01 09:00 |
+|  499 |      200 | 2011-04-02 05:00 |
+
+=visit_time= is in epoch microseconds in the actual chrome history database, but it's easier to illustrate with strings here.
+
+Note that ids don't start with 0, we had already been using Chrome for more than 90 days at the time we started exporting, so sadly some data is gone forever.
+
+Now, imagine you've reinstalled your operating system. 
+
+What happens to the Chrome databases? They reset, no one guaranteed you that ids would persist. The *table ids start all over from 0 again*.
+
+=~/.config/google-chrome/Profile/History= now looks like:
+
+#+html: <style> #urls_chunk_new   { display: inline-block; } </style>
+#+html: <style> #visits_chunk_new { display: inline-block; } </style>
+
+#+name: urls_chunk_new
+| =id= | =url=             | =title=       |
+|    0 | wikipedia.org     | Wikipedia     |
+|    1 | google.com        | Google        |
+|  ... | ...               | ...           |
+|  100 | stackoverflow.com | Stackoverflow |
+
+
+#+name: visits_chunk_new
+| =id= | =url_id= | =visit_time=     |
+|    0 |        0 | 2012-04-20 19:00 |
+|  ... |      ... | ...              |
+|  900 |      100 | 2012-06-03 12:00 |
+
+Let's see what it means for our full history database =/exports/chrome/full_history.db=. What happens after you merge the new chunk of history?
+
+| =id= | =url=         | =title=   |
+|    0 | wikipedia.org | Wikipedia |
+|    1 | google.com    | Google    |
+|  100 | reddit.com    | Reddit    |
+|  ... | ...           | ...       |
+|  200 | google.com    | Google    |
+
+Hmm.
+
+- =google.com= ended up twice with different ids, but okay, why not
+- however, the real problem is that =stackoverflow.com= is gone due to the use of =insert_or_ignore=.
+
+And it's actually worse. Let's look at the =visits= table in the =full_history.db=:
+
+| =id= | =url_id= | =visit_time=     |
+|    0 |        0 | 2012-04-20 19:00 |
+|  ... |      ... | ...              |
+|  300 |      100 | 2011-02-10 10:00 |
+|  ... |      ... | ...              |
+|  498 |      100 | 2011-04-01 09:00 |
+|  499 |      200 | 2011-04-02 05:00 |
+|  ... |      ... | ...              |
+|  900 |      100 | 2012-06-03 12:00 |
+
+The visit with id 900, that should point at =stackoverflow.com=, now points at =google.com=, so we ended up with some *fake browsing history*.
+
+How could we have avoided it? Note that using =insert_or_update= wouldn't have helped: that way we'd just overwrite history in the master database and make it inconsistent again
+
+Why did that happen? The schema was wrong. 
+We shouldn't have relied on ids: they are kind of an artifact of the [[#relational][relational model]]. One way of getting around it is [[https://en.wikipedia.org/wiki/Unnormalized_form]["unnormalizing"]]:
+
+#+begin_example
+  TABLE   visit_with_url(
+      visit_time STRING
+      url        STRING
+      title      STRING
+  )
+#+end_example
+
+When we update the database, we use something like:
+
+#+begin_src python
+  for row in query(chunk_db, 'SELECT visit_time, url, title FROM urls JOIN visits ON url.id = visits.url_id'):
+      insert_or_ignore(master_db, row)
+#+end_src
+
+Note that by the time you do realize that and fix it, you may have already lost (and even worse, corrupted) older history.
+
+*** An alternative
+According to what I suggest:
+
+- export script is a matter of copying =Profile/History= database along with a timestamp. E.g. if we do it weekly, we end up with:
+
+  : /exports/chrome/History-20110210.sqlite
+  : /exports/chrome/History-20110217.sqlite
+  : ...
+  : /exports/chrome/History-20120603.sqlite
+
+- to get full history, we can use the following code
+
+  #+begin_src python
+    def get_history():
+       handled = set()
+       for db in sorted(Path('/exports/chrome/').glob('*.sqlite')):
+          for row in query(db, 'SELECT visit_time, url, title FROM urls JOIN visits ON url.id = visits.url_id'):
+    	  if row in handled:
+    	      continue
+    	  else:
+    	      yield row
+    	      handled.insert(row)
+  #+end_src
+
+  That way the full data view is a runtime concept and can never corrupt anything.
+
+  If you ever find out that there are more interesting things in your browsing history, e.g. =time_spent= column (keeps time spent on each page), it's literally just a matter of inserting =time_spent= in the query.
+
+  Again, an obvious downside is that in runtime, it might take several minutes to assemble the full history (although that may be acceptable, depending on your usecase). And that makes sense to try and use a database for [[#cachew][intermediate caching]]; just don't rely on it for primary data storage.
+
+* Appendix: when you really really want a database
+As I mentioned so many times, databases are actually great for caching, as they can persist data in between program's runs.  
+
+After noticing similar similar database access patterns used all over again, I realized that it's possible to isolate the complexity and boilerplate in a separate Python library, [[https://github.com/karlicoss/cachew#motivation][cachew]].
+
+** cachew
+TLDR: cachew lets you *cache function calls* into an sqlite database on
+your disk in a matter of *single decorator* (similar to
+[[https://docs.python.org/3/library/functools.html#functools.lru_cache][=functools.lru_cache=]]).
+The difference from =functools.lru_cache= is that cached data is
+persisted between program runs, so next time you call your function, it
+will only be a matter of reading from the cache. The cache is *invalidated
+automatically* if your function's arguments change, so you don't have to
+think about maintaining it.
+
+In order to be cacheable, your function needs to return (an
+[[https://docs.python.org/3/library/typing.html#typing.Iterator][Iterator]],
+that is generator, tuple or list) of simple data types:
+
+- primitive types: =str= / =int= / =float= / =datetime=
+- [[https://docs.python.org/3/library/typing.html#typing.NamedTuple][NamedTuples]]
+- [[https://docs.python.org/3/library/dataclasses.html][dataclasses]]
+
+That allows to *automatically infer the schema from type hints*
+([[https://www.python.org/dev/peps/pep-0526][PEP 526]]) and not think
+about serializing/deserializing.
+
+The readme also contains [[https://github.com/karlicoss/cachew#incremental-data-exports][an example]] of using cachew for exporting temperature sensor data.
+
+In essence, filenames along with their modification times are used as the key for caching:
+
+- when the exported data is updated, files and their modification times change, which makes the cache invalidate. It's it's updated automatically on the next data access
+- in between data updates, data is read straight from the cache and  the access is pretty much instantaneous: [[#performance][databases are indeed fast]]
+
+* --
+The post subtitle refers to an excellent article [[https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate]["Parse, don't validate"]].
+It's on a different topic, but in a somewhat similar spirit: making our programs more robust while writing less code.
+
+Happy to hear your thoughts and suggestions! Thank you for making it through this pile of text :)

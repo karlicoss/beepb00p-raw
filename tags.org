@@ -1,0 +1,362 @@
+#+filetags: tags
+#+upid: tags
+
+#+macro: exobrain    [[./exobrain/$1][exobrain: $1]]
+
+* quantified self                                            :quantifiedself:
+
+
+[[https://en.wikipedia.org/wiki/Quantified_self]["Quantified self"]] refers to self tracking and coming up with metrics in order to gain more insight and potentially improve various aspects of your life such as health (physical or mental) or performance.
+
+I personally haven't managed to gain any significant insights from the data I've collected so far.
+I don't really regret it though.
+
+Body maintenance like sleep, diet or exercise are hard for most people and also boring for many, myself included.
+It sucks and given the opportunity, I'd get myself independent of the [[https://beepb00p.xyz/tags.html#meatsack][physical shell]] in a blink. However, while I'm in it:
+
+- I find that the *process of quantifying is fun*, and even motivating for the routine!
+
+  E.g. I can't imagine going on a run without my HR monitor, because whatever the benefit exercise has and however exhausting run would be, at least I'll have a data point.
+- learning about routine and trying to optimize routine is also way *more fun than doing the actual routine*
+
+  Human body is fragile and needs constant care, but it's still a fascinating mechanism.
+
+- *immunity to broscience* and cargo cult
+
+  After trying to find interesting/significant correlations in my data and failing, I've started taking most of anecdotal advice
+  from the internet about dieting/exercise and sleep with a pile of salt and mostly ignoring it.
+
+  If I can't feel changes subjectively and I can't find them using linear regression, then surely it just doesn't matter to my body.
+
+  I want to empathize though that it's specific to my body. I'm lucky to be healthy enough so I don't have anything obvious to 'fix'.
+  I do know people who claim minor things changed the way they e.g. sleep, so *I don't want to devalue others' experiences*.
+
+  But if you do stress over so many (often contradictory) advises like I used to, I'd recommend trying to set up proper experiments and measure.
+  Numbers don't lie, or at least harder to trick.
+
+- *collecting data* is valuable for [[https://beepb00p.xyz/tags.html#lifelogging][#lifelogging]]
+
+- *finding my baseline* while I'm healthy for potential future health issues
+
+Some links:
+- [[https://beepb00p.xyz/./my-data.html][How I am using 50+ sources of my personal data]]
+- [[https://github.com/woop/awesome-quantified-self][Awesome Quantified Self]] is probably the best no-bullshit resource
+- Fantastic [[https://www.gwern.net/tags/experiments][Gwern's self-experiments]]
+- [[https://www.reddit.com/r/QuantifiedSelf][/r/QuantifiedSelf]]
+- [[http://experimentable.com/qs-guide][QS Resource Guide]]
+- [[https://beepb00p.xyz/tags.html#lifelogging][#lifelogging]]
+- [[https://beepb00p.xyz/tags.html#exercise][#exercise]]
+- [[https://beepb00p.xyz/tags.html#sleep][#sleep]]
+
+* lifelogging                                                   :lifelogging:
+[[https://en.wikipedia.org/wiki/Lifelog][Lifelogging]] is not a completely new concept, people have kept diaries for centuries.
+However these days it's particularly easy to do because lots of it can be automated and collected passively from your digital trace.
+
+Personally I do it because I find it fun, having access to your activities from the past is very satisfying and compensates for decaying memory and it fits well along the [[https://beepb00p.xyz/tags.html#quantified-self][#quantified-self]] lines.
+
+Links:
+
+- [[https://matiroy.com/writings/Should-I-record-my-life.html][Should I record my life?]]: a good summary highlighting pros and cons
+- [[https://kk.org/thetechnium/lifelogging-an][Lifelogging, An Inevitability]]: describes early attempts at digital lifelogging and raises some ethical/legal questions
+- [[https://www.wired.com/1995/06/xanadu][The Curse of Xanadu]]: early attempt at lifelogging with a hope to process the logged data with a computer one day. "The amazing epic tragedy" as described by the author is a pretty good summary.
+- [[https://beepb00p.xyz/tags.html#quantified-self][#quantified-self]]
+- [[https://beepb00p.xyz/tags.html#timeline][#timeline]]
+- [[https://beepb00p.xyz/tags.html#immortality][#immortality]]
+
+* extendedmind                                                 :extendedmind:
+[[https://en.wikipedia.org/wiki/Extended_mind_thesis][Extended mind]] is the idea that your mind isn't limited by your physical body, but augmented by external means.
+Paper notes & diaries, data in your computer/phone/cloud -- all these things contribute to your cognitive process, thinking and help you navigate the landscape of ideas.
+
+One of the biggest motivations to start dumping my brain out here, write and share is to offload my mind a bit and interact with people even in my physical absence. I spread my ideas, hoping that other people would resonate and also work on them, thus making it easier for me!
+
+- I particularly like this analogy: [[https://1000wordphilosophy.com/2014/05/19/the-extended-mind][The Extended Mind – 1000-Word Philosophy: An Introductory Anthology]], in 'Inga and Otto' section
+
+  Perhaps because it resonates with me most and was [[https://beepb00p.xyz/./annotating.html#motivation][the main reason]] I started my quest for better personal information management.
+
+- Feynman on extended mind, [[https://hyp.is/VJkQwDSeEeqSYq_Uw7vQRA/www.aip.org/history-programs/niels-bohr-library/oral-histories/5020-5][AIP interview]]
+
+  : They [paper notes] aren’t a record of my thinking process.
+  : They are my thinking process. I actually did the work on the paper.
+
+- Losing your digital trace can be [[https://hyp.is/w7dLEDfsEeq0QoN1TU4rNQ/www.fastcompany.com/58044/head-detail][pretty painful]]
+
+  : “It was like having my memories stolen,” he says.
+  : He was amazed to realize his backup brain was no longer some novelty but a regular part of his psychological landscape.
+  : “I realized I count on this now. It’s like I expect to drive cars and have flush toilets.”
+
+Links:
+- [[https://beepb00p.xyz/tags.html#exobrain][#exobrain]]
+- [[https://beepb00p.xyz/tags.html#immortality][#immortality]]
+
+* personal knowledge/information management                             :pkm:
+PKM stands for Personal Knowledge Management (I agree it's a somewhat clumsy acronym).
+It refers to strategies and tools for efficient information management (i.e. processing, organizing and access), which is particularly important these days in abundance of information around us.
+
+Specifically, when I talk about it I mostly refer to digital knowledge management and ways of seamless integration with our meaty brains. 
+I write more about it [[https://beepb00p.xyz/./pkm-setup.html][here]]. 
+
+Human brains seem to be best for generating new ideas. I want to learn more, think faster, distract less, interact and visualize, effortlessly remember everything; not memorize and do routine information processing, which computers seem better at.
+
+I haven't thought much of a specific roadmap, but my vision is:
+
+- ultimate goal is of course merging with the machine/cloud/God, or whatever else you wish for yourself when the Singularity happens
+- medium term thing might be some sort of neuroimplant/brain-computer interface, but sadly technology doesn't seem to be there (apart from experimental devices that help people with dementia or other serious brain conditions)
+- what we realistically can and capable of doing now is developing tools to make the knowledge accessible on your fingertips with existing technology as computers and smartphones
+
+The latter bit is what I'm trying to do and developing simple but working tools (rather than sketching prototypes that look beautiful but never make it). Even though stuff we have at disposal at the moment (often lousy internet connection, OCR, basic speech and pattern recognition, text search, 2D screens, touchscreens and basic VR/AR) is not so exciting and somewhat restricted, I feel we're not fully utilizing it anyway yet.
+
+I'm writing more on motivation and things I'd like to integrate in my workflow [[https://beepb00p.xyz/./sad-infra.html#why][here]].
+
+Some things I'm working on and contributing:
+- [[https://beepb00p.xyz/./grasp.html][grasp]], quick org-capture in browser
+- [[https://github.com/karlicoss/promnesia][promnesia]]
+- [[https://github.com/karlicoss/orger][orger]], long story :) you can read about it [[https://beepb00p.xyz/./orger.html][here]]
+  - [[https://github.com/karlicoss/telegram2org][telegram2org]], and [[https://beepb00p.xyz/./orger-todos.html][here]]
+- [[https://github.com/karlicoss/my][my]], package to interact with my data
+- [[https://github.com/karlicoss/axol][karlicoss/axol]], personal automatic news feed. I'm writing up about it [[https://beepb00p.xyz/axol.html][here]].
+- [[https://github.com/karlicoss/porg][porg]]
+- [[https://github.com/orgzly/orgzly-android][orglzy]]
+
+Links:
+- [[https://karl-voit.at/tags/pim][Personal Information Management]] by Karl Voit
+- [[https://tkainrad.dev/posts/managing-my-personal-knowledge-base][Managing my personal knowledge base]] by Thomas Kainrad: I've got very similar workflows except using org-mode instead of Notion
+- [[http://www.acuriousmix.com/2014/09/03/designing-a-personal-knowledgebase][Designing a Personal Knowledgebase]]
+- [[https://writings.stephenwolfram.com/2019/02/seeking-the-productive-life-some-details-of-my-personal-infrastructure][Seeking the Productive Life]] by Stephen Wolfram
+- [[https://physicstravelguide.com/start][Physics travel guide]]: awesome wiki presenting information at different levels of abstraction/specifics
+- [[https://news.ycombinator.com/item?id=17530498][HN: Why do you keep a personal knowledge base?]]
+- [[https://beepb00p.xyz/tags.html#extendedmind][#extendedmind]]
+- [[https://beepb00p.xyz/tags.html#offline][#offline]]
+- [[https://beepb00p.xyz/tags.html#orgmode][#orgmode]]
+- [[https://beepb00p.xyz/tags.html#bci][#bci]]
+
+* annotation                                                     :annotation:
+[[https://en.wikipedia.org/wiki/Text_annotation][Annotation]] is the process of adding a layer of personal (with a potential for sharing) metadata on top of existing content such as highlights, notes, anchors etc.
+
+Links:
+
+- [[https://beepb00p.xyz/./annotating.html]["How to annotate literally everything"]]: my overview of annotation software
+- [[https://beepb00p.xyz/tags.html#pkm][#pkm]]
+- [[https://beepb00p.xyz/tags.html#extendedmind][#extendedmind]]
+
+* emacs                                                               :emacs:
+Chances are that if you're reading this blog, you already have an idea what is Emacs, but otherwise google it.
+
+I've got a love-hate relationship with Emacs.
+
+- I love that it's possible to configure anything you want and the rich packages ecosystem
+- I hate Elisp and being to a certain extent siloed in it
+
+Mainly I am using it because of its first-class org-mode support.
+
+Links:
+
+- excellent [[https://sachachua.com/blog/category/geek/emacs/emacs-news][weekly Emacs news]] by Sacha Chua
+
+* exobrain                                                         :exobrain:
+Exobrain, or "second brain", or "brain dump", or "knowledge base" is something like a public wiki where you can keep your notes, ideas and thoughts.
+Other people can search in your exobrain without having to physically interact with you.
+
+You can find mine here: [[https://beepb00p.xyz/./exobrain][Exobrain]].
+
+Links:
+- [[https://beepb00p.xyz/tags.html#extendedmind][#extendedmind]]
+- [[https://beepb00p.xyz/tags.html#pkm][#pkm]]
+
+Examples of exobrains
+- [[https://wiki.nikitavoloboev.xyz]['Everything I know']] wiki by Nikita Voloboev
+- [[https://wiki.xxiivv.com/site/about.html][xxiivv]] by Devine Lu Linvega
+- [[https://philosopher.life/#h0p3][h0p3's Wiki]]
+- [[https://braindump.jethro.dev][Braindump]] by Jethro Kuan
+- [[https://samsquire.github.io/ideas]['One Hundred Ideas for Computing']] repository by Sam Squire
+- [[https://wiki.nikitavoloboev.xyz/other/wiki-workflow#similar-wikis-i-liked][more wiki examples]] from Nikita Voloboev
+
+* offline                                                           :offline:
+For most of modern web services, data is too centralized and only accessible from the services cloud, which makes applications unusable if you lost Internet connection.
+
+What is more, imagine if something horrible happens say to Gmail servers and the emails are completely wiped from them. Geeks like me and you might do occasional backups,
+but most people will lose their personal data forever. E.g. it's somewhat scary how many people rely on Google Photos only to store their memories.
+
+Some of IT giants are already too big to fail and when they have brief periods of downtime, they take a good chunk of internet with them.
+Governments are blocking access because they control ISPs at the moment. All this is just **dangerous** (it literally feels dangerous if you consider your digital trace as [[#extendedmind][your essential part]]).
+
+We need to make it easier for normal users to own (at least as in 'own a copy') of their data.
+We need to find ways of bringing better network resilience and ideally fully offline mode or easier ways of selfhosting/setting up personal clouds.
+
+This is also good for privacy and security, because potentially you can have software that doesn't even have permissions to
+access the internet as long as you are using your own means of synchronizing data.
+
+Links:
+
+- [[https://syncthing.net][Syncthing]] is a good example of personal realtime file sync solution
+- [[https://www.inkandswitch.com/local-first.html][Ink & Switch: local-first software]]
+- [[http://offlinefirst.org][Offline first]]
+- [[https://beepb00p.xyz/./ideas.html#distributed_Dropbox][Distributed cloud sync]]: some of my findings and thoughts
+- [[https://beepb00p.xyz/./sad-infra.html][My rant]] on the sad state of offline access in particular
+- [[https://beepb00p.xyz/tags.html#selfhosted][#selfhosted]]
+- [[https://beepb00p.xyz/tags.html#prepping][#prepping]]
+- [[https://beepb00p.xyz/tags.html#extendedmind][#extendedmind]]
+
+* tools                                                               :tools:
+I write lots of various scripts and tools to simplify my life and experiment. Most of them I [[https://github.com/karlicoss?tab=repositories][open source]].
+
+Links:
+- [[https://beepb00p.xyz/tags.html#pkm][#pkm]]
+- [[https://beepb00p.xyz/tags.html#infra][#infra]]
+
+* infra                                                               :infra:
+I rely on software a lot to make my life easier and try to offload as much as I can onto computers.
+
+Links:
+- [[https://beepb00p.xyz/./sad-infra.html]["The sad state of personal data and infrastructure"]]
+- [[https://beepb00p.xyz/./hpi.html][HPI]] (Human Programming Interface) to interact and access my personal data
+- [[https://beepb00p.xyz/./myinfra.html][map]] of my personal infrastructure
+- [[https://beepb00p.xyz/tags.html#meatsack][#meatsack]]
+
+* data liberation                                            :dataliberation:
+I refer to data liberation as a practice of getting your personal information out of silos like cloud services, phone apps and gadgets.
+At the moment it's a fairly complicated process even for people with technical background; let alone others.
+
+Links:
+
+- [[https://beepb00p.xyz/./exports.html][Building data liberation infrastructure]]
+- [[https://en.wikipedia.org/wiki/Google_Data_Liberation_Front][Google Data Liberation Front]]
+- [[https://beepb00p.xyz/tags.html#infra][#infra]]
+- [[https://beepb00p.xyz/tags.html#offline][#offline]]
+
+* physics                                                           :physics:
+My alternative self (not necessarily in the sense of many worlds interpretation) is doing some cool physics research.
+
+I took a different path, so for the past few years in my spare time I'm slowly picking up modern physics, at the moment: quantum field theory and general relativity. 
+In the process, however, I've [[https://en.wiktionary.org/wiki/yak_shaving][*massively*]] distracted on this blog, and various tools that would help me utilize my [[#pkm][knowledge]] better :)
+
+Even if I never achieve anything new, that's still worth it. 
+Through learning physics I can:
+
+- appreciate nature
+- understand contemporary philosophy (in particular, philosophy of mind)
+
+  I'm also glad to have studied computer science, it's a massive boost.
+
+- not have existential fear 
+
+  I have my small theory of [[https://beepb00p.xyz/tags.html#immortality][#immortality]] along the lines of [[https://en.wikipedia.org/wiki/Unitary_transformation_(quantum_mechanics)][unitarity]] and 
+  [[https://en.wikipedia.org/wiki/Boltzmann_brain][Boltzmann brain]].
+
+- learn lots of otherwise useful math
+
+Links:
+- [[https://beepb00p.xyz/tags.html#ipython][#ipython]]
+
+* exercise                                                  :health:exercise:
+There are some potential short term benefits: 
+
+- makes you more resilient
+
+  Something along the lines of [[https://beepb00p.xyz/tags.html#prepping][#prepping]].
+  Realistically though, in modern world, it's nice to be able to run after a bus or up the stairs, but it's quite questionable if running, say, even 5K is useful.
+
+- makes you appear better physically
+
+  Nice bonus, but I don't find it as a good value for time spent.
+
+- feeling better immediately after exercise
+
+  I used to get that, but it seems that the body adapted and I can't feel endorphine kick anymore.
+  There is some good feeling about yourself having willpower to stick to routine, but I'd rather not have the routine in the first place.
+
+- feeling better generally (less stressed, better sleep etc)
+
+  I suppose I'm lucky to feel good anyway, so I don't feel subjective impact of exercise on my well being. 
+  Objectively, I tried to find correlations between amount of exercise and sleep, and failed to find *any*. (I'll write about it in more details later)
+
+I absolutely hate it. It's a massive *drain of time and willpower*.
+In addition, it comes with all sorts of logistical difficulties: gym outfit, shower, backpack, eating, weather.
+
+*That said, I'm doing it regularly* and it's part of my routine. What made me really serious about it is the quote [[https://www.lesswrong.com/posts/PhXENjdXiHhsWGfQo/lifestyle-interventions-to-increase-longevity#Exercise][here]]:
+
+#+begin_quote
+Even ignoring quality of life you are looking at a 3-7 fold return on every minute you spend exercising in extended life,[1] perhaps even exceeding that if you are making optimal use of your time.
+#+end_quote
+
+Something just clicked and I was consistent since reading this.
+Even 1-fold return would worth it: basically you gain free consciousness (quality of thinking is shit when I exercise, but it's better than nothing).
+This estimate should be used carefully though, returns are, of course, not linear, otherwise power athletes would have *much* longer lifespans.
+
+So, yes, long term benefits. It seems that pretty much all studies find correlation between activity level and longevity.
+Sadly, the recommendations *vary wildly* and are extremely *vague*, e.g. from [[https://www.nhs.uk/live-well/exercise][NHS website]]:
+
+#+begin_quote
+do at least 150 minutes of moderate intensity activity a week or 75 minutes of vigorous intensity activity a week
+
+Examples of moderate intensity activities: brisk walking, water aerobics, riding a bike 
+
+Examples of vigorous activities: jogging or running, riding a bike fast or on hills, skipping rope
+#+end_quote
+I have no idea what is that supposed to mean: 8 km/h running and 15 km/h are all running, but everyone would agree that it's quite different!
+How fast is riding bike 'fast'?
+
+#+begin_quote
+You can also achieve your weekly activity target with: several short sessions of very vigorous intensity activity a mix of moderate, vigorous and very vigorous intensity activity
+#+end_quote
+Duh! I understand that NHS cares about averages (as it should!) and most people don't give a shit about details and just want some simple instructions. Also recommendations will probably vary depending on people's genetics anyway.
+
+That's one of my primary motivations behind [[https://beepb00p.xyz/tags.html#quantified-self][#quantified-self]]: I want to understand how exercise impacts *my* body. For now I'm mainly just collecting data and doing various plots/analyses.
+
+No amount of exercise is going to prevent your body from failing you.
+If I knew for sure that, say, in 20 years, there would be some sort of technology that can compensate for not doing regular exercise, I'd stop it in a blink.
+Since I don't have this certainty, I hope that by sticking to routine I can buy some time till the [[https://beepb00p.xyz/tags.html#singularity][#singularity]] happens.
+
+Links:
+- [[https://beepb00p.xyz/tags.html#quantifiedself][#quantifiedself]]
+- [[https://beepb00p.xyz/tags.html#meatsack][#meatsack]]
+
+* immortality                                                   :immortality:
+Immortality is a highly speculative concept from many perspectives. But it aligns very well with healthy lifestyle and pursuing awesome goals, so why not?
+
+Links:
+- [[https://www.lesswrong.com/posts/PPpLCjKHHryXHzJtj/digital-immortality-map-how-to-collect-enough-information][Less Wrong: Digital Immortality Map]]: a very speculative concept, but I find it interesting
+- [[https://beepb00p.xyz/tags.html#lifelogging][#lifelogging]]
+- [[https://beepb00p.xyz/tags.html#meatsack][#meatsack]]
+
+* meatsack                                                         :meatsack:
+"meat sack", "meat shell", "physical shell", wetware refer to the biological (aka *meatspace*) aspects of my body.
+Typically I think of them as inferior, because they are so unreliable and limited.
+
+Links:
+
+- [[https://beepb00p.xyz/tags.html#quantifiedself][#quantifiedself]]
+- [[https://beepb00p.xyz/tags.html#exercise][#exercise]]
+- [[https://beepb00p.xyz/tags.html#extendedmind][#extendedmind]]
+- [[https://beepb00p.xyz/tags.html#immortality][#immortality]]
+
+
+* programming                                                   :programming:
+Programming is my main occupation, and also the means by which I can transform the world.
+Given enough time, I can bring to life almost anything I can imagine with programming. This is very empowering.
+
+
+Also see: [[https://beepb00p.xyz/./exobrain/programming][exobrain: programming]]
+
+** programing language theory                                           :plt:
+[[https://en.wikipedia.org/wiki/Programming_language_theory][PLT]] studies design of programming languages and their features.
+
+This is important, because better programming languages and type theory will allow us to keep software expressive and safe.
+
+** python                                                            :python:
+Python is the language I'm using most of the time. I used to hate its dynamic nature, but [[https://beepb00p.xyz/tags.html#mypy][#mypy]] changed everything!
+
+At some point I'll write up a post highlighting
+
+Also see: [[https://beepb00p.xyz/./exobrain/programming/python][exobrain: programming/python]]
+
+** mypy                                                                :mypy:
+[[https://mypy.readthedocs.io][Mypy]] is a static type checker for Python.
+
+I'm heavily relying on it to make sure my Python code is working and documented.
+
+Mypy is great for:
+
+- [[https://beepb00p.xyz/mypy-error-handling.html][Error handling]]
+- [[https://beepb00p.xyz/configs-suck.html][Configuration files]]
+
+Also see: [[https://beepb00p.xyz/./exobrain/programming/python/mypy.html][exobrain: programming/python/mypy.html]]

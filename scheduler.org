@@ -1,0 +1,255 @@
+#+summary: What if cron and systemd had a baby? Wouldn't it be beautiful?
+#+filetags: :infra:
+#+upid: scheduler
+
+To support my [[https://beepb00p.xyz/tags.html#infra][personal infrastructure]], I need a fair amount of regular automatic jobs:
+
+- for exporting [[https://beepb00p.xyz/my-data.html][my personal data]] from the cloud
+- for generating [[https://beepb00p.xyz/orger.html][plaintext]] views of my digital trace
+- for updating my [[https://beepb00p.xyz/orger-todos.html][todo lists]]
+- updating [[https://github.com/karlicoss/promnesia#demo][promnesia]] index
+- lots of other backups and supplementary scripts
+
+Running all that manually (more than 100 scripts across all devices) is an awful job for a human.
+I want to set them up once and more or less forget about it, only checking now and then.
+
+In addition, I am trying to share my knowledge with other people, and it turns out not many people (even programmers, let alone less technical people) are using scheduling software in a personal capacity. So in this post I'll be speculating why it's hard and how to make it easier.
+
+I'll be considering pros and cons of job scheduling software mostly with the *emphasis on the personal infrastructure*. 
+I'm sure there will be some aspects I'm missing out on, more specific to industrial-scale job management.
+
+#+toc: headlines 2
+
+* [[https://en.wikipedia.org/wiki/Cron][cron]]
+*Pros*:  
+
+- once you get used to the cron scheduling syntax, it's very easy to actually add new jobs.
+- easy to adjust
+
+  You just type ~crontab -e~, and you can insert/delete/comment jobs, overview when they are running, and space them out in time if necessary.
+  Once you saved the crontab and exited, it's applied immediately
+- even though systemd is present in most desktop Linux/Mac distributions, cron will *definitely* be there
+
+  This probably doesn't matter if you're using a general purpose Linux distribution.
+
+*Cons*: anything else you can think of is extremely tedious and repetitive to achieve in cron.
+
+- no periodic (i.e. 'once a day' scheduling), only supports specific time
+
+  This is annoying when if you don't keep your computer always on.
+- no job dependencies
+- no timeouts and generally no means of resource management
+- no restart policies
+- no means of failure notifications apart from local email
+- logs go to local mail by default and there are no other mechanisms of failure notification
+- [[https://habilis.net/cronic/#disease][some really bad defaults]]
+
+  Fun fact: cron only emails you if the job has produced output. If your job failed with nonzero exit code, but produced no output you'd never find out.
+
+Cron has some variations that help with some of these problems:
+
+- [[https://en.wikipedia.org/wiki/Anacron][anacron]] -- allows running commands periodically (e.g. weekly), which helps if your computer is sometimes offline; but it can't run more frequently than once a day
+- <<fcron>>[[https://wiki.archlinux.org/index.php/cron#Fcron][fcron]], which I'm *using at the moment*. Pretty decent:
+
+  - unlike anacron, fully compatible with regular cron jobs and allows running periodically as well
+  - got lots of cool [[http://fcron.free.fr/doc/en/fcrontab.5.html][options]], e.g.:
+
+    - setting [[http://fcron.free.fr/doc/en/fcrontab.5.html#FCRONTAB.5.NICE][~nice~]] value
+    - [[http://fcron.free.fr/doc/en/fcrontab.5.html#FCRONTAB.5.LAVG][~lavg~]]: conditional running depending on load balancing
+    - [[http://fcron.free.fr/doc/en/fcrontab.5.html#FCRONTAB.5.JITTER][~jitter~]], [[http://fcron.free.fr/doc/en/fcrontab.5.html#FCRONTAB.5.RANDOM][~random~]]
+    - [[http://fcron.free.fr/doc/en/fcrontab.5.html#FCRONTAB.5.SERIAL][~serial~]] as a primitive way of specifying dependencies
+    - [[http://fcron.free.fr/doc/en/fcrontab.5.html#FCRONTAB.5.EXESEV][~exesev~]] to prevent multiple instances of the same job (although it doesn't treat it as error)
+
+* [[https://en.wikipedia.org/wiki/Systemd][systemd]] / [[https://en.wikipedia.org/wiki/Launchd][launchd]]
+Disclaimer: I'm not very familiar with Mac OS, but as far as I understand, launchd is very similar to systemd.
+
+Systemd is very powerful and flexible, supports timers, dependencies, restart policies, monitoring, logging, etc.
+
+*Pros*:
+- timers
+- dependencies
+- resource policies (restricting memory and CPU, timeouts)
+- restart policies (although [[https://github.com/systemd/systemd/issues/6129][no exponential backoff]])
+- shared [[https://www.freedesktop.org/software/systemd/man/systemd.exec.html#EnvironmentFile][environments]]
+
+  It can be particularly helpful if a set of scripts shares certain libraries (e.g. =PYTHONPATH=) or data.
+- tooling and monitoring
+- logging
+
+*Cons*:
+
+- tedious to add new jobs
+
+  If you want to add a job, you need to:
+
+  - write a unit file
+
+    Most of it is boilerplate, so good luck getting the syntax right.
+  - copy it to =~/.config/systemd/user=
+  - remember to enable the service
+  - remember to run ~systemctl --user reload-daemon~.
+
+  That's a *massive overhead* in comparison with ~crontab -e~, edit, save.
+
+- *units are scattered* across =~/.config/systemd/user=
+
+  In cron if I have some boilerplate shared across several jobs (e.g. prefixed with =nice= or =timeout=), or multiple
+  very similar commands, I can align/tabulate them with spaces and use block editing in vim to add/remove/change it all at once, so if you keep the crontab tidy, there is little opportunity for error.
+
+  In systemd I'd have two options:
+
+  - edit each unit file separately: boring and error-prone
+  - use a script to generate boilerplate for unit files and manage them
+
+- error notifications (even mailing) requires some [[https://wiki.archlinux.org/index.php/Systemd/Timers#MAILTO][hacking]]
+
+Systemd feels like something desirable when scheduling services is your full time job, but not for personal scripts when everything is a bit more chaotic.
+
+* What do I need?
+I feel a serious lack of user-friendly job scheduling software for *personal* needs. I want it to be:
+
+- *possible for regular people* to use
+
+  "Regular" has different meaning for different people, so imagine someone starting to learn to program. They are capable of writing and running scripts, committing and pushing to git, etc. Imagine they want to run their script periodically:
+
+  - with [[#cron][cron]]: I'd say the difficulty for them is somewhere around 5/10
+
+    They need to run =crontab -e=, google the syntax, paste the path to their script, save and exit. That's it.
+
+  - with [[#systemd][systemd]]: I'd say the difficulty is 9/10
+
+    Several steps, confusing syntax and boilerplate, multiple different commands. It's not trivial even for experienced programmers.
+
+  In addition, both of these would behave in confusing ways with respect to environment, error reporting, and logging.
+
+  It's understandable why these systems are so complex (they are very powerful and flexible!), but it's not impossible to have an alternative and user-friendlier interface for simple (cron-like) usecases.
+
+- as *easy to configure* as regular cron
+
+  So you can edit the single plaintext configuration file, quickly adjust the jobs, check and apply configuration immediately.
+- *better specs* for jobs
+
+  dependencies, timeouts, resource policies and retries without hacky wrappers and boilerplate
+
+- keeping configuration under *version control*
+
+  This is easy with systemd, and also possible with cron (with some extra hacks).
+
+- better means of *monitoring*
+
+  How often are the jobs running? Which ones are most flaky? How much resources are they using?
+
+- simple way of running in *user's environment*
+
+  It's understandable that cron/systemd shell environment is kept minimal, but for personal scripts, you want the same environment as in your interactive shell.
+
+- means of *logging*
+
+  E.g. easy logging to the filesystem for later inspection.
+
+- means of *notification*
+
+  E.g. alternative ways of failure notification (e.g. sending desktop/phone notification).
+
+  Currently, I'm using [[https://wiki.archlinux.org/index.php/Mutt][mutt]] for that which is fine, but TODO
+
+* Alternative schedulers
+Some of the tools I tried, none of which really satisfied me:
+
+- [[https://github.com/mesos/chronos][mesos/chronos]]: too heavyweight to use personally
+- [[https://habilis.net/cronic][cronic]]: simple wrapper that helps with emailing on non-zero exit code, but not much else.
+- [[https://github.com/instacart/ohmycron][instacart/ohmycron]]
+
+  Supports locks to prevent simultaneous jobs, loads user environment and PATH.
+
+  The interesting idea is setting it as a [[https://github.com/instacart/ohmycron#ohmycron-as-the-cron-shell][cron shell]], which can enhance cron syntax.
+
+- <<huginn>>[[https://github.com/huginn/huginn][huginn]]: great example of a *user-friendly* tool
+
+  One thing that makes it different is that it's reactive and mainly event/data driven, so dependencies are first class citizens to the workflow.
+  There are multiple ways of inspecting jobs, e.g. list with some stats on events and dependency diagram. I highly recommend checking out [[https://github.com/huginn/huginn#examples][example]].
+
+  It seems good for simple pipelines (e.g. scrape something/transform/send Telegram notification), but you're gonna need a real programming language to do something more complicated. It's possible to run [[https://huginnio.herokuapp.com/agents#ShellCommandAgent][shell commands]] and [[https://github.com/huginn/huginn/wiki/Creating-a-new-agent][write external agents]], but the primary interface for editing is GUI. That makes it not very programmer friendly, and in addition it suffers from the same issues as [[#systemd][systemd]] in that aspect (e.g. no bulk edit for jobs).
+
+- [[https://dshearer.github.io/jobber/doc/v1.4/#jobfile][jobber]]: looks the most promising so far
+
+  Supported:
+
+  - plaintext configuration (yaml)
+  - job execution history
+  - quickly testing jobs
+  - pausing/resuming jobs
+  - success/failure notifications
+  - backoffs (although they weren't configurable last time I checked)
+
+  However, still no timeouts, dependencies, and jobs can only run at the schedule, like [[#cron][cron]].
+
+*[2020-01-26]* Thanks to everyone who suggested alternatives in the comments and linked discussions!
+
+Sadly, most of them are pretty heavy: often distributed, aiming at orchestrating clusters and grids, which is quite an overkill for my humble personal needs.
+
+* Solution?
+[[#systemd][Systemd]] feels almost perfect except for its boilerplate and being somewhat user-unfriendly.
+
+What if we took the good bit that cron has (easy means of editing jobs), and tried to do the same within systemd?
+
+Imagine a frontend (let's name it ~systemdtab~), that gave something similar to cron experience:
+
+- you type ~systemdtab -e~, and that opens the text editor with your configuration
+
+  You can adjust your jobs as you wish, save the file and exit. It can check syntax the same way ~crontab -e~ checks it, and prompt to retry in case of typos.
+
+  Once you exit, your changes are applied automatically: 
+
+  - =systemdtab= generates individual unit files from your output
+  - replaces the old unit files with the new ones and restarts the daemon
+
+- considering the boilerplate, it seems that the systemdtab config could be a script (e.g. =~/.systemdtab.py=), that generates the actual Systemd unit files
+
+  It doesn't matter which language is used, it could be bash, python or anything. It would allow one to massively save on boilerplate if you're running sets of similar jobs.
+
+- the configuration is kept in a plaintext file, which makes it trivial to inspect and version control.
+
+- some means of simple visualization and monitoring, e.g. similar to [[huginn][huginn]]?
+
+This doesn't have to be a replacement or something, =systemdtab= can manage its own set of unit files, completely separate from the rest of the services.
+
+ It feels like it's possible to hack together a rough implementation (at least satisfying to me) fairly quickly, but is there really nothing existing? Please let me know!
+
+One tool in a similar spirit is [[https://github.com/systemd-cron/systemd-cron][systemd-cron/systemd-cron]], but it simply maps existing cron job specs into systemd jobs. This seems very useful if you're trying to transition, but doesn't help with my [[#what_do_i_want][needs]]..
+
+** dron
+[2020-01-26]   
+
+After writing this post, I realized that even if there are no existing tools, the shortcomings of systemd might be fairly easy to overcome. So I hacked together [[https://github.com/karlicoss/dron][dron]].
+
+* Phone jobs?
+That's another problem I sort of solved for myself, but not fully satisfied.
+
+I need to export app data regularly from my (rooted) Android phone (e.g. see [[https://beepb00p.xyz/my-data.html#bluemaestro][here]]). Export scripts themselves are trivial, it's just a matter of copying files from =/data/data/= directory. However, there is no software for Android to run these scripts regularly.
+
+At the moment, I'm using [[https://llamalab.com/automate][Automate app]] to run them. Automate is great, but it feels a bit wrong running a shell script using a complex flowchart, so I'd be interested to know if there are simpler alternatives.
+
+Ideally, it would be a simple app that allows running shell scripts at regular intervals, keeping logs and notifying when they fail. 
+
+ Please let me know if you know one!
+
+** cron?
+Thanks to a commenter who [[https://beepb00p.xyz/scheduler.html#isso-103][suggested]] that [[https://play.google.com/store/apps/details?id=com.termux][Termux]] got cron daemon. I tried it out, and it works!
+
+The downsides are:
+
+- something still needs to run cron daemon at startup
+
+  On Linux, this is achieved by the init system, but it turns out [[https://android.stackexchange.com/questions/6558/how-can-i-run-a-script-on-boot][a bit tricky]] to use even on rooted phone.
+
+  So I'm just starting it on boot via Automate app at the moment.
+
+- would be nice to have a GUI based tool as it's not very convenient to edit shell scripts on Android (I just used interactive [[https://developer.android.com/studio/command-line/adb][adb shell]])
+- I'm not sure how it behaves with respect to the power saving mode, etc. Ideally you'd want it to integrate with [[https://developer.android.com/reference/android/app/job/JobScheduler][JobScheduler]] Android APIs.
+
+* --
+Updates:
+
+- [2020-01-19] added section on [[huginn][huginn]]
+- [2020-01-26] added sections: [[#dron][dron]] and [[#android_cron][using cron on Android]]
