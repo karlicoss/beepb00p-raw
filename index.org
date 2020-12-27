@@ -1,39 +1,43 @@
 This is a raw plaintext export for my blog, [[https://beepb00p.xyz][beepb00p.xyz]].
+
 Note that due to [[https://github.com/novoid/github-orgmode-tests][Github's inconsistencies]] at rendering org-mode, not everything might render correctly.
-You can also glone this repository and browse the blog in emacs.
-* [2020-05-30 Sat] [[file:promnesia.org][Promnesia]]                                                                          =#promnesia= [[file:tags.org::#pkm][=#pkm=]]
+
+You can also clone this repository and browse the blog in Emacs.
+
+Extra pages: [[file:ideas.org][IDEAS]] | [[file:tags.org][TAGS]] | [[file:site.org][SITE]]
+** [2020-05-30 Sat] [[file:promnesia.org][Promnesia]]                                                                          =#promnesia= [[file:tags.org::#pkm][ =#pkm= ]]
   A journey in fixing browser history
-* [2020-04-20 Mon] [[file:myinfra-roam.org][Extending my personal infrastructure with a data source]]                            [[file:tags.org::#infra][=#infra=]] =#hpi= =#orger= =#promnesia=
+** [2020-04-20 Mon] [[file:myinfra-roam.org][Extending my personal infrastructure with a data source]]                            [[file:tags.org::#infra][ =#infra= ]] =#hpi= =#orger= =#promnesia=
   Featuring Roam Research
-* [2020-04-05 Sun] [[file:configs-suck.org][Your configs suck? Try a real programming language.]]                                [[file:tags.org::#plt][=#plt=]] [[file:tags.org::#python][=#python=]]
+** [2020-04-05 Sun] [[file:configs-suck.org][Your configs suck? Try a real programming language.]]                                [[file:tags.org::#plt][ =#plt= ]] [[file:tags.org::#python][ =#python= ]]
   Or yet another rant about YAML
-* [2020-03-15 Sun] [[file:hpi.org][Human Programming Interface]]                                                        [[file:tags.org::#infra][=#infra=]] [[file:tags.org::#pkm][=#pkm=]] [[file:tags.org::#quantifiedself][=#quantifiedself=]] =#hpi=
+** [2020-03-15 Sun] [[file:hpi.org][Human Programming Interface]]                                                        [[file:tags.org::#infra][ =#infra= ]] [[file:tags.org::#pkm][ =#pkm= ]] [[file:tags.org::#quantifiedself][ =#quantifiedself= ]] =#hpi=
   My life in a Python package
-* [2020-02-13 Thu] [[file:exports.org][Building data liberation infrastructure]]                                            [[file:tags.org::#infra][=#infra=]] [[file:tags.org::#dataliberation][=#dataliberation=]]
+** [2020-02-13 Thu] [[file:exports.org][Building data liberation infrastructure]]                                            [[file:tags.org::#infra][ =#infra= ]] [[file:tags.org::#dataliberation][ =#dataliberation= ]]
   How to export, access and own your personal data with minimal effort
-* [2020-01-26 Sun] [[file:unnecessary-db.org][Against unnecessary databases]]                                                      [[file:tags.org::#infra][=#infra=]] [[file:tags.org::#dataliberation][=#dataliberation=]] =#cachew=
+** [2020-01-26 Sun] [[file:unnecessary-db.org][Against unnecessary databases]]                                                      [[file:tags.org::#infra][ =#infra= ]] [[file:tags.org::#dataliberation][ =#dataliberation= ]] =#cachew=
   Parse, don't normalize
-* [2020-01-18 Sat] [[file:scheduler.org][In search of a better job scheduler]]                                                [[file:tags.org::#infra][=#infra=]]
+** [2020-01-18 Sat] [[file:scheduler.org][In search of a better job scheduler]]                                                [[file:tags.org::#infra][ =#infra= ]]
   What if cron and systemd had a baby? Wouldn't it be beautiful?
-* [2020-01-12 Sun] [[file:my-data.org][What data on myself I collect and why?]]                                             [[file:tags.org::#dataliberation][=#dataliberation=]] [[file:tags.org::#pkm][=#pkm=]] [[file:tags.org::#quantifiedself][=#quantifiedself=]]
+** [2020-01-12 Sun] [[file:my-data.org][What data on myself I collect and why?]]                                             [[file:tags.org::#dataliberation][ =#dataliberation= ]] [[file:tags.org::#pkm][ =#pkm= ]] [[file:tags.org::#quantifiedself][ =#quantifiedself= ]]
   How I am using 50+ sources of my personal data
-* [2019-12-15 Sun] [[file:sad-infra.org][The sad state of personal data and infrastructure]]                                  [[file:tags.org::#infra][=#infra=]] [[file:tags.org::#pkm][=#pkm=]] [[file:tags.org::#quantifiedself][=#quantifiedself=]]
+** [2019-12-15 Sun] [[file:sad-infra.org][The sad state of personal data and infrastructure]]                                  [[file:tags.org::#infra][ =#infra= ]] [[file:tags.org::#pkm][ =#pkm= ]] [[file:tags.org::#quantifiedself][ =#quantifiedself= ]]
   Why can't we have nice digital things?
-* [2019-11-19 Tue] [[file:scrapyroo.org][Scrapyroo]]                                                                          [[file:tags.org::#infra][=#infra=]] =#scraping= =#rust= =#selfhosted=
+** [2019-11-19 Tue] [[file:scrapyroo.org][Scrapyroo]]                                                                          [[file:tags.org::#infra][ =#infra= ]] =#scraping= =#rust= =#selfhosted=
   How I was unhappy about Deliveroo search and implemented my own
-* [2019-11-01 Fri] [[file:pkm-search.org][Building personal search infrastructure for your knowledge and code]]                [[file:tags.org::#pkm][=#pkm=]] =#search= [[file:tags.org::#emacs][=#emacs=]] =#orgmode=
+** [2019-11-01 Fri] [[file:pkm-search.org][Building personal search infrastructure for your knowledge and code]]                [[file:tags.org::#pkm][ =#pkm= ]] =#search= [[file:tags.org::#emacs][ =#emacs= ]] =#orgmode=
   Overview of search tools for desktop and mobile; using Emacs and Ripgrep as desktop search engine
-* [2019-10-26 Sat] [[file:mypy-error-handling.org][Python: better typed than you think]]                                                [[file:tags.org::#mypy][=#mypy=]] [[file:tags.org::#python][=#python=]] [[file:tags.org::#plt][=#plt=]]
+** [2019-10-26 Sat] [[file:mypy-error-handling.org][Python: better typed than you think]]                                                [[file:tags.org::#mypy][ =#mypy= ]] [[file:tags.org::#python][ =#python= ]] [[file:tags.org::#plt][ =#plt= ]]
   mypy assisted error handling, exception mechanisms in other languages, fun with pattern matching and type variance
-* [2019-10-05 Sat] [[file:orger-todos.org][Using Orger to populate your tasks list]]                                            =#orgmode= =#productivity= =#orger=
+** [2019-10-05 Sat] [[file:orger-todos.org][Using Orger to populate your tasks list]]                                            =#orgmode= =#productivity= =#orger=
   Reading Reddit, building spaced repetition queue and quick todos from Telegram messages
-* [2019-09-26 Thu] [[file:orger.org][Orger: plaintext reflection of your digital self]]                                   [[file:tags.org::#pkm][=#pkm=]] =#orgmode= =#orger=
+** [2019-09-26 Thu] [[file:orger.org][Orger: plaintext reflection of your digital self]]                                   [[file:tags.org::#pkm][ =#pkm= ]] =#orgmode= =#orger=
   Mirror your personal data as org-mode for instant access and search
-* [2019-09-12 Thu] [[file:cloudmacs.org][Cloudmacs: Emacs in your web browser]]                                               [[file:tags.org::#emacs][=#emacs=]] [[file:tags.org::#pkm][=#pkm=]] =#selfhosted=
+** [2019-09-12 Thu] [[file:cloudmacs.org][Cloudmacs: Emacs in your web browser]]                                               [[file:tags.org::#emacs][ =#emacs= ]] [[file:tags.org::#pkm][ =#pkm= ]] =#selfhosted=
   How I really wanted Spacemacs everywhere and my wish came true thanks to Docker
-* [2019-07-05 Fri] [[file:annotating.org][How to annotate literally everything]]                                               [[file:tags.org::#pkm][=#pkm=]] [[file:tags.org::#annotation][=#annotation=]] =#sr= [[file:tags.org::#tools][=#tools=]]
+** [2019-07-05 Fri] [[file:annotating.org][How to annotate literally everything]]                                               [[file:tags.org::#pkm][ =#pkm= ]] [[file:tags.org::#annotation][ =#annotation= ]] =#sr= [[file:tags.org::#tools][ =#tools= ]]
   Comprehensive overview of existing tools, strategies and thoughts on interacting with your data
-* [2019-05-13 Mon] [[file:pkm-setup.org][How to cope with having a fleshy human brain]]                                       [[file:tags.org::#pkm][=#pkm=]] =#orgmode= =#learning=
+** [2019-05-13 Mon] [[file:pkm-setup.org][How to cope with having a fleshy human brain]]                                       [[file:tags.org::#pkm][ =#pkm= ]] =#orgmode= =#learning=
   My personal knowledge setup
-* [2019-05-12 Sun] [[file:contemp-art.org][Don't shoot the artist]]                                                             =#art=
+** [2019-05-12 Sun] [[file:contemp-art.org][Don't shoot the artist]]                                                             =#art=
   How I visited a contemporary art museum and didn't get it
