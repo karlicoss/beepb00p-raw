@@ -1,25 +1,85 @@
-#+filetags: :infra:
+#+created: [2020-02-03 Mon]
+#+filetags: :infra:dataliberation:
 #+upid: infra_diagram
 
-#+html: <style> body { margin-left: 0; } </style>
+#+html: <style> :root { --width: 80rem; } body { margin-left: 0.2em; } #myinfra svg { height: auto; width: 100vw; }  #table-of-contents { display: none; } </style>
 
-This is a map of my personal [[file:tags.org::#infra][infrastructure]], with links to the scripts and tools used; and my posts explaining different parts of it.
+Well, it's been a year since I started the draft, so I guess it's about time to publish this! :)
 
-This is still incomplete; work in progress! In reality it's many more nodes and edges; I'm just trying to preserve sanity and adding them gradually;
-otherwise it's going to be too overwhelming.
+This is a map of my personal [[file:tags.org::#dataliberation][data liberation]] [[file:tags.org::#infra][infrastructure]], with links to the scripts and tools used; and my blog posts elaborating on different parts of it.
 
-If something doesn't have a link, it's likely because I haven't made it public yet. Anyway, feel free to ask so I can prioritize.
+My goal for data liberation is approximating the [[https://beepb00p.xyz/sad-infra.html#data_mirror]['personal data mirror']] concept,
+often [[https://www.eff.org/deeplinks/2019/10/adversarial-interoperability][despite]] crappy interoperability (or lack thereof) of different platforms.
 
-This probably won't be mobile friendly (it's barely desktop friendly!). Content centering (e.g. navigation) isn't broken on this page -- it's just a temporary hack to fit in the diagram till I figure out wide pages properly. Also SVG support varies among web browsers, so there might be some minor artifacts.
+I prepared this diagram for several reasons:
 
-This is rendered via graphviz, and you can find the source [[https://github.com/karlicoss/myinfra][here]].
+- to give more context for my blog posts about data liberation and tools around it
+- to highlight the complexity and hoops we have to jump over because of the lack of interoperability
+- it was also sort of fun :)
 
-*NOTE*: due to some svg issues, this is best viewed in Chromium based browsers!
+This time I won't write too much text and just let you explore it. *Tips for exploring the diagram*:
 
-* TODO TODOs
+- perhaps open the [[file:myinfra_files/myinfra.svg][*full size SVG*]] in a new tab
+- make sure to read the legend
+- links you can follow are marked with blue (and sometimes other colours)
+- there is a bubble (💬) near some nodes/edges, you can hover it to see the comment
+- some integrations are in progress: marked with =WIP=, construction signs (🚧🚧) and dashed edges
+- arrows roughly represent the direction of data flow
+- arrow colors roughly correspond to the data source (so it's easier to track how it flows)
+- there are some rendering issues
+
+  - it's probably not very mobile friendly (it's barely desktop friendly!)
+  - SVG support varies among web browsers, so there might be some minor artifacts (chromium works better, but firefox works well enough)
+  - navbar centering isn't broken on this page -- it's just a temporary hack to fit in the diagram till I figure out wide pages properly
+
+
+#+html: <span id="myinfra">
+#+html: </span>
+
+
+Some *notes* regarding the diagram:
+- it's plotted via graphviz, and you can find the source [[https://github.com/karlicoss/myinfra][here]] (although the code is quite domain specific)
+- even though there is a lot of stuff on the diagram, it's still incomplete!
+
+  - [[https://beepb00p.xyz/my-data.html][here]] there is an (also incomplete) list of data I collect/export
+  - [[https://github.com/karlicoss/HPI/tree/master/my][HPI modules]] are a good proxy for the data I'm using
+
+- note that despite some platforms dying (e.g. Jawbone/Endomondo), I can still use data produced with them!
+
+  E.g. after Endomondo was discontinued, I was able to quickly switch to open source [[https://github.com/jonasoreland/runnerup#readme][RunnerUp app]],
+  while [[https://github.com/karlicoss/HPI/blob/5b501d156266ca8e185d681fab6bc3ee156498a6/my/runnerup.py][preserving]] complete data compatibility.
+
+- note how many services are outright malicious with their *anti-API/anti-scraping/anti-interoperability* measures (yellow/red highlight for API nodes)
+
+- probably more platforms have GDPR exports, I just haven't tried yet
+- indirection is crazy
+
+  Note how for some data, before I can get it on my computer, it goes as
+
+  - device --> phone (over bluetooth)
+  - phone  --> cloud (over internet)
+  - cloud  --> computer (over internet)
+- for many phone apps *the only way* I can sync the data is *by rooting my phone* in order to access the ~/data/data~ directory
+
+  This is getting worse and worse with every Android version. I understand the security concerns, but this is ridiculous.
+
+- some modules/packages (marked with^{sb} superscript) were developed by [[https://github.com/seanbreckenridge][Sean Breckenridge]]
+
+  He's forked my [[https://github.com/karlicoss/HPI][HPI]] package and working on it [[https://github.com/seanbreckenridge/HPI][in parallel]].
+  For now, we decided to hack on it independently, in the hope that eventually we figure out what's a good model for cooperating and maintaining the modules.
+
+  Also, he's done some cool work on [[https://github.com/seanbreckenridge/HPI_API][automatic HTTP API]] for HPI!
+
+* TODOs
 :PROPERTIES:
 :CUSTOM_ID: todos
 :END:
+** TODO [#C] [2021-02-07 Sun 19:53] hmm some 'HTML label' boxes seem to have extra padding?
+:PROPERTIES:
+:CUSTOM_ID: NONE
+:END:
+although only in svg mode? png renders fine.
+
 ** STRT [#C] [2020-02-03 Mon 01:57] fix css so it's occupying full screen width
 :PROPERTIES:
 :CUSTOM_ID: NONE
@@ -29,13 +89,19 @@ This is rendered via graphviz, and you can find the source [[https://github.com/
 :PROPERTIES:
 :CUSTOM_ID: NONE
 :END:
-** STRT [#B] [2020-02-07 Fri 19:51] labels don't fit into the boxes??
+** DONE [#B] [2020-02-07 Fri 19:51] labels don't fit into the boxes??
 :PROPERTIES:
 :CUSTOM_ID: NONE
 :END:
 - [2020-02-14 21:25] apparently only on desktop Firefox =/
-** STRT [#B] [2020-02-14 Fri 21:30] Chrome [[https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/side#Browser_compatibility][doesn't]] support svg side attribute, so some labels appear upside down :(
+- [2021-02-07 19:46] looks fine now?
+** STRT [#C] [2020-02-14 Fri 21:30] Chrome [[https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/side#Browser_compatibility][doesn't]] support svg side attribute, so some labels appear upside down :(
 :PROPERTIES:
 :CUSTOM_ID: NONE
 :END:
 fixing with JS for now...
+* ---
+:PROPERTIES:
+:CUSTOM_ID: fin
+:END:
+Let me know what you think, and as always happy to answer your questions!

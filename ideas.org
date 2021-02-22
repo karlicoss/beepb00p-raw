@@ -1,8 +1,9 @@
 #+filetags: :ideas:think:
 #+upid: ideas
 
-These are mostly half baked, some are kinda weird, so even unclear if worthy of exercising.
-But if several people have similar idea, perhaps you are all onto something.
+These are mostly half baked, some are kinda weird.
+Most of them aren't revolutionary in any way, and even unclear if worthy of exercising.
+But if several people have relevant ideas, perhaps you are all onto something.
 
 Priorities roughly indicate how important is the topic to me.
 
@@ -559,3 +560,4 @@ Apparently I wasn't the first to think about that:
 - [[https://www.halfbakery.com/editorial/about.html][Halfbakery]], a communal database of original, fictitious inventions, edited by its users
 - [[https://trello.com/b/alB1ryRP/ideas][ideas Trello board]] by Nikita Voloboev
 - [[https://0oo.li][Space to Think]]: a space for exploring ideas
+- [[https://news.ycombinator.com/item?id=21991260][Ask HN: Is there a platform for sharing ideas that people want to “give away”?]]

@@ -5,10 +5,15 @@ Note that due to [[https://github.com/novoid/github-orgmode-tests][Github's inco
 You can also clone this repository and browse the blog in Emacs.
 
 Extra pages: [[file:ideas.org][IDEAS]] | [[file:tags.org][TAGS]] | [[file:site.org][SITE]]
+** [2020-12-30 Wed] [[file:pkm_processing.org][Processing information]]                                                             [[file:tags.org::#pkm][ =#pkm= ]]
+** [2020-12-29 Tue] [[file:offline.org][Offline life]]                                                                       [[file:tags.org::#offline][ =#offline= ]] =#prepping= [[file:tags.org::#infra][ =#infra= ]]
+  How to make sure your infrastructure and apps is offline ready
+** [2020-12-29 Tue] [[file:how_to_python.org][How I write and package Python]]                                                     [[file:tags.org::#python][ =#python= ]]
+  Opinionated guide
+** [2020-12-29 Tue] [[file:backup-checker.org][Ensuring continuity of backups and personal data exports]]                           [[file:tags.org::#infra][ =#infra= ]] [[file:tags.org::#dataliberation][ =#dataliberation= ]]
 ** [2020-04-12 Sun] [[file:kython.org][Write your own standard library]]                                                    [[file:tags.org::#programming][ =#programming= ]]
 ** [2020-04-12 Sun] [[file:axol.org][Axol: Google Alerts that actually work]]                                             =#axol=
   personal automatic news feed
-** [2020-02-03 Mon] [[file:myinfra.org][Map of my infrastructure]]                                                           [[file:tags.org::#infra][ =#infra= ]]
 ** [2019-05-27 Mon] [[file:pkm-todos.org][On todo lists]]                                                                      [[file:tags.org::#pkm][ =#pkm= ]] =#orgmode= =#productivity= =#gtd=
   How I am managing my life and keeping track of the things I want to do
 ** [2018-11-19 Mon] [[file:least-action-lie.org][Least action principle is a lie]]                                                    [[file:tags.org::#physics][ =#physics= ]]

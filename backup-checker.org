@@ -1,0 +1,35 @@
+#+upid: backup_checker
+#+filetags: :infra:dataliberation:
+#+draft: public
+
+I've got something similar to this setup: https://brokensandals.net/technical/backup-tooling/making-backup-validation-easier
+
+My own backup validation thing is basically a single python script (so all configs are in the same script instead of config files like you do).
+
+Most of my exports are timestamped, and I almost never delete old data or modify in place during the export (unless it's an sqlite database).
+
+So for most of them, I simply check that new files appear in the respective direectory. Usually each data source got its own update interval, e.g. for Google takeout (which is manual) can be several month, whereas for Twitter data (which is automatic) it is checked daily.
+
+I really like the idea of metrics and especially keeping them close to the export process.
+
+Most of my backups simply rely on timestamps, so don't need special handling, but I was thinking of hardening it and actually extracting metrics too.
+I thought maybe it might even make sense to expose metrics in the backups scripts themselves.
+
+That way:
+
+- whoever uses the backup won't have to figure out the xmllint/jq queries and grep anything (unless they want something extra). They would only need to call something like /path/to/export/script --metrics /path/to/latest/backup
+
+- that would also ensure the metrics stay in sync with the export format, new metrics can be added by the script author, etc
+
+Basically I already have all the necessary bits in HPI. I just need to pass the outputs of =stat= / =hpi doctor= to the backup checker:
+
+: $ python3 -c 'import my.hypothesis as H; print(H.stats())'
+: {'highlights': 1912, 'pages': 602}
+
+* backup cleanser
+Another (someone experimental) tool I have, I call 'cleanser'. The idea is figuring out 'redundant' backups, but in a data source agnostic way.
+This is possible for example for JSON: if the export from today is a superset of an export from yesterday, you can safely remove the old export. This actually works quite well as is for many data sources.
+
+For few I've got slight adjustments that normalise them before comparing by removing certain fields that change often, but not very important. For example, Reddit upvotes/downvotes always jump, so I just exclude them from the comparison.
+
+It's similar to extracting the useful fields (like in metrics), but instead it filters the useless ones. That makes it safer in case new fields are added by the backend, I'd rather keep extra data than potentially lose useful information.

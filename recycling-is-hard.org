@@ -1,0 +1,46 @@
+#+summary: So many questions, so few answers
+#+upid: recycling_is_hard
+#+filetags: :recycling:environment:
+
+Even since I moved to the UK I've of course been separating waste. I wasn't ever questioning the positive value of recycling or suspecting it could be a conspiracy designed to drain my time or anything along that line. In many ways it's even easier since you can pile up plastic/cardboard/glass and just throw it away in bulk, and have a smaller food waste bin. I was never too crazy about it though, so I never bothered recycling every last bit of material that I possibly could.
+
+Recently though I started wondering if I should be more efficient at recycling, so I googled for a bit, and ... got nowhere.
+
+For instance, one of my fluorescent light bulbs died. It's not recycled by the council, so can't be put in the recycling dumpster. Apparently it also contains mercury and shouldn't be put in general waste either.
+The closest recycling facility that accepts energy efficient bulbs is 15 mins from me by tube.
+The question is — disregarding that I don't feel like spending half an hour in transport to recycle couple of light bulbs: is it more efficient for the planet if instead of going there I just spend that time 
+on my job and donate the money? I seriously suspect that recycling a bulb is not the most environmentally efficient thing [[https://en.wikipedia.org/wiki/Effective_altruism][I can do with my skills]].
+*How much environmental impact in terms of pure dollars of damage does a light bulb have anyway?* Sadly, I didn't manage to find any specific numbers.
+
+Another thing that puzzled me: **is it worth washing a soiled plastic container before recycling?** You're wasting hot water and detergents after all, which also has some environmental impact (also your time if you wash manually).
+The internet gives confusing answers, starting from people who put their greasy plastic in dishwasher to suggestions to only give a quick rinse. I can't understand how rinsing without washing helps against attracting bacteria and 
+greasing paper in mixed recycling. Couldn't google anything meaningful either.
+
+Interesting enough, while looking that up, I ran into many discussions of using paper plates vs washing ceramic plates — apparently it's unclear which is more environmental!
+[[https://sustainability.stackexchange.com/a/6020][Here's]] an example calculation which gives =$0.78= vs =$0.63=, the difference I find pretty marginal. Generally all over the place the answer seems to be
+"it depends on your detergent, electricity source, etc". *How is an average person meant to figure that out?*
+
+
+Lastly, it's not even clear which [[https://www.pureplanetrecycling.co.uk/types-of-plastics/][types of plastic]] materials you can recycle.
+For instance, my [[https://www.towerhamlets.gov.uk/lgnl/environment_and_waste/recycling_and_waste/a-z_recycling_guide.aspx][council's website]] has no mention of specific materials whatsoever, only 'trays', 'yogurt pots' and 'bags'.
+
+[[https://web.archive.org/web/20200308123232/https://www.cityoflondon.gov.uk/services/environment-and-planning/waste-and-recycling/household-waste-and-recycling/Pages/recycling-A-to-Z.aspx][City of London website]] confuses me as well:
+
+- It mentions PS (polystyrene, 6) as non-recyclable and it instructs to recycle yogurt pots. However some of yogurt pots are made of polystyrene!
+- "Plastic bags, including those used for salad, bread, rice/pasta should be placed in the household waste". While most of salad packaging I seen here has no marking, some of it is made of PP (polypropylene, 5), which is same stuff that used to make yogurt pots. *Surely there should be no difference in recycling as long as it's the same material?*
+
+I find it very hard to remember every specific shape of plastic, surely it's way easier to base your decision to recycle on a single number they but on plastic? At least there is a little I can do about that and I emailed my council asking to clarify.
+
+Lastly, I can't help feeling that I'm nitpicking and the 95% of obviously recyclable stuff I already recycle is enough; and that I should have spent time writing this post doing something more obviously useful.
+However, I'm already done and hopefully will gain more knowledge about recycling as a result.
+
+*How can we make it easier to decide if something can or can't be recycled and whether it has net positive cost with respect to time you spend doing it?*
+
+If you know answers to any of the questions here, please let me know!
+
+* related links
+:PROPERTIES:
+:CUSTOM_ID: links
+:END:
+
+- [2020-09-12 21:43] [[https://news.ycombinator.com/item?id=24454067][Is Plastic Recycling a Lie? Oil Companies Touted Recycling to Sell More Plastic | Hacker News]]

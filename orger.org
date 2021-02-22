@@ -354,8 +354,7 @@ Well yeah it really does seem simple... until you try to do it.
 
   This is probably where most of effort was spent. All sorts of stupid APIs, tedious parsing, you can imagine.
 
-  I'll write separately about it sometime, for now you can see some code I prettified and shared in my github <a href='https://github.com/search?type=Repositories&q=user%3Akarlicoss+++topic%3Aexport'>'export'</a> and [[https://github.com/karlicoss/HPI][HPI]] packages.
-  I tried to make sure they are easy to use for other people and not specific to my use cases.
+  I write about it in detail in [[file:hpi.org]["Human Programming Interface"]].
 
 - keeping track of already processed items for =Interactive= views
 

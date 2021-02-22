@@ -52,4 +52,7 @@ this is how I came up with
 - discovered pathlib
 - ????
 ** TODO more-itertools                                               :kython:
+** TODO first, numbers() functions -- more-itertools            :blog:kython:
+** [2020-12-17 Thu 04:05] [[https://boltons.readthedocs.io/en/latest/][boltons — boltons 20.2.1 documentation]] :kython:
+
 * STRT remove org stuff from kython? just rely on inorganic or make a symlink? :org:kython:inorganic:

@@ -678,11 +678,10 @@ As I mentioned, I'll share all of this later in a separate post.
 :CUSTOM_ID: mypkg
 :END:
 
-Each data exporter comes with minimal bindings that merely map json/sqlite export into simple datatypes and data classes.
-
+Each data exporter comes with [[file:exports.org::#dal][minimal bindings]] that merely map json/sqlite export into simple datatypes and data classes.
 That way anyone who wishes to use data can kick off some reasonable representation, which is not overfitted to my specific needs.
 
-Higher level querying and access, specific to myself is implemented in [[file:hpi.org::#examples][my.]] package (note that this post is still in draft stage).
+Higher level querying and access, specific to myself is implemented in [[file:hpi.org::#examples][my.]] package.
 
 [[https://github.com/karlicoss/my][~my.~]] package allows me to query my data from anywhere, enabling me to use familiar data processing, analysis and visualization tools, and various integrations.
 
@@ -722,19 +721,18 @@ I'm simply using [[https://borgbackup.readthedocs.io/en/stable][borg backup]] ag
 :CUSTOM_ID: links
 :END:
 
-- jborichevskiy: [[https://news.ycombinator.com/item?id=21659876][Digital Tools I Wish Existed (HN)]]
 - IndieWeb wiki on [[https://indieweb.org/silo][silos]]
-- Ink & Switch: [[https://www.inkandswitch.com/local-first.html][Local-first software: You own your data, in spite of the cloud]]
-- [[https://commandcenter.blogspot.com/2017/10/the-upspin-manifesto-on-ownership-and.html][The Upspin manifesto]]: On the ownership and sharing of data
-- [[https://news.ycombinator.com/item?id=21921323][The old Internet died and we watched and did nothing (HN)]]
-- NetOpWibby: [[https://news.ycombinator.com/item?id=21684949][A Personal API (HN)]]
+- Ruben Verborgh: [[https://ruben.verborgh.org/blog/2020/12/07/a-data-ecosystem-fosters-sustainable-innovation/][A data ecosystem fosters sustainable innovation]] (2020)
+- jborichevskiy: [[https://news.ycombinator.com/item?id=21659876][Digital Tools I Wish Existed (HN)]] (2019)
+- Ink & Switch: [[https://www.inkandswitch.com/local-first.html][Local-first software: You own your data, in spite of the cloud]] (2019)
+- [[https://commandcenter.blogspot.com/2017/10/the-upspin-manifesto-on-ownership-and.html][The Upspin manifesto]]: On the ownership and sharing of data (2017)
+- [[https://news.ycombinator.com/item?id=21921323][The old Internet died and we watched and did nothing (HN)]] (2019)
+- NetOpWibby: [[https://news.ycombinator.com/item?id=21684949][A Personal API (HN)]] (2019)
 
 Attempts of resolving this sad state:
 
 - [[https://en.wikipedia.org/wiki/Solid_(web_decentralization_project)][Solid]], web decentralization project by Tim Berners-Lee, WWW pioneer and the director of W3C
-  #+begin_quote
-  The project "aims to radically change the way Web applications work today, resulting in true data ownership as well as improved privacy" by developing a platform for linked-data applications that are completely decentralized and fully under users' control rather than controlled by other entities.
-  #+end_quote
+  : The project "aims to radically change the way Web applications work today, resulting in true data ownership as well as improved privacy" by developing a platform for linked-data applications that are completely decentralized and fully under users' control rather than controlled by other entities.
 
 * --
 :PROPERTIES:
@@ -751,3 +749,4 @@ Let me know if you can think of any other data integrations you are missing and 
 :END:
 - *[2020-01-12]* [[file:my-data.org][What data on myself I collect and why?]]
 - *[2020-01-18]* [[file:scheduler.org][In search of a friendlier scheduler]]
+- *[2020-03-15]* [[file:hpi.org][Human Programming Interface]]

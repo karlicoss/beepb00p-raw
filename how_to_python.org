@@ -1,0 +1,54 @@
+#+upid: how_to_python
+#+summary: Opinionated guide
+#+filetags: python
+#+draft: public
+
+* TODO How i write in Python                                    :blog:python:
+
+I'm describing what's my process
+Maybe you're opinionated about different things.. Make your own judgments
+
+* TODO [2020-05-28 Thu 13:50] [[https://news.ycombinator.com/item?id=23336050][Hypermodern Python | Hacker News]] :python:blog:
+- comment:
+  : boring and slightly opinitionated python guide
+** [2020-05-28 Thu 13:51] several 'layers'
+- git + gitignore
+- single executable script
+  start using type annotations, IDE (LSP/flycheck/intellij) already helps
+- add tests
+  keep tests in the same file, run manually now and then
+
+  (run tests during import?) not a great idea in general, but okay to start with
+
+  TODO doctests
+
+  TODO framework: unittest is annoying. even though it's built in, it introduces friction assert len(x) == 10 vs assert self.assertEquals TODO
+
+- dependencies: rely on symlinks
+
+- typing: keep reasonable default config, so you can simply run =mypy file.py=
+- no pylint
+  most of my projects I work on my own, so I don't care about debatable code qualities metrics. TODO opinitionated etc
+- no autoformatting
+  similar, and I feel that often they only make things worse by removning meaningful space and tabulations
+- documentation: warning: opinitonated
+  keep as much as you can in the docstrings and help
+  examples: doctests
+** [2020-05-28 Thu 14:31] seen this article. It makes sense for me as someone who's had a fair deal of Python experience
+But if it was the first article I seen? It would absolutely terrify me.
+- You need very little to be productive in Python
+- You don't have to be fancy TODO.
+- Not every package needs to be running under a virtual environment, linted and continuously integrated. It gets in the way of flexibility TODO and can be frustrating.
+  TODO e.g. submodules
+
+
+* TODO example of setup. py with literate dependencies            :python:lp:
+* code style                                                    :python:blog:
+I guess it depends. If you're aiming for your project to have dozens of contributors -- yeah, maybe better to invest early so you can avoid reformatting your whole codebase later
+But if you're not sure TODO
+
+* instead, rely on your text editor?                           :guide:python:
+
+* TODO write guide -- python from easy to inf??                      :python:
+* TODO post pymplate                                                   :blog:
+** I want to wrap up with my projects and make sure fixing bugs and releasing new versions is as smooth as possible :blog:pymplate:

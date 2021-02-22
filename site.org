@@ -113,7 +113,7 @@ Other downsides of Disqus:
 
 Selfhosting however is somewhat tedious and requires technical skill, so it's understandable many people prefer just inserting a bit of javascript from Disqus that does the job.
 
-Ideally I'd want comments to be some sort of [[file:annotating.org::#social_function][annotation overlay]].
+Ideally I'd want comments to be some sort of [[file:./annotating.html#social_function][annotation overlay]].
 So you could comment at any place in text, without having to jump back and forth.
 Perhaps one could choose any annotation platform they like and I would just need to query the comments from each of these platforms and display all of them.
 It's a bit vague though, so needs a proper think!

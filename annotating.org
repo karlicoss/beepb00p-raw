@@ -146,9 +146,14 @@ which is not the same as standard, but apparently close enough.
 There are quite a few different kinds of PDF annotations, e.g. you can see them here in [[https://www.adobe.com/content/dam/acom/en/devnet/pdf/PDF32000_2008.pdf][section 12.5.6: Annotation Types]] or in [[https://gitlab.freedesktop.org/poppler/poppler/blob/a4d3db87c3bae5e2a364c828479a6cbb0277069e/poppler/Annot.h#L606-634][Poppler source code]].
 In addition to Highlight and Text types there are things like support for styling, underlines, strikethoughs, and even (heaven forbid) sounds, movies and 3D.
 
-Using native PDF annotations has one major drawback: you will have to save metadata back to the PDF file at some point.
-At worst it could be impossible due to DRM, but in any case, you'd need to somehow remember that some of your documents might have private notes inside.
-I get around it by making a copy of the file I'm about to annotate first, and giving it =[annotated]= prefix so I wouldn't confuse it with the original file.
+Using native PDF annotations has one major drawback: you will have to save the metadata back to the PDF file at some point.
+It mutates the PDF, which has all kinds of nasty drawbacks:
+
+- at worst it's impossible due to DRM protection
+- it changes the file hash, which may break other tools, trigger unnecessary cloud syncs, etc.
+- you can't easily tell, which documents have your private notes and which don't
+
+I work around it by making a copy of the file I'm about to annotate first, and giving it =[annotated]= prefix so I wouldn't confuse it with the original file.
 
 ** Okular, Evince, Atril
 :PROPERTIES:

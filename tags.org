@@ -125,7 +125,7 @@ I'm writing more on motivation and things I'd like to integrate in my workflow [
 Some things I'm working on and contributing:
 - [[file:./grasp.html][grasp]], quick org-capture in browser
 - [[https://github.com/karlicoss/promnesia][promnesia]]
-- [[https://github.com/karlicoss/orger][orger]], long story :) you can read about it [[file::orger.org][here]]
+- [[https://github.com/karlicoss/orger][orger]], long story :) you can read about it [[file:orger.org][here]]
   - [[https://github.com/karlicoss/telegram2org][telegram2org]], and [[file:orger-todos.org][here]]
 - [[https://github.com/karlicoss/my][my]], package to interact with my data
 - [[https://github.com/karlicoss/axol][karlicoss/axol]], personal automatic news feed. I'm writing up about it [[file:axol.org][here]].
@@ -251,8 +251,10 @@ Links:
 :PROPERTIES:
 :CUSTOM_ID: dataliberation
 :END:
-I refer to data liberation as a practice of getting your personal information out of silos like cloud services, phone apps and gadgets.
+(personal) data liberation is a practice of getting your personal information out of silos like cloud services, phone apps and gadgets.
+
 At the moment it's a fairly complicated process even for people with technical background; let alone others.
+
 
 Links:
 
@@ -260,6 +262,7 @@ Links:
 - [[https://en.wikipedia.org/wiki/Google_Data_Liberation_Front][Google Data Liberation Front]]
 - [[file:tags.org::#infra][#infra]]
 - [[file:tags.org::#offline][#offline]]
+- [[https://beepb00p.xyz/exobrain/infra/exports.html][exobrain: data exports & liberation]]
 
 * physics                                                           :physics:
 :PROPERTIES:

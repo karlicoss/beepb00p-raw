@@ -1,0 +1,80 @@
+#+upid: pkm_processing
+#+filetags: pkm
+#+draft: public
+
+Perhaps it's nothing unusual, but I remember enjoying reading other people's organization TODO styles when I just started, so I'm returning my???  
+
+I'm a heavy user of capture (TODO link to post about capture or grasp)?  
+
+At the end of week I end up with a pile of links, thoughts and TODO?? captured mainly thought my Emacs, Orgzly app on android and Grasp. 
+
+TODO
+I do realise that I don't (and likely won't (TODO or by the time I do have time it would cease to be relevant)) have time to go throught all of it?
+
+First, I'd glance through everything and check that there are no things that have to be done immediately or soon. These I'd usually schedule and refile somewhere more appropriate straightaway.
+
+Next I go through the list and tag if there is anything untagged. TODO keybinding ~T~
+
+Next, I sort everything by tags (TODO???) (~org-sort-entries~ ~r~ ~TAGS~) TODO maybe there is a link?. Typically I only have a single tag for captured items, so there isn't much ambiguity there.
+Benefit of sorting by tags first is that you end up doing less context switch when you do further item processing. E.g. you can refile several items to the same file in row without extra typing.
+
+Next I go through everything and prioritize. TODO link to my keybindings ~,1~
+
+- A typically means something actionable that has to be done ASAP.
+  Sometimes though it's not immediately actionable, but something I want to stay on top so I get more opportinity to think about it.
+- B is somewhat less urgent, but good to be done sooner than later
+- C and D are somewhat more vague. But generally D means something that would be good to do, but it's on an.
+  Hence, I almost never have D priority tasks on my agenda.
+  I do have some regular tasks with D priority, usually it means that if I don't have much time for it, it's safe to skip (e.g. go
+
+Next, I refile (TODO ~,r~) or archive (~,A~).
+
+TODO perhaps needs to mention a separate post?
+
+Few big ones are
+
+- blog.org
+- buy.org
+- coding.org
+- health.org
+- read.org
+- social.org
+- think.org
+- qs.org
+- watch.org
+
+TODO special alog file?
+TODO rename it somehow? sink.org
+You know that feeling when you have that good meme TODO??
+
+unlikely I'd ever look there, but it is indexed by my search routines and somethimes I do run into things there
+
+* TODO amend                                                         :refile:
+** TODO sort-enries - by property TAGS                             :blog:org:
+useful to have a quick overview of the tags that dominate and worth splitting in separate files
+
+** TODO write how I am processing links.org file                   :blog:pkm:
+*** [2019-02-14 Thu 22:34] priority is important. information processing sort of bubbles up through my system :motivation:
+
+** my sorting routine: sort by tags, then put proirities, then bulk refile :blog:
+** TODO Marking stuff as Todo tag is kind of capture as well   :blog:capture:
+
+** TODO information processing                                     :blog:pkm:
+I accept that the amount of information is staggering and there is no way I can process thins on my own.
+
+TODO secret hope that some sort of agi personall assistant would catch up for media
+
+Sharing: these links are at least *somewhat* curated and if someone is exploring the topic and trusts me to be reasonable perhaps it could be a good way to kickstart their search
+*** TODO Reading in my rss reader on the phone.               :blog:workflow:
+
+First time I notice I'd like to highlight, I share into instapaper
+** TODO about rss/twitter testdrive lists/groups                   :blog:pkm:
+** TODO https://news.ycombinator.com/item?id=22009000 you don't need to reread all bookmarks :blog:
+: You don't need to re-read all of your bookmarks. They're basically a hash table keyed by some concept or some problem that you either list elsewhere or remember in your head, that you can quickly use to pull up the full detail content for the given key. Much like the actual physical bookmarks that are just quick jump references to content you already know the summary of.
+: Don't use bookmarks as a 'I might come back and read this later'. Use them as 'I will need this later'.
+
+** TODO Ask HN: How do you manage your bookmarks? | Hacker News        :blog:
+https://news.ycombinator.com/item?id=22105561
+Good thread on the value of bookmarking
+
+** TODO tracking releases: android app, blogs, gitpunch. we need something uniform... :blog:

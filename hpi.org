@@ -5,12 +5,14 @@
 
 #+macro: map      @@html:<span style='color:darkgreen; font-weight: bolder'>@@$1@@html:</span>@@
 
-*TLDR*: I'm using [[https://github.com/karlicoss/HPI][HPI]] (Human Programming Interface) package as a means of unifying, accessing and interacting with all of my personal data.
-
 If you're in a hurry, feel free to jump straight to the [[#usecases][demos]].
 
 - see [[https://github.com/karlicoss/HPI/tree/master/doc/SETUP.org][SETUP]] for the *installation/configuration guide*
 - see [[https://github.com/karlicoss/HPI/tree/master/doc/DEVELOPMENT.org][DEVELOPMENT]] for the *development/extension guide*
+- see [[https://github.com/karlicoss/HPI/tree/master/doc/DESIGN.org][DESIGN]] for the *design goals*
+- see [[https://beepb00p.xyz/exobrain/projects/hpi.html][exobrain/HPI]] for some of my raw thoughts and todos on the project
+
+*TLDR*: I'm using [[https://github.com/karlicoss/HPI][HPI]] (Human Programming Interface) package as a means of unifying, accessing and interacting with all of my personal data.
 
 HPI is a Python package (named ~my~), a collection of modules for:
 
@@ -42,10 +44,10 @@ You simply 'import' your data and get to work with familiar Python types and dat
 
 
 I consider my digital trace an important part of my identity. ([[file:tags.org::#extendedmind][#extendedmind]])
-The fact that the data is siloed, and accessing it is inconvenient and borderline frustrating feels very wrong.
+Usually the data is siloed, accessing it is inconvenient and borderline frustrating. This feels very wrong.
 
-Once the data is available as Python objects, I can easily plug it into existing tools, libraries and frameworks.
-It makes building new tools considerably easier and allows creating new ways of interacting with the data.
+In contrast, once the data is available as Python objects, I can easily plug it into existing tools, libraries and frameworks.
+It makes building new tools considerably easier and opens up new ways of interacting with the data.
 
 I tried different things over the years and I think I'm getting to the point where other people can also benefit from my code by 'just' plugging in their data,
 and that's why I'm sharing this.
@@ -199,9 +201,10 @@ Here's the (incomplete) list of the modules:
 
  
 :results:
-| [[https://github.com/karlicoss/HPI/tree/master/my/bluemaestro/__init__.py][=my.bluemaestro=]]                        | [[https://bluemaestro.com/products/product-details/bluetooth-environmental-monitor-and-logger][Bluemaestro]] temperature/humidity/pressure monitor |
-| [[https://github.com/karlicoss/HPI/tree/master/my/body/blood.py][=my.body.blood=]]                                   | Blood tracking                                                                                                                                     |
-| [[https://github.com/karlicoss/HPI/tree/master/my/body/exercise/cardio.py][=my.body.exercise.cardio=]]               | Cardio data, filtered from Endomondo and inferred from other data sources                                                                          |
+| [[https://github.com/karlicoss/HPI/tree/master/my/bluemaestro.py][=my.bluemaestro=]]                                 | [[https://bluemaestro.com/products/product-details/bluetooth-environmental-monitor-and-logger][Bluemaestro]] temperature/humidity/pressure monitor |
+| [[https://github.com/karlicoss/HPI/tree/master/my/body/blood.py][=my.body.blood=]]                                   | Blood tracking (manual org-mode entries)                                                                                                           |
+| [[https://github.com/karlicoss/HPI/tree/master/my/body/exercise/all.py][=my.body.exercise.all=]]                     | Combined exercise data                                                                                                                             |
+| [[https://github.com/karlicoss/HPI/tree/master/my/body/exercise/cardio.py][=my.body.exercise.cardio=]]               | Cardio data, filtered from various data sources                                                                                                    |
 | [[https://github.com/karlicoss/HPI/tree/master/my/body/exercise/cross_trainer.py][=my.body.exercise.cross_trainer=]] | My cross trainer exercise data, arbitrated from different sources (mainly, Endomondo and manual text notes)                                        |
 | [[https://github.com/karlicoss/HPI/tree/master/my/body/weight.py][=my.body.weight=]]                                 | Weight data (manually logged)                                                                                                                      |
 | [[https://github.com/karlicoss/HPI/tree/master/my/calendar/holidays.py][=my.calendar.holidays=]]                     | Holidays and days off work                                                                                                                         |
@@ -217,7 +220,7 @@ Here's the (incomplete) list of the modules:
 | [[https://github.com/karlicoss/HPI/tree/master/my/hypothesis.py][=my.hypothesis=]]                                   | [[https://hypothes.is][Hypothes.is]] highlights and annotations                                                                                    |
 | [[https://github.com/karlicoss/HPI/tree/master/my/instapaper.py][=my.instapaper=]]                                   | [[https://www.instapaper.com][Instapaper]] bookmarks, highlights and annotations                                                                   |
 | [[https://github.com/karlicoss/HPI/tree/master/my/kobo.py][=my.kobo=]]                                               | [[https://uk.kobobooks.com/products/kobo-aura-one][Kobo]] e-ink reader: annotations and reading stats                                              |
-| [[https://github.com/karlicoss/HPI/tree/master/my/lastfm/__init__.py][=my.lastfm=]]                                  | Last.fm scrobbles                                                                                                                                  |
+| [[https://github.com/karlicoss/HPI/tree/master/my/lastfm.py][=my.lastfm=]]                                           | Last.fm scrobbles                                                                                                                                  |
 | [[https://github.com/karlicoss/HPI/tree/master/my/location/google.py][=my.location.google=]]                         | Location data from Google Takeout                                                                                                                  |
 | [[https://github.com/karlicoss/HPI/tree/master/my/location/home.py][=my.location.home=]]                             | Simple location provider, serving as a fallback when more detailed data isn't available                                                            |
 | [[https://github.com/karlicoss/HPI/tree/master/my/materialistic.py][=my.materialistic=]]                             | [[https://play.google.com/store/apps/details?id=io.github.hidroh.materialistic][Materialistic]] app for Hackernews                                 |
@@ -234,6 +237,7 @@ Here's the (incomplete) list of the modules:
 | [[https://github.com/karlicoss/HPI/tree/master/my/rss/feedbin.py][=my.rss.feedbin=]]                                 | Feedbin RSS reader                                                                                                                                 |
 | [[https://github.com/karlicoss/HPI/tree/master/my/rss/feedly.py][=my.rss.feedly=]]                                   | Feedly RSS reader                                                                                                                                  |
 | [[https://github.com/karlicoss/HPI/tree/master/my/rtm.py][=my.rtm=]]                                                 | [[https://rememberthemilk.com][Remember The Milk]] tasks and notes                                                                                 |
+| [[https://github.com/karlicoss/HPI/tree/master/my/runnerup.py][=my.runnerup=]]                                       | [[https://github.com/jonasoreland/runnerup][Runnerup]] exercise data (TCX format)                                                                  |
 | [[https://github.com/karlicoss/HPI/tree/master/my/smscalls.py][=my.smscalls=]]                                       | Phone calls and SMS messages                                                                                                                       |
 | [[https://github.com/karlicoss/HPI/tree/master/my/stackexchange/gdpr.py][=my.stackexchange.gdpr=]]                   | Stackexchange data (uses [[https://stackoverflow.com/legal/gdpr/request][official GDPR export]])                                                   |
 | [[https://github.com/karlicoss/HPI/tree/master/my/stackexchange/stexport.py][=my.stackexchange.stexport=]]           | Stackexchange data (uses API via [[https://github.com/karlicoss/stexport][stexport]])                                                              |
@@ -264,14 +268,13 @@ Some modules are private, and need a bit of cleanup before merging:
 :END:
 Mainly I use it as a data provider for my scripts, tools, and dashboards.
 
-Also, check out [[file:myinfra.org::#mypkg][my infrastructure map]].
-It's a draft at the moment, but it might be helpful for understanding what's my vision on HPI.
+Also, check out [[file:myinfra.org::#mypkg][my infrastructure map]]. It might be helpful for understanding what's my vision on HPI.
 ** Instant search
 :PROPERTIES:
 :CUSTOM_ID: search
 :END:
 Typical search interfaces make me unhappy as they are *siloed, slow, awkward to use and don't work offline*.
-So I built my own ways around it! I write about it in detail [[file:../../adhoc-project/input/pkm-search.org::#personal_information][here]].
+So I built my own ways around it! I write about it in detail [[file:../../adhoc-project/data/input/pkm-search.org::#personal_information][here]].
 
 In essence, I'm mirroring most of my online data like chat logs, comments, etc., as plaintext.
 I can overview it in any text editor, and incrementally search over *all of it* in a single keypress.
@@ -291,7 +294,7 @@ I'm using it for:
 
 Orger comes with some existing [[https://github.com/karlicoss/orger/tree/master/modules][modules]], but it should be easy to adapt your own data source if you need something else.
 
-I write about it in detail [[file:../../adhoc-project/input/orger.org][here]]and [[file:../../adhoc-project/input/orger-todos.org][here]].
+I write about it in detail [[file:../../adhoc-project/data/input/orger.org][here]]and [[file:../../adhoc-project/data/input/orger-todos.org][here]].
 ** promnesia
 :PROPERTIES:
 :CUSTOM_ID: promnesia
@@ -498,7 +501,7 @@ How much do I chat on Facebook Messenger?
 [[file:hpi_files/messenger_2016_to_2019.png]]
 
 
-** Querying Roam Reasearch database
+** Querying Roam Research database
 :PROPERTIES:
 :CUSTOM_ID: roamresearch
 :END:
@@ -509,6 +512,8 @@ I've got some code examples [[file:myinfra-roam.org::#interactive][here]].
 :CUSTOM_ID: input_data
 :END:
 If you're curious about any specific data sources I'm using, I've written it up [[https://beepb00p.xyz/my-data.html][in detail]].
+
+Also see [[https://github.com/karlicoss/HPI/blob/master/doc/SETUP.org#data-flow]["Data flow"]] documentation with some nice diagrams explaining on specific examples.
 
 In short:
 
@@ -667,6 +672,7 @@ Similar projects:
 - [[https://github.com/tehmantra/my][tehmantra/my]]: directly inspired by this package
 - [[https://github.com/bcongdon/bolero][bcongdon/bolero]]: exposes your personal data as a REST API
 - [[https://en.wikipedia.org/wiki/Solid_(web_decentralization_project)#Design][Solid project]]: personal data pod, which websites pull data from
+- [[https://remotestorage.io][remoteStorage]]: open protocol for apps to write data to your own storage
 
 Other links:
 

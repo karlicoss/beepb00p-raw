@@ -5,14 +5,14 @@
 #+macro: shrug @@html:<code>¯\_(ツ)_/¯</code>@@
 
 This is the list of personal data sources I use or planning to use with rough guides on how to get your hands on that data if you want it as well.
-
 It's still incomplete and I'm going to update it regularly.
 
-My goal is *automating data collection to the maximum extent possible* and making it work in the background, so one can set up pipelines once and hopefully never think about it again.
+My goal is collecting almost all of my digital trace, *automating data collection to the maximum extent possible* and making it work in the background, so one can set up pipelines once and hopefully never think about it again.
 
 This is kind of a follow-up on my previous post on the [[file:sad-infra.org][sad state of personal data]], and part of my personal way of getting around this sad state.
 
 If you're terrified by the long list, you can jump straight into [[#consumers]["Data consumers"]] section to find out how I use it.
+In addition, check out [[file:myinfra.org][my infrastructure map]], which might explain it better!
 
 #+toc: headlines 2
 
@@ -268,7 +268,7 @@ Why:
 - (potentially) search history for [[#promnesia][promnesia]]
 - [[#search][search]] in youtube watch history
 - location data for lifelogging and the [[#dashboard][dashboard]] (activity)
-** TODO Hackernews
+** STRT Hackernews
 :PROPERTIES:
 :CUSTOM_ID: hackernews
 :END:

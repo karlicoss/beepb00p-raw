@@ -5,6 +5,7 @@ Note that due to [[https://github.com/novoid/github-orgmode-tests][Github's inco
 You can also clone this repository and browse the blog in Emacs.
 
 Extra pages: [[file:ideas.org][IDEAS]] | [[file:tags.org][TAGS]] | [[file:site.org][SITE]]
+** [2021-02-22 Mon] [[file:myinfra.org][Map of my personal data infrastructure]]                                             [[file:tags.org::#infra][ =#infra= ]] [[file:tags.org::#dataliberation][ =#dataliberation= ]]
 ** [2020-05-30 Sat] [[file:promnesia.org][Promnesia]]                                                                          =#promnesia= [[file:tags.org::#pkm][ =#pkm= ]]
   A journey in fixing browser history
 ** [2020-04-20 Mon] [[file:myinfra-roam.org][Extending my personal infrastructure with a data source]]                            [[file:tags.org::#infra][ =#infra= ]] =#hpi= =#orger= =#promnesia=
@@ -41,3 +42,5 @@ Extra pages: [[file:ideas.org][IDEAS]] | [[file:tags.org][TAGS]] | [[file:site.o
   My personal knowledge setup
 ** [2019-05-12 Sun] [[file:contemp-art.org][Don't shoot the artist]]                                                             =#art=
   How I visited a contemporary art museum and didn't get it
+** [2019-04-18 Thu] [[file:recycling-is-hard.org][On cognitive demand of recycling]]                                                   =#recycling= =#environment=
+  So many questions, so few answers

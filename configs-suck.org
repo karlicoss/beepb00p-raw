@@ -54,21 +54,22 @@ An incomplete list of my frustrations:
     - ~for~ loop: build matrices and 'excludes' always give me a headache
     - ~if~ statement: e.g. [[https://circleci.com/docs/2.0/configuration-reference/#the-when-step-requires-version-21][=when=]] in CircleCI
 
+  [[https://blog.atomist.com/in-defense-of-yaml]["This is not structured data. This is programming masquerading as configuration."]]
 
 - can't be validated
 
-  You can validate the config syntax itself (i.e. check JSON for correctness), but you can't do semantic checks.
+  You can validate the config syntax itself (i.e. check JSON for correctness), but if you want more sophisticated semantic checks, you need to spend extra effort.
 
   This is kind of a consequence of not having logic in the config files.
   Typically you'll have to write a supplementary program to check your configs and remember to call it before passing to a program.
 
-  Very few programs bother with that and usually, your program crashes because of something that would be *trivial to catch with any simple type system*.
+  Very few programs bother with that. Usually, your program crashes because of something that would be *trivial to catch with any simple type system*.
 
-- YAML simply stands out with its implicit conversions and portability issues
+- YAML simply stands out with its implicit conversions and portability issues (e.g. "The NOrway Problem")
 
   There are enough rants about it, so I'll just leave a link to a good one: [[https://www.arp242.net/yaml-config.html]["YAML: probably not so great after all"]].
 
-Summary: we spend time learning *useless syntax, instead of productive work*.
+Summary: we spend time learning *useless syntax and reinventing programming constructs, instead of productive work*.
 
 * Workarounds
 :PROPERTIES:

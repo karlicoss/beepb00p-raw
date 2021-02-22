@@ -1,0 +1,11 @@
+#+upid: offline
+#+summary: How to make sure your infrastructure and apps is offline ready
+#+filetags: :offline:prepping:infra:
+#+draft: public
+
+Also see [[file:tags.org::#offline][#offline]], [[file:tags.org::#cloud][#cloud]].
+
+* TODO [2020-02-23 Sun 19:08] Daily Life with Offline OpenBSD Laptop | Lobsters :blog:offline:
+https://lobste.rs/s/zpsvuu/daily_life_with_offline_openbsd_laptop
+Comment:
+could compile a guide on offgrid?
